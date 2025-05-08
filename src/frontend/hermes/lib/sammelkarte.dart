@@ -1,9 +1,11 @@
+import 'schwierigkeit.dart';
+
 class Sammelkarte {
   String Name;
   String Bild;
-  int Schwierigkeit;
+  Schwierigkeit schwierigkeit;
   double Hoehe;
   DateTime Datum;
 
-  Sammelkarte(this.Name, this.Bild, this.Schwierigkeit, this.Hoehe, this.Datum);
+  Sammelkarte(this.Name, this.Bild, this.schwierigkeit, this.Hoehe, this.Datum);
 }

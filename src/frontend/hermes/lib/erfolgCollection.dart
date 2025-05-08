@@ -1,4 +1,4 @@
-import 'package:hermes/erfolg.dart';
+import 'erfolg.dart';
 
 class ErfolgCollection{
   List<Erfolg> ergebnisse = [];
