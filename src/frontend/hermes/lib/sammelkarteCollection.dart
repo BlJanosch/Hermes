@@ -1,4 +1,4 @@
-import 'package:hermes/sammelkarte.dart';
+import 'sammelkarte.dart';
 
 class SammelkarteCollection {
   List<Sammelkarte> sammelkarten = [];

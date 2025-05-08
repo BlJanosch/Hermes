@@ -1,4 +1,4 @@
-import 'package:hermes/schwierigkeit.dart';
+import 'schwierigkeit.dart';
 
 class Erfolg {
   String name;
