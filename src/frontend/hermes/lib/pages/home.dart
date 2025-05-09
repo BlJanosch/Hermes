@@ -29,13 +29,16 @@ class _HomeState extends State<Home> {
             ],
           ),
           Positioned(
-            
-            child: 
-              FloatingActionButton(
-              onPressed: null,
-              child: Icon(Icons.start),
-              backgroundColor: Colors.black.withOpacity(0.5),
+            bottom: 130.0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: FloatingActionButton(
+                onPressed: null,
+                child: Icon(Icons.route_rounded, color: Colors.grey),
+                backgroundColor: Colors.black.withOpacity(0.5),
               ),
+            ),
           ),
           Positioned(
             bottom: 10.0,
