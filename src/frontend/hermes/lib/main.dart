@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hermes/pages/collection_page.dart';
 import 'package:hermes/pages/home.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hermes',
-      home: const Home(),
+      home: const CollectionPage(),
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
