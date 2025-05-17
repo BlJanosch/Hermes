@@ -37,7 +37,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_nav_bar: ^5.0.6
   geolocator: ^10.0.0
-  flutter_map_location_marker: any
 
 dev_dependencies:
   flutter_test:
