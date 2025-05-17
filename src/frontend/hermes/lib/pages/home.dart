@@ -227,9 +227,10 @@ class _HomeState extends State<Home> {
                           IconButton(
                             icon: const Icon(Icons.check, color: Colors.white),
                             onPressed: () {
+                              // Strecke in DB schreiben
                               setState(() {
                                 _trackingStopped = false;
-                                // ggf. Daten speichern oder zurücksetzen
+                                _trackedRoute = [];
                               });
                             },
                           ),
