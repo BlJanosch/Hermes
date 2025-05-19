@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       home: const CollectionPage(),
       theme: ThemeData(
         primarySwatch: Colors.yellow,
+        fontFamily: "Sans"
       ),
     );
   }
