@@ -54,7 +54,7 @@ class MyBottomNavBar extends StatelessWidget {
           tabBackgroundColor: Colors.grey.shade100,
           mainAxisAlignment: MainAxisAlignment.center,
           tabBorderRadius: 10,
-          tabMargin: EdgeInsets.symmetric(horizontal: horizontalMargin),
+          tabMargin: EdgeInsets.symmetric(horizontal: horizontalMargin, vertical: 5),
           tabs: const [
             GButton(icon: Icons.home),
             GButton(icon: Icons.collections),
