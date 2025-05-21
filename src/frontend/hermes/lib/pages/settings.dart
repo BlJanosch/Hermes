@@ -13,6 +13,16 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.7),
+      appBar: AppBar(
+        title: Text('Einstellungen'),
+        backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu), // Drei-Striche-Menü
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Positioned(
