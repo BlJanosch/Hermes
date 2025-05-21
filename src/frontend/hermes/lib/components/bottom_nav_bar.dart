@@ -37,8 +37,11 @@ class MyBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double navBarHeight = MediaQuery.of(context).size.height * 0.10;
+    final double horizontalMargin = MediaQuery.of(context).size.width * 0.02;
+
     return SizedBox(
-      height: 100,
+      height: navBarHeight.clamp(60, 100),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: GNav(
@@ -51,7 +54,7 @@ class MyBottomNavBar extends StatelessWidget {
           tabBackgroundColor: Colors.grey.shade100,
           mainAxisAlignment: MainAxisAlignment.center,
           tabBorderRadius: 10,
-          tabMargin: EdgeInsets.symmetric(horizontal: 10),
+          tabMargin: EdgeInsets.symmetric(horizontal: horizontalMargin),
           tabs: const [
             GButton(icon: Icons.home),
             GButton(icon: Icons.collections),
