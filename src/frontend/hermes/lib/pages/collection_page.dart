@@ -34,7 +34,9 @@ class CollectionPage extends StatelessWidget {
           bottom: 10.0,
           left: 5,
           right: 5,
-          child: MyBottomNavBar(),
+          child: MyBottomNavBar(
+            currentIndex: 1,
+          ),
           ),
         ]
 

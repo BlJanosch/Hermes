@@ -9,7 +9,7 @@ class MySammelkarte extends StatelessWidget {
       height: 220,
       padding: EdgeInsets.all(3.0),
       width: 140,
-      color: Colors.white60,
+      color: Colors.red,
     );
   }
 }

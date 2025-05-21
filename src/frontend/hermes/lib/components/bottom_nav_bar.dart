@@ -39,7 +39,6 @@ class MyBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 100,
-      padding: EdgeInsets.all(3.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: GNav(
