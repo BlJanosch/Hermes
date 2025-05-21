@@ -1,0 +1,353 @@
+openapi: 3.0.0
+info:
+  description: Eine API zur Verwaltung und Steuerung der Kaffeemaschine & Benutzerdaten
+  title: Kaffeemaschine API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /erfolg/add_erfolg:
+    post:
+      operationId: add_erfolg
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserErfolg'
+        required: true
+      responses:
+        "201":
+          description: Erfolg hinzugefügt
+        "400":
+          description: Ungültige Eingabe!
+      summary: Neuen Erfolg zum User hinzufügen
+      tags:
+      - Erfolge
+      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+  /erfolg/add_erreichtesziel:
+    post:
+      operationId: add_erreichtesziel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZielErreicht'
+        required: true
+      responses:
+        "201":
+          description: Ziel erfolgreich gespeichert
+        "400":
+          description: Ungültige Eingabe!
+      summary: Neues erreichtes Ziel hinzufügen
+      tags:
+      - Erfolge
+      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+  /erfolg/erreichteziele:
+    get:
+      operationId: erfolg_get
+      parameters:
+      - explode: true
+        in: query
+        name: userID
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Ziel'
+                type: array
+          description: Erreichte Ziele erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Alle erreichten Ziele vom jeweiligen User erhalten
+      tags:
+      - Erfolge
+      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+  /erfolg/get_erfolge:
+    get:
+      operationId: get_erfolge
+      parameters:
+      - explode: true
+        in: query
+        name: userID
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Erfolg'
+                type: array
+          description: Erfolge erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Gibt alle Erfolge vom jeweiligen User zurück
+      tags:
+      - Erfolge
+      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+  /user/bestenliste:
+    get:
+      operationId: bestenliste
+      parameters:
+      - explode: true
+        in: query
+        name: userID
+        required: true
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: filter
+        required: true
+        schema:
+          enum:
+          - kmgelaufen
+          - hoehenmeter
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserBestenliste'
+                type: array
+          description: Bestenliste erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Bestenliste nach Filter abrufen
+      tags:
+      - Benutzer
+      x-openapi-router-controller: swagger_server.controllers.bestenliste_controller
+  /user/login:
+    get:
+      operationId: user_login
+      parameters:
+      - explode: true
+        in: query
+        name: benutzername
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: passwort
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Login erfolgreich
+        "401":
+          description: Benutzer nicht gefunden oder Passwort falsch
+      summary: "Prüft, ob ein User existiert"
+      tags:
+      - Benutzer
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+  /user/register:
+    post:
+      operationId: user_register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: Benutzer erfolgreich registriert
+        "409":
+          description: Benutzer existiert bereits
+      summary: Neuen Benutzer registrieren
+      tags:
+      - Benutzer
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+  /user/update_stats:
+    put:
+      operationId: update_stats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: Statistiken aktualisiert
+        "400":
+          description: Fehlerhafte Eingabe
+      summary: Aktualisiert die Statistiken eines Benutzers
+      tags:
+      - Benutzer
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+components:
+  schemas:
+    User:
+      example:
+        hoehenmeter: 1.4658129805029452
+        kmgelaufen: 6.027456183070403
+        Benutzername: Benutzername
+        ID: 0
+        Profilbild: Profilbild
+        Passwort: Passwort
+      properties:
+        ID:
+          title: ID
+          type: integer
+        Benutzername:
+          title: Benutzername
+          type: string
+        Passwort:
+          title: Passwort
+          type: string
+        Profilbild:
+          title: Profilbild
+          type: string
+        kmgelaufen:
+          format: double
+          title: kmgelaufen
+          type: number
+        hoehenmeter:
+          format: double
+          title: hoehenmeter
+          type: number
+      title: User
+      type: object
+    UserBestenliste:
+      example:
+        hoehenmeter: 6.027456183070403
+        kmgelaufen: 0.8008281904610115
+        Benutzername: Benutzername
+        Profilbild: Profilbild
+      properties:
+        Benutzername:
+          title: Benutzername
+          type: string
+        Profilbild:
+          title: Profilbild
+          type: string
+        kmgelaufen:
+          format: double
+          title: kmgelaufen
+          type: number
+        hoehenmeter:
+          format: double
+          title: hoehenmeter
+          type: number
+      title: UserBestenliste
+      type: object
+    Ziel:
+      example:
+        Bild: Bild
+        hoehe: 6.027456183070403
+        Schwierigkeit: 1
+        ID: 0
+        Koordinaten:
+          lng: 5.637376656633329
+          lat: 5.962133916683182
+        Name: Name
+      properties:
+        ID:
+          title: ID
+          type: integer
+        Name:
+          title: Name
+          type: string
+        hoehe:
+          format: double
+          title: hoehe
+          type: number
+        Schwierigkeit:
+          title: Schwierigkeit
+          type: integer
+        Bild:
+          title: Bild
+          type: string
+        Koordinaten:
+          $ref: '#/components/schemas/Ziel_Koordinaten'
+      title: Ziel
+      type: object
+    Erfolg:
+      example:
+        Beschreibung: Beschreibung
+        Schwierigkeit: 6
+        ID: 0
+        Name: Name
+      properties:
+        ID:
+          title: ID
+          type: integer
+        Name:
+          title: Name
+          type: string
+        Beschreibung:
+          title: Beschreibung
+          type: string
+        Schwierigkeit:
+          title: Schwierigkeit
+          type: integer
+      title: Erfolg
+      type: object
+    ZielErreicht:
+      example:
+        UID: 0
+        Datum: 2000-01-23
+        ZID: 6
+      properties:
+        UID:
+          title: UID
+          type: integer
+        ZID:
+          title: ZID
+          type: integer
+        Datum:
+          format: date
+          title: Datum
+          type: string
+      title: ZielErreicht
+      type: object
+    UserErfolg:
+      example:
+        Status: true
+        UID: 0
+        EID: 6
+      properties:
+        UID:
+          title: UID
+          type: integer
+        EID:
+          title: EID
+          type: integer
+        Status:
+          title: Status
+          type: boolean
+      title: UserErfolg
+      type: object
+    Ziel_Koordinaten:
+      example:
+        lng: 5.637376656633329
+        lat: 5.962133916683182
+      properties:
+        lat:
+          format: double
+          title: lat
+          type: number
+        lng:
+          format: double
+          title: lng
+          type: number
+      title: Ziel_Koordinaten
+      type: object
