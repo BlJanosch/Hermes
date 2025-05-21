@@ -50,11 +50,14 @@ class _HomeState extends State<Home> {
 
     Position position = await Geolocator.getCurrentPosition();
 
-    setState(() {
+    if (mounted){
+      setState(() {
       _currentPosition = LatLng(position.latitude, position.longitude);
-    });
+      });
+      _mapController.move(_currentPosition!, 15.0);
+    }
 
-    _mapController.move(_currentPosition!, 15.0);
+    
   }
 
   void _startTracking() {

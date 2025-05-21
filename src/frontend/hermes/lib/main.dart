@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       home: const Login(),
       theme: ThemeData(
         primarySwatch: Colors.yellow,
+        fontFamily: "Sans"
       ),
     );
   }
