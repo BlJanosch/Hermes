@@ -43,7 +43,7 @@ class _LoginState extends State<Login> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Align(
-              alignment: const Alignment(0, -0.55),
+              alignment: const Alignment(0, -0.95),
               child: SvgPicture.asset(
               'lib/assets/hermes_logo.svg',
               fit: BoxFit.cover,
