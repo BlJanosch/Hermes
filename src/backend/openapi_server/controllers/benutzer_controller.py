@@ -36,7 +36,7 @@ def bestenliste(user_id, filter):  # noqa: E501
     :rtype: Union[List[UserBestenliste], Tuple[List[UserBestenliste], int], Tuple[List[UserBestenliste], int, Dict[str, str]]
     """
     conn = get_connection()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
 
     query = """
         SELECT u.id, u.benutzername, s.punkte, s.spiele_gewonnen, s.spiele_verloren
@@ -74,7 +74,7 @@ def bestenliste(user_id, filter):  # noqa: E501
 
 
 def update_stats(body):  # noqa: E501
-    """Aktualisiert die Statistiken eines Benutzers
+    """Aktualisiert die Statistiken eines Benutzers, man muss ein Json mitgeben
 
      # noqa: E501
 
@@ -88,12 +88,18 @@ def update_stats(body):  # noqa: E501
         user = User.from_dict(connexion.request.get_json())  # noqa: E501
 
     if not isinstance(user, User):
-        return {"message": "Wrong input: user object expected"}, 400
+        return {"message": "Wrong input: user object json expected"}, 400
 
     conn = get_connection()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
 
-    cur.execute(f"UPDATE user SET kmgelaufen = {user.kmgelaufen}, hoehenmeter = {user.hoehenmeter}, passwort = {user.passwort}, benutzername = {user.benutzername}, profilbild = {user.profilbild} WHERE id = {user.id}")
+    cur.execute(
+    "UPDATE user SET kmgelaufen = ?, hoehenmeter = ?, passwort = ?, benutzername = ?, profilbild = ? WHERE id = ?",
+    (user.kmgelaufen, user.hoehenmeter, user.passwort, user.benutzername, user.profilbild, user.id)
+    )
+
+    conn.commit()
+    cur.close()
 
     return "Erfolg", 200
 
@@ -110,7 +116,17 @@ def user_login(benutzername, passwort):  # noqa: E501
 
     :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
-    return 'do some magic!'
+
+    conn = mariadb.connect(cursorclass=mariadb.cursors.DictCursor)
+    cur = conn.cursor()
+
+    cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (benutzername, passwort))
+    row = cur.fetchone()
+    if row:
+        return row['id'], 200
+    else:
+        return -1, 404
+
 
 
 def user_register(body):  # noqa: E501
@@ -126,4 +142,21 @@ def user_register(body):  # noqa: E501
     user = body
     if connexion.request.is_json:
         user = User.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+
+    if not isinstance(user, User):
+        return {"message": "Wrong input: user object json expected"}, 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+        "INSERT INTO user (kmgelaufen, hoehenmeter, passwort, benutzername, userprofilbild) VALUES (?, ?, ?, ?, ?)",
+        (0, 0, user.passwort, user.benutzername, user.profilbild)
+        )
+    except: 
+        return "Falsche Daten eingegeben", 400
+    conn.commit()
+    cur.close()
+    conn.close()
+    return "Erfolg", 200

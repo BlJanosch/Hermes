@@ -1,6 +1,6 @@
 import mariadb
 import sys
-import swagger_server.__main__ as server
+import openapi_server.__main__ as server
 
 def get_connection():
     try:
