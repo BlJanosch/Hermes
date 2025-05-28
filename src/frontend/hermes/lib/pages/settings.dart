@@ -100,33 +100,28 @@ class _SettingsState extends State<Settings> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Unlocked achievement (shaded)
-              Erfolgcircle(),
+              Erfolgcircle(icon: Icons.check, text: 'Erfolg 1'),
               // Unlocked achievement (shaded)
-              Erfolgcircle(),
+              Erfolgcircle(icon: Icons.lock, text: 'Erfolg 2'),
               // Locked achievement
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.grey[200],
-                child: Icon(Icons.lock, color: Colors.grey),
-              ),
+              Erfolgcircle(icon: Icons.check, text: 'Erfolg 3'),
               // Locked achievement
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.grey[200],
-                child: Icon(Icons.lock, color: Colors.grey),
-              ),
             ],
               ),
               SizedBox(height: 16),
               Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
-              4,
-              (index) => CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.grey[200],
-                child: Icon(Icons.remove, color: Colors.grey[400]),
+              3,
+              (index) => Erfolgcircle(icon: Icons.check, text: 'Erfolg ${index + 4}'),
+            ),
               ),
+            SizedBox(height: 16),
+              Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(
+              3,
+              (index) => Erfolgcircle(icon: Icons.check, text: 'Erfolg ${index + 7}'),
             ),
               ),
             ],
