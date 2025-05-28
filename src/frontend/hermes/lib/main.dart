@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // <-- für SystemChrome
 import 'package:hermes/pages/home.dart';
 import 'package:hermes/pages/login.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, // Nur Hochformat erlauben
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -19,9 +26,8 @@ class MyApp extends StatelessWidget {
       home: const Login(),
       theme: ThemeData(
         primarySwatch: Colors.yellow,
-        fontFamily: "Sans"
+        fontFamily: "Sans",
       ),
     );
   }
 }
-
