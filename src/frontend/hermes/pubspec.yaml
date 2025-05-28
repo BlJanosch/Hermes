@@ -46,6 +46,8 @@ dependencies:
   google_nav_bar: ^5.0.6
   geolocator: ^10.0.0
   flutter_map_location_marker: any
+  flutter_background_service: ^5.0.1
+  location: ^5.0.0
 
 dev_dependencies:
   flutter_test:

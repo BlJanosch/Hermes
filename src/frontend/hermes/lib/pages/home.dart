@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
+import 'package:hermes/components/tracking_service.dart';
+import 'package:location/location.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,171 +16,100 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final MapController _mapController = MapController();
-  LatLng? _currentPosition;
-
-  bool _isRecording = false;
-  bool _trackingStopped = false;
-
-  List<LatLng> _trackedRoute = [];
-  StreamSubscription<Position>? _positionStream;
-
-  double _distance = 0.0;
-  DateTime? _startTime;
-  Duration _accumulatedDuration = Duration.zero;
-
-  final Distance _distanceCalculator = Distance();
+  final TrackingService trackingService = TrackingService();
+  final Location _location = Location();
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _determinePosition();
-  }
 
-  Future<void> _determinePosition() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
-
-    if (permission == LocationPermission.deniedForever) return;
-
-    Position position = await Geolocator.getCurrentPosition();
-
-    if (mounted){
-      setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-      });
-      _mapController.move(_currentPosition!, 15.0);
-    }
-
-    
-  }
-
-  void _startTracking() {
-    _trackedRoute.clear();
-    _distance = 0.0;
-    _accumulatedDuration = Duration.zero;
-    _startTime = DateTime.now();
-
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 5,
-      ),
-    ).listen((Position position) {
-      final LatLng newPoint = LatLng(position.latitude, position.longitude);
-      setState(() {
-        if (_trackedRoute.isNotEmpty) {
-          _distance += _distanceCalculator(_trackedRoute.last, newPoint);
+    trackingService.onLocationUpdated = () {
+      if (mounted) {
+        setState(() {});
+        if (trackingService.trackedRoute.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _mapController.move(
+              trackingService.trackedRoute.last,
+              _mapController.zoom,
+            );
+          });
         }
-        _trackedRoute.add(newPoint);
-      });
-      _mapController.move(newPoint, _mapController.zoom);
-    });
+      }
+    };
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _zoomToCurrentLocation());
 
     _startTimer();
-
-    setState(() {
-      _isRecording = true;
-      _trackingStopped = false;
-    });
   }
 
-  void _stopTracking() {
-    _positionStream?.cancel();
-    _positionStream = null;
-
-    if (_startTime != null) {
-      _accumulatedDuration += DateTime.now().difference(_startTime!);
+  Future<void> _zoomToCurrentLocation() async {
+    final hasPermission = await _location.hasPermission();
+    if (hasPermission == PermissionStatus.denied) {
+      await _location.requestPermission();
     }
 
-    _stopTimer();
-
-    setState(() {
-      _isRecording = false;
-      _trackingStopped = true;
-      _startTime = null;
-    });
-  }
-
-  void _resumeTracking() {
-    _startTime = DateTime.now();
-
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 5,
-      ),
-    ).listen((Position position) {
-      final LatLng newPoint = LatLng(position.latitude, position.longitude);
-      setState(() {
-        if (_trackedRoute.isNotEmpty) {
-          _distance += _distanceCalculator(_trackedRoute.last, newPoint);
-        }
-        _trackedRoute.add(newPoint);
-      });
-      _mapController.move(newPoint, _mapController.zoom);
-    });
-
-    _startTimer();
-
-    setState(() {
-      _isRecording = true;
-      _trackingStopped = false;
-    });
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (_isRecording) {
-        setState(() {}); // UI-Aktualisierung
-      }
-    });
-  }
-
-  void _stopTimer() {
-    _timer?.cancel();
-    _timer = null;
-  }
-
-  void _toggleTracking() {
-    if (_isRecording) {
-      _stopTracking();
-    } else {
-      if (_trackingStopped) {
-        _resumeTracking();
-      } else {
-        _startTracking();
-      }
+    final serviceEnabled = await _location.serviceEnabled();
+    if (!serviceEnabled) {
+      await _location.requestService();
     }
-  }
 
-  Duration get _duration {
-    if (_startTime == null) return _accumulatedDuration;
-    return _accumulatedDuration + DateTime.now().difference(_startTime!);
+    final currentLocation = await _location.getLocation();
+    if (mounted) {
+      _mapController.move(
+        LatLng(currentLocation.latitude!, currentLocation.longitude!),
+        20.0, 
+      );
+    }
   }
 
   @override
   void dispose() {
-    _positionStream?.cancel();
-    _stopTimer();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted && trackingService.isTracking) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _toggleTracking() {
+    if (trackingService.isTracking) {
+      trackingService.stopTracking();
+    } else {
+      if (trackingService.startTime != null) {
+        trackingService.resumeTracking();
+      } else {
+        trackingService.startTracking();
+      }
+    }
+    setState(() {});
+  }
+
+  void _resetTracking() {
+    trackingService.reset();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final route = trackingService.trackedRoute;
+    final distance = trackingService.totalDistance;
+    final isTracking = trackingService.isTracking;
+    final isTrackingStopped = !isTracking && route.isNotEmpty;
+    final duration = trackingService.currentDuration;
+
     return Scaffold(
       body: Stack(
         children: [
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: _currentPosition ?? LatLng(47.165, 9.758),
+              center: route.isNotEmpty ? route.last : LatLng(47.165, 9.758),
               zoom: 13.0,
             ),
             children: [
@@ -187,11 +117,11 @@ class _HomeState extends State<Home> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.app',
               ),
-              if (_trackedRoute.length > 1)
+              if (route.length > 1)
                 PolylineLayer(
                   polylines: [
                     Polyline(
-                      points: _trackedRoute,
+                      points: route,
                       color: Colors.blue,
                       strokeWidth: 4,
                     ),
@@ -200,8 +130,7 @@ class _HomeState extends State<Home> {
               CurrentLocationLayer(),
             ],
           ),
-
-          if (_isRecording || _trackingStopped)
+          if (isTracking || isTrackingStopped)
             Positioned(
               top: 40,
               left: 20,
@@ -216,31 +145,28 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Distanz: ${(_distance / 1000).toStringAsFixed(2)} km',
+                      'Distanz: ${(distance / 1000).toStringAsFixed(2)} km',
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    if (_trackingStopped)
+                    if (isTrackingStopped)
                       Row(
                         children: [
                           IconButton(
                             icon: const Icon(Icons.play_arrow, color: Colors.white),
-                            onPressed: _resumeTracking,
+                            onPressed: () {
+                              trackingService.resumeTracking();
+                              setState(() {});
+                            },
                           ),
                           IconButton(
                             icon: const Icon(Icons.check, color: Colors.white),
-                            onPressed: () {
-                              // Strecke in DB schreiben
-                              setState(() {
-                                _trackingStopped = false;
-                                _trackedRoute = [];
-                              });
-                            },
+                            onPressed: _resetTracking,
                           ),
                         ],
                       ),
                     Text(
-                      'Dauer: ${_duration.inMinutes.toString().padLeft(2, '0')}:${(_duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                      'Dauer: ${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -248,34 +174,32 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-
-            Positioned(
+          Positioned(
             bottom: 130.0,
             left: 0,
             right: 0,
             child: Center(
               child: FloatingActionButton(
-              onPressed: _trackingStopped ? null : _toggleTracking,
-              backgroundColor: _isRecording
-                ? Colors.red.withOpacity(0.7)
-                : Colors.black.withOpacity(0.5),
-              child: Icon(
-                Icons.route_rounded,
-                color: _isRecording
-                  ? Colors.white
-                  : _trackingStopped
-                    ? Colors.grey.withOpacity(0.5)
-                    : Colors.grey,
-              ),
+                onPressed: isTrackingStopped ? null : _toggleTracking,
+                backgroundColor: isTracking
+                    ? Colors.red.withOpacity(0.7)
+                    : Colors.black.withOpacity(0.5),
+                child: Icon(
+                  Icons.route_rounded,
+                  color: isTracking
+                      ? Colors.white
+                      : isTrackingStopped
+                          ? Colors.grey.withOpacity(0.5)
+                          : Colors.grey,
+                ),
               ),
             ),
-            ),
-
+          ),
           Positioned(
             bottom: 10.0,
             left: 5,
             right: 5,
-            child: MyBottomNavBar(currentIndex: 0,),
+            child: MyBottomNavBar(currentIndex: 0),
           ),
         ],
       ),

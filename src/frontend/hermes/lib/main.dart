@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hermes/pages/home.dart';
 import 'package:hermes/pages/login.dart';
 
 void main() {
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //navigatorObservers: [routeObserver],
       title: 'Hermes',
       home: const Login(),
       theme: ThemeData(
