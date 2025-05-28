@@ -81,6 +81,15 @@ class _SettingsState extends State<Settings> {
             ),
             SizedBox(height: 32),
             // Achievements grid
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+              "Erfolge",
+              style: TextStyle(fontSize: 24,),
+              textAlign: TextAlign.left,
+              ),
+            ),
+            SizedBox(height: 16),
             Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
