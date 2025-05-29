@@ -6,6 +6,8 @@ import 'package:hermes/pages/home.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -40,6 +42,16 @@ class _LoginState extends State<Login> {
         );
       return false;
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    await prefs.setBool('isLoggedIn', true);
+
+    // Für Logout
+    //final prefs = await SharedPreferences.getInstance();
+    //await prefs.clear(); // oder prefs.setBool('isLoggedIn', false);
+
     return true;
   }
 
@@ -78,6 +90,11 @@ class _LoginState extends State<Login> {
         );
       return false;
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    await prefs.setBool('isLoggedIn', true);
     return true;
   }
 
