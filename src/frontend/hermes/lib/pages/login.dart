@@ -1,6 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hermes/pages/home.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -15,12 +19,34 @@ class _LoginState extends State<Login> {
   bool _obscurePassword = true;
   bool _isLogin = true;
 
-  void _login() {
+  Future<int> fetchData(username, password) async {
+      final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+      final response = await http.get(url);
+
+      return json.decode(response.body);
+    }
+
+  Future<bool> _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Login mit $username')),
-    );
+    int result = await fetchData(username, password);
+    if (result == -1){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Login fehlgeschlagen'),
+            content: Text('Benutzername oder Passwort ist falsch.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      return false;
+    }
+    return true;
   }
 
   void _register() {
@@ -131,22 +157,26 @@ class _LoginState extends State<Login> {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _isLogin
-                                  ? Color(0xFFBBA430)
-                                  : Color(0xFF4A742F),
-                              foregroundColor: _isLogin
-                                  ? Colors.white
-                                  : Colors.black,
-                              elevation: _isLogin ? 2 : 0,
+                              backgroundColor: Color(0xFFBBA430),
+                              foregroundColor: Colors.white,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              // hier mit login regeln
+                              bool login = await _login();
                               setState(() {
-                              _isLogin = true;
+                                if (login){
+                                  _isLogin = true;
+                                }
+                                else{
+                                  _isLogin = false;
+                                }
                               });
-                              Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const Home()),
-                              );
+                              if (_isLogin){
+                                Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Home()),
+                                );
+                              }
                             },
                             child: const Text('Login'),
                           ),
@@ -155,13 +185,8 @@ class _LoginState extends State<Login> {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: !_isLogin
-                                  ? Color(0xFFBBA430)
-                                  : Color(0xFF4A742F),
-                              foregroundColor: !_isLogin
-                                  ? Colors.white
-                                  : Colors.black,
-                              elevation: !_isLogin ? 2 : 0,
+                              backgroundColor: Color(0xFF4A742F),
+                              foregroundColor: Colors.black,
                             ),
                             onPressed: () {
                               setState(() {
