@@ -24,6 +24,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
+    _location.enableBackgroundMode(enable: true);
+
     trackingService.onLocationUpdated = () {
       if (mounted) {
         setState(() {});
