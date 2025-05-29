@@ -30,27 +30,60 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.withOpacity(0.7),
+
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Color(0xFF4A742F)),
+              child: Text(
+                'Menü',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Abmelden'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Mehr Einstellungen'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+
       appBar: AppBar(
         title: Text('Einstellungen'),
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {},
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer(); 
+              },
+            ),
           ),
         ],
       ),
+
       body: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Top card with info and profile icon
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Info card
                     Container(
                       width: 180,
                       padding: EdgeInsets.all(15),
@@ -86,10 +119,9 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     Spacer(),
-                    // Profile icon
                     CircleAvatar(
                       radius: 60,
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Color(0xFFBBA430),
                       child: Text(
                         _username.isNotEmpty ? _username[0].toUpperCase() : 'A',
                         style: TextStyle(fontSize: 32, color: Colors.white),
