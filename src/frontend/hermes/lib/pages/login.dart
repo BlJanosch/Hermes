@@ -19,18 +19,12 @@ class _LoginState extends State<Login> {
   bool _obscurePassword = true;
   bool _isLogin = true;
 
-  Future<int> fetchData(username, password) async {
-      final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
-      final response = await http.get(url);
-
-      return json.decode(response.body);
-    }
-
   Future<bool> _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    int result = await fetchData(username, password);
-    if (result == -1){
+    final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+      final response = await http.get(url);
+    if (json.decode(response.body) == -1){
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -49,12 +43,42 @@ class _LoginState extends State<Login> {
     return true;
   }
 
-  void _register() {
+  Future<bool> _register() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Registrieren mit $username')),
+    final url = Uri.parse('http://194.118.174.149:8080/user/register');
+
+    final body = json.encode({
+      "Benutzername": username,
+      "Passwort": password,
+      "Profilbild": "Profilbild"
+    });
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
     );
+
+    if (response.statusCode == 409){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Regestrierung fehlgeschlagen'),
+            content: Text('User existiert bereits'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -161,7 +185,6 @@ class _LoginState extends State<Login> {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
-                              // hier mit login regeln
                               bool login = await _login();
                               setState(() {
                                 if (login){
@@ -188,10 +211,22 @@ class _LoginState extends State<Login> {
                               backgroundColor: Color(0xFF4A742F),
                               foregroundColor: Colors.black,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              bool register = await _register();
                               setState(() {
-                                _isLogin = false;
+                                if (register){
+                                  _isLogin = true;
+                                }
+                                else{
+                                  _isLogin = false;
+                                }
                               });
+                              if (_isLogin){
+                                Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Home()),
+                                );
+                              }
                             },
                             child: const Text('Registrieren'),
                           ),
