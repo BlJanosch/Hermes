@@ -1,68 +1,116 @@
 import connexion
-from typing import Dict
-from typing import Tuple
-from typing import Union
-
+import mariadb
 from openapi_server.models.erfolg import Erfolg  # noqa: E501
 from openapi_server.models.user_erfolg import UserErfolg  # noqa: E501
 from openapi_server.models.ziel import Ziel  # noqa: E501
 from openapi_server.models.ziel_erreicht import ZielErreicht  # noqa: E501
-from openapi_server import util
 
+def get_connection():
+    try:
+        return mariadb.connect(
+            user="root",
+            password="Hermes!1234",
+            host="127.0.0.1",
+            port=3306,
+            database="hermes"
+        )
+    except mariadb.Error as e:
+        print(f"DB Verbindung Fehler: {e}")
+        raise
 
 def add_erfolg(body):  # noqa: E501
-    """Neuen Erfolg zum User hinzufügen
-
-     # noqa: E501
-
-    :param user_erfolg: 
-    :type user_erfolg: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
-    """
-    user_erfolg = body
+    """Neuen Erfolg zum User hinzufügen"""
     if connexion.request.is_json:
-        user_erfolg = UserErfolg.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
-
+        user_erfolg = UserErfolg.from_dict(connexion.request.get_json())
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)",
+                (user_erfolg.user_id, user_erfolg.erfolg_id, user_erfolg.datum)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return None, 201
+        except mariadb.Error as e:
+            return {"error": str(e)}, 500
+    return {"error": "Invalid input"}, 400
 
 def add_erreichtesziel(body):  # noqa: E501
-    """Neues erreichtes Ziel hinzufügen
-
-     # noqa: E501
-
-    :param ziel_erreicht: 
-    :type ziel_erreicht: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
-    """
-    ziel_erreicht = body
+    """Neues erreichtes Ziel hinzufügen"""
     if connexion.request.is_json:
-        ziel_erreicht = ZielErreicht.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
-
+        ziel_erreicht = ZielErreicht.from_dict(connexion.request.get_json())
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO ziel_erreicht (user_id, ziel_id, datum) VALUES (?, ?, ?)",
+                (ziel_erreicht.user_id, ziel_erreicht.ziel_id, ziel_erreicht.datum)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return None, 201
+        except mariadb.Error as e:
+            return {"error": str(e)}, 500
+    return {"error": "Invalid input"}, 400
 
 def erfolg_get(user_id):  # noqa: E501
-    """Alle erreichten Ziele vom jeweiligen User erhalten
+    """Alle erreichten Ziele vom jeweiligen User erhalten"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT z.id, z.name, z.hoehe, z.schwierigkeit, z.bild, z.lat, z.lng "
+            "FROM ziel_erreicht ze "
+            "JOIN ziel z ON ze.ziel_id = z.id "
+            "WHERE ze.user_id = ?",
+            (user_id,)
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
 
-     # noqa: E501
+        result = [Ziel(
+            id=row["id"],
+            name=row["name"],
+            hoehe=row["hoehe"],
+            schwierigkeit=row["schwierigkeit"],
+            bild=row["bild"],
+            lat=row["lat"],
+            lng=row["lng"]
+        ) for row in rows]
 
-    :param user_id: 
-    :type user_id: int
+        return result, 200
 
-    :rtype: Union[List[Ziel], Tuple[List[Ziel], int], Tuple[List[Ziel], int, Dict[str, str]]
-    """
-    return 'do some magic!'
-
+    except mariadb.Error as e:
+        return {"error": str(e)}, 500
 
 def get_erfolge(user_id):  # noqa: E501
-    """Gibt alle Erfolge vom jeweiligen User zurück
+    """Gibt alle Erfolge vom jeweiligen User zurück"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT e.id, e.name, e.beschreibung, e.bild "
+            "FROM user_erfolg ue "
+            "JOIN erfolg e ON ue.erfolg_id = e.id "
+            "WHERE ue.user_id = ?",
+            (user_id,)
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
 
-     # noqa: E501
+        result = [Erfolg(
+            id=row["id"],
+            name=row["name"],
+            beschreibung=row["beschreibung"],
+            bild=row["bild"]
+        ) for row in rows]
 
-    :param user_id: 
-    :type user_id: int
+        return result, 200
 
-    :rtype: Union[List[Erfolg], Tuple[List[Erfolg], int], Tuple[List[Erfolg], int, Dict[str, str]]
-    """
-    return 'do some magic!'
+    except mariadb.Error as e:
+        return {"error": str(e)}, 500

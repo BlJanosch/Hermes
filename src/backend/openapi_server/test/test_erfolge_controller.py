@@ -22,7 +22,7 @@ class TestErfolgeController(BaseTestCase):
             'Content-Type': 'application/json',
         }
         response = self.client.open(
-            '/erfolg/add_erfolg',
+            '/ui/erfolg/add_erfolg',
             method='POST',
             headers=headers,
             data=json.dumps(user_erfolg),
@@ -40,7 +40,7 @@ class TestErfolgeController(BaseTestCase):
             'Content-Type': 'application/json',
         }
         response = self.client.open(
-            '/erfolg/add_erreichtesziel',
+            '/ui/erfolg/add_erreichtesziel',
             method='POST',
             headers=headers,
             data=json.dumps(ziel_erreicht),
@@ -58,7 +58,7 @@ class TestErfolgeController(BaseTestCase):
             'Accept': 'application/json',
         }
         response = self.client.open(
-            '/erfolg/erreichteziele',
+            '/ui/erfolg/erreichteziele',
             method='GET',
             headers=headers,
             query_string=query_string)
@@ -75,7 +75,7 @@ class TestErfolgeController(BaseTestCase):
             'Accept': 'application/json',
         }
         response = self.client.open(
-            '/erfolg/get_erfolge',
+            '/ui/erfolg/get_erfolge',
             method='GET',
             headers=headers,
             query_string=query_string)
