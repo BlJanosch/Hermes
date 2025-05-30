@@ -18,10 +18,13 @@ class Erfolgcircle extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          text,
-          style: const TextStyle(fontSize: 16),
-          textAlign: TextAlign.center,
+        text,
+        style: TextStyle(
+          fontSize: 16,
+          color: icon == Icons.check ? Colors.black : Colors.white,
         ),
+        textAlign: TextAlign.center,
+      ),
       ],
     );
   }
