@@ -6,14 +6,13 @@ from typing import Tuple
 from typing import Union
 
 from openapi_server.models.user import User  # noqa: E501
-from openapi_server.models.user_bestenliste import UserBestenliste  # noqa: E501
 from openapi_server import util
 
 def get_connection():
     try:
         return mariadb.connect(
             user="root",              
-            password="dein_passwort",  
+            password="Hermes!1234",  
             host="localhost",          
             port=3306,
             database="hermes" 
@@ -23,55 +22,35 @@ def get_connection():
         sys.exit(1)
 
 
-def bestenliste(user_id, filter):  # noqa: E501
-    """Bestenliste nach Filter abrufen
+def user_get(user_id):  # noqa: E501
+    """Gibt die Daten eines Benutzers anhand der ID zurück
 
-     # noqa: E501
+    :param id:
+    :type id: int
 
-    :param user_id: 
-    :type user_id: int
-    :param filter: 
-    :type filter: str
-
-    :rtype: Union[List[UserBestenliste], Tuple[List[UserBestenliste], int], Tuple[List[UserBestenliste], int, Dict[str, str]]
+    :rtype: Union[User, Tuple[User, int], Tuple[User, int, Dict[str, str]]]
     """
     conn = get_connection()
     cur = conn.cursor()
 
-    query = """
-        SELECT u.id, u.benutzername, s.punkte, s.spiele_gewonnen, s.spiele_verloren
-        FROM user u
-        JOIN stats s ON u.id = s.user_id
-        ORDER BY
-    """
-    if filter == "punkte":
-        query += " s.punkte DESC"
-    elif filter == "spiele_gewonnen":
-        query += " s.spiele_gewonnen DESC"
-    elif filter == "spiele_verloren":
-        query += " s.spiele_verloren DESC"
-    else:
-        query += " s.punkte DESC"
-
-    cur.execute(query)
-    rows = cur.fetchall()
-
-    result = []
-    for row in rows:
-        user_bestenliste = UserBestenliste(
-            id=row["id"],
-            benutzername=row["benutzername"],
-            punkte=row["punkte"],
-            spiele_gewonnen=row["spiele_gewonnen"],
-            spiele_verloren=row["spiele_verloren"]
-        )
-        result.append(user_bestenliste)
-
+    cur.execute("SELECT id, kmgelaufen, hoehenmeter, passwort, benutzername, profilbild FROM user WHERE id = ?", (user_id,))
+    row = cur.fetchone()
     cur.close()
     conn.close()
 
-    return result, 200
-
+    if row:
+        user = User(
+            id=row[0],
+            kmgelaufen=row[1],
+            hoehenmeter=row[2],
+            passwort=row[3],
+            benutzername=row[4],
+            profilbild=row[5]
+        )
+        return user, 200
+    else:
+        return {"message": "User not found"}, 401
+    
 
 def update_stats(body):  # noqa: E501
     """Aktualisiert die Statistiken eines Benutzers, man muss ein Json mitgeben
@@ -116,17 +95,16 @@ def user_login(benutzername, passwort):  # noqa: E501
 
     :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
-
-    conn = mariadb.connect(cursorclass=mariadb.cursors.DictCursor)
+    print("hallo")
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (benutzername, passwort))
     row = cur.fetchone()
     if row:
-        return row['id'], 200
+        return row[0], 200
     else:
         return -1, 404
-
 
 
 def user_register(body):  # noqa: E501
@@ -149,9 +127,15 @@ def user_register(body):  # noqa: E501
     conn = get_connection()
     cur = conn.cursor()
 
+    cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (user.benutzername, user.passwort))
+    row = cur.fetchone()
+    print(row[0])
+    if (row[0] != -1):
+        return "User existiert bereits", 409
+
     try:
         cur.execute(
-        "INSERT INTO user (kmgelaufen, hoehenmeter, passwort, benutzername, userprofilbild) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO user (kmgelaufen, hoehenmeter, passwort, benutzername, profilbild) VALUES (?, ?, ?, ?, ?)",
         (0, 0, user.passwort, user.benutzername, user.profilbild)
         )
     except: 

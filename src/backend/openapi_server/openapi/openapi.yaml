@@ -3,8 +3,6 @@ info:
   description: Eine API zur Verwaltung und Steuerung der Kaffeemaschine & Benutzerdaten
   title: Kaffeemaschine API
   version: 1.0.0
-servers:
-- url: /
 paths:
   /erfolg/add_erfolg:
     post:
@@ -23,7 +21,7 @@ paths:
       summary: Neuen Erfolg zum User hinzufügen
       tags:
       - Erfolge
-      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/add_erreichtesziel:
     post:
       operationId: add_erreichtesziel
@@ -41,7 +39,7 @@ paths:
       summary: Neues erreichtes Ziel hinzufügen
       tags:
       - Erfolge
-      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/erreichteziele:
     get:
       operationId: erfolg_get
@@ -67,7 +65,7 @@ paths:
       summary: Alle erreichten Ziele vom jeweiligen User erhalten
       tags:
       - Erfolge
-      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/get_erfolge:
     get:
       operationId: get_erfolge
@@ -93,28 +91,24 @@ paths:
       summary: Gibt alle Erfolge vom jeweiligen User zurück
       tags:
       - Erfolge
-      x-openapi-router-controller: swagger_server.controllers.erfolg_controller
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /user/bestenliste:
     get:
       operationId: bestenliste
       parameters:
-      - explode: true
-        in: query
-        name: userID
-        required: true
-        schema:
-          type: integer
-        style: form
-      - explode: true
-        in: query
-        name: filter
-        required: true
-        schema:
-          enum:
-          - kmgelaufen
-          - hoehenmeter
-          type: string
-        style: form
+        - name: userID
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: filter
+          in: query
+          required: true
+          schema:
+            enum:
+            - kmgelaufen
+            - hoehenmeter
+            type: string
       responses:
         "200":
           content:
@@ -126,10 +120,10 @@ paths:
           description: Bestenliste erfolgreich geladen
         "400":
           description: Ungültige Eingabe!
-      summary: Bestenliste nach Filter abrufen
+      summary: Bestenliste nach Filter abrufen [ACHTUNG gibt aktuell Error 500]
       tags:
-      - Benutzer
-      x-openapi-router-controller: swagger_server.controllers.bestenliste_controller
+      - Bestenliste
+      x-openapi-router-controller: openapi_server.controllers.bestenliste_controller
   /user/login:
     get:
       operationId: user_login
@@ -156,7 +150,7 @@ paths:
       summary: "Prüft, ob ein User existiert"
       tags:
       - Benutzer
-      x-openapi-router-controller: swagger_server.controllers.user_controller
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
   /user/register:
     post:
       operationId: user_register
@@ -164,7 +158,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRegister'
         required: true
       responses:
         "201":
@@ -174,7 +168,26 @@ paths:
       summary: Neuen Benutzer registrieren
       tags:
       - Benutzer
-      x-openapi-router-controller: swagger_server.controllers.user_controller
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
+  /user/datenabfrage:
+    get:
+      operationId: user_get
+      parameters:
+      - explode: true
+        in: query
+        name: user_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Daten abgefragt
+        "401":
+          description: Benutzer nicht gefunden
+      summary: "Gibt alle Benutzerdaten zurück"
+      tags:
+      - Benutzer
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
   /user/update_stats:
     put:
       operationId: update_stats
@@ -192,7 +205,7 @@ paths:
       summary: Aktualisiert die Statistiken eines Benutzers
       tags:
       - Benutzer
-      x-openapi-router-controller: swagger_server.controllers.user_controller
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
 components:
   schemas:
     User:
@@ -225,6 +238,23 @@ components:
           title: hoehenmeter
           type: number
       title: User
+      type: object
+    UserRegister:
+      example:
+        Benutzername: Benutzername
+        Profilbild: Profilbild
+        Passwort: Passwort
+      properties:
+        Benutzername:
+          title: Benutzername
+          type: string
+        Passwort:
+          title: Passwort
+          type: string
+        Profilbild:
+          title: Profilbild
+          type: string
+      title: UserRegister
       type: object
     UserBestenliste:
       example:

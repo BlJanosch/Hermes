@@ -9,6 +9,7 @@ openapi_server/__init__.py
 openapi_server/__main__.py
 openapi_server/controllers/__init__.py
 openapi_server/controllers/benutzer_controller.py
+openapi_server/controllers/bestenliste_controller.py
 openapi_server/controllers/erfolge_controller.py
 openapi_server/controllers/security_controller.py
 openapi_server/encoder.py
@@ -24,6 +25,7 @@ openapi_server/models/ziel_koordinaten.py
 openapi_server/openapi/openapi.yaml
 openapi_server/test/__init__.py
 openapi_server/test/test_benutzer_controller.py
+openapi_server/test/test_bestenliste_controller.py
 openapi_server/test/test_erfolge_controller.py
 openapi_server/typing_utils.py
 openapi_server/util.py

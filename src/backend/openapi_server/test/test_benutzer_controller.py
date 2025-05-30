@@ -3,30 +3,11 @@ import unittest
 from flask import json
 
 from openapi_server.models.user import User  # noqa: E501
-from openapi_server.models.user_bestenliste import UserBestenliste  # noqa: E501
 from openapi_server.test import BaseTestCase
 
 
 class TestBenutzerController(BaseTestCase):
     """BenutzerController integration test stubs"""
-
-    def test_bestenliste(self):
-        """Test case for bestenliste
-
-        Bestenliste nach Filter abrufen
-        """
-        query_string = [('userID', 56),
-                        ('filter', 'filter_example')]
-        headers = { 
-            'Accept': 'application/json',
-        }
-        response = self.client.open(
-            '/user/bestenliste',
-            method='GET',
-            headers=headers,
-            query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
 
     def test_update_stats(self):
         """Test case for update_stats
@@ -38,7 +19,7 @@ class TestBenutzerController(BaseTestCase):
             'Content-Type': 'application/json',
         }
         response = self.client.open(
-            '/user/update_stats',
+            '/ui/user/update_stats',
             method='PUT',
             headers=headers,
             data=json.dumps(user),
@@ -56,7 +37,7 @@ class TestBenutzerController(BaseTestCase):
         headers = { 
         }
         response = self.client.open(
-            '/user/login',
+            '/ui/user/login',
             method='GET',
             headers=headers,
             query_string=query_string)
@@ -73,7 +54,7 @@ class TestBenutzerController(BaseTestCase):
             'Content-Type': 'application/json',
         }
         response = self.client.open(
-            '/user/register',
+            '/ui/user/register',
             method='POST',
             headers=headers,
             data=json.dumps(user),
