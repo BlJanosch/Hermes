@@ -1,6 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hermes/pages/home.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -15,20 +21,81 @@ class _LoginState extends State<Login> {
   bool _obscurePassword = true;
   bool _isLogin = true;
 
-  void _login() {
+  Future<bool> _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Login mit $username')),
-    );
+    final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+      final response = await http.get(url);
+    if (json.decode(response.body) == -1){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Login fehlgeschlagen'),
+            content: Text('Benutzername oder Passwort ist falsch.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      return false;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    await prefs.setBool('isLoggedIn', true);
+
+    // Für Logout
+    //final prefs = await SharedPreferences.getInstance();
+    //await prefs.clear(); // oder prefs.setBool('isLoggedIn', false);
+
+    return true;
   }
 
-  void _register() {
+  Future<bool> _register() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Registrieren mit $username')),
+    final url = Uri.parse('http://194.118.174.149:8080/user/register');
+
+    final body = json.encode({
+      "Benutzername": username,
+      "Passwort": password,
+      "Profilbild": "Profilbild"
+    });
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
     );
+
+    if (response.statusCode == 409){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Regestrierung fehlgeschlagen'),
+            content: Text('User existiert bereits'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      return false;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    await prefs.setBool('isLoggedIn', true);
+    return true;
   }
 
   @override
@@ -43,7 +110,7 @@ class _LoginState extends State<Login> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Align(
-              alignment: const Alignment(0, -0.95),
+                    alignment: Alignment(0, MediaQuery.of(context).size.height > 600 ? -0.55 : -0.3),
               child: SvgPicture.asset(
               'lib/assets/hermes_logo.svg',
               fit: BoxFit.cover,
@@ -131,22 +198,25 @@ class _LoginState extends State<Login> {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _isLogin
-                                  ? Color(0xFFBBA430)
-                                  : Color(0xFF4A742F),
-                              foregroundColor: _isLogin
-                                  ? Colors.white
-                                  : Colors.black,
-                              elevation: _isLogin ? 2 : 0,
+                              backgroundColor: Color(0xFFBBA430),
+                              foregroundColor: Colors.white,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              bool login = await _login();
                               setState(() {
-                              _isLogin = true;
+                                if (login){
+                                  _isLogin = true;
+                                }
+                                else{
+                                  _isLogin = false;
+                                }
                               });
-                              Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const Home()),
-                              );
+                              if (_isLogin){
+                                Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Home()),
+                                );
+                              }
                             },
                             child: const Text('Login'),
                           ),
@@ -155,18 +225,25 @@ class _LoginState extends State<Login> {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: !_isLogin
-                                  ? Color(0xFFBBA430)
-                                  : Color(0xFF4A742F),
-                              foregroundColor: !_isLogin
-                                  ? Colors.white
-                                  : Colors.black,
-                              elevation: !_isLogin ? 2 : 0,
+                              backgroundColor: Color(0xFF4A742F),
+                              foregroundColor: Colors.black,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              bool register = await _register();
                               setState(() {
-                                _isLogin = false;
+                                if (register){
+                                  _isLogin = true;
+                                }
+                                else{
+                                  _isLogin = false;
+                                }
                               });
+                              if (_isLogin){
+                                Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Home()),
+                                );
+                              }
                             },
                             child: const Text('Registrieren'),
                           ),
