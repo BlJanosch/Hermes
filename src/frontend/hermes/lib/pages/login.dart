@@ -25,8 +25,9 @@ class _LoginState extends State<Login> {
     final username = _usernameController.text;
     final password = _passwordController.text;
     final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
-      final response = await http.get(url);
-    if (json.decode(response.body) == -1){
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    if (result == -1){
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -44,13 +45,10 @@ class _LoginState extends State<Login> {
     }
 
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('id', result);
     await prefs.setString('username', username);
     await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);
-
-    // Für Logout
-    //final prefs = await SharedPreferences.getInstance();
-    //await prefs.clear(); // oder prefs.setBool('isLoggedIn', false);
 
     return true;
   }
@@ -92,6 +90,7 @@ class _LoginState extends State<Login> {
     }
 
     final prefs = await SharedPreferences.getInstance();
+    //await prefs.setInt('id', result); // Hier mit User data abfrage noch ID holen oder noch in Request miteinbinden
     await prefs.setString('username', username);
     await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);

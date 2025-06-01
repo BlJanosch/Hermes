@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
+import 'package:hermes/erfolg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hermes/pages/login.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -12,17 +17,45 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   String _username = '';
+  double _kmgelaufen = 0;
+  double _hoehenmeter = 0;
+  double _berge = 0;
+  List<Erfolg> _erfolge = [];
 
   @override
   void initState() {
     super.initState();
-    _loadUsername();
+    _loadUserData();
+    _loadErfolge();
   }
 
-  Future<void> _loadUsername() async {
+  Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
+    // Mittels http request km und berge holen
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/user/datenabfrage?user_id=$id');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    print(result);
     setState(() {
       _username = prefs.getString('username') ?? 'Unbekannt';
+      _kmgelaufen = result['kmgelaufen'];
+      _hoehenmeter = result['hoehenmeter'];
+      // Mit Berge noch machen
+    });
+  }
+
+  Future<void> _loadErfolge() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=1'); // auf $id ändern
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    print(result);
+    setState(() {
+      _erfolge = (result as List)
+        .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
+        .toList();
     });
   }
 
@@ -45,8 +78,17 @@ class _SettingsState extends State<Settings> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Abmelden'),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
+                // Cache resetten
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                prefs.setBool('isLoggedIn', false);
+                // Abmelden
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  );
               },
             ),
             ListTile(
@@ -107,7 +149,12 @@ class _SettingsState extends State<Settings> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'km: 121 km',
+                            'km: $_kmgelaufen km',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Höhenmeter: $_hoehenmeter km',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),
@@ -154,29 +201,18 @@ class _SettingsState extends State<Settings> {
                   ),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Erfolgcircle(icon: Icons.check, text: 'Erfolg 1'),
-                          Erfolgcircle(icon: Icons.lock, text: 'Erfolg 2'),
-                          Erfolgcircle(icon: Icons.check, text: 'Erfolg 3'),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: List.generate(
-                          3,
-                          (index) => Erfolgcircle(icon: Icons.check, text: 'Erfolg ${index + 4}'),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: List.generate(
-                          3,
-                          (index) => Erfolgcircle(icon: Icons.check, text: 'Erfolg ${index + 7}'),
-                        ),
+                      GridView.count(
+                      crossAxisCount: 4,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 25,
+                      mainAxisSpacing: 20,
+                      children: _erfolge.map((erfolg) {
+                        return Erfolgcircle(
+                        icon: Icons.check,
+                        text: erfolg.name,
+                        );
+                      }).toList(),
                       ),
                     ],
                   ),
