@@ -42,7 +42,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/erreichteziele:
     get:
-      operationId: erfolg_get
+      operationId: get_ziele
       parameters:
       - explode: true
         in: query
@@ -89,6 +89,24 @@ paths:
         "400":
           description: Ungültige Eingabe!
       summary: Gibt alle Erfolge vom jeweiligen User zurück
+      tags:
+      - Erfolge
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
+  /erfolg/get_allerfolge:
+    get:
+      operationId: get_allerfolge
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Erfolg'
+                type: array
+          description: Erfolge erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Gibt alle Erfolge zurück
       tags:
       - Erfolge
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller

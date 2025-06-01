@@ -56,7 +56,7 @@ def add_erreichtesziel(body):  # noqa: E501
             return {"error": str(e)}, 500
     return {"error": "Invalid input"}, 400
 
-def erfolg_get(user_id):  # noqa: E501
+def get_ziele(user_id):  # noqa: E501
     """Alle erreichten Ziele vom jeweiligen User erhalten"""
     try:
         conn = get_connection()
@@ -106,8 +106,31 @@ def get_erfolge(user_id):  # noqa: E501
         result = [Erfolg(
             id=row["id"],
             name=row["name"],
-            beschreibung=row["beschreibung"],
-            bild=row["bild"]
+            beschreibung=row["beschreibung"]
+        ) for row in rows]
+
+        return result, 200
+
+    except mariadb.Error as e:
+        return {"error": str(e)}, 500
+    
+
+def get_allerfolge():  # noqa: E501
+    """Gibt alle Erfolge zurück"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT * FROM erfolg;",
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        result = [Erfolg(
+            id=row["id"],
+            name=row["name"],
+            beschreibung=row["beschreibung"]
         ) for row in rows]
 
         return result, 200
