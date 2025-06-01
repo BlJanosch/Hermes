@@ -90,9 +90,10 @@ class _LoginState extends State<Login> {
     }
 
     final urlLogin = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
-    final responseLogin = await http.get(url);
-    final resultLogin = json.decode(response.body);
+    final responseLogin = await http.get(urlLogin);
+    final resultLogin = json.decode(responseLogin.body);
     // User ist noch nicht erstellt bevor ich seine ID abrufe
+    print(resultLogin);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', resultLogin);
     await prefs.setString('username', username);

@@ -19,7 +19,7 @@ class _SettingsState extends State<Settings> {
   String _username = '';
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
-  double _berge = 0;
+  int _berge = 0;
   List<Erfolg> _userErfolge = [];
   List<Erfolg> _allErfolge = [];
 
@@ -43,11 +43,15 @@ class _SettingsState extends State<Settings> {
     final response = await http.get(url);
     final result = json.decode(response.body);
     print(result);
+    final urlBerge = Uri.parse('http://194.118.174.149:8080/erfolg/erreichteziele?userID=$id');
+    final responseBerge = await http.get(urlBerge);
+    final resultBerge = json.decode(responseBerge.body);
+    print(resultBerge.length);
     setState(() {
       _username = prefs.getString('username') ?? 'Unbekannt';
       _kmgelaufen = result['kmgelaufen'];
       _hoehenmeter = result['hoehenmeter'];
-      // Mit Berge noch machen
+      _berge = resultBerge.length;
     });
   }
 
@@ -185,7 +189,7 @@ class _SettingsState extends State<Settings> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Berge: 7',
+                            'Berge: $_berge',
                             style: TextStyle(fontSize: 13),
                           ),
                         ],
