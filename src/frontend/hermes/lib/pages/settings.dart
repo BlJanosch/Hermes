@@ -20,13 +20,19 @@ class _SettingsState extends State<Settings> {
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
   double _berge = 0;
-  List<Erfolg> _erfolge = [];
+  List<Erfolg> _userErfolge = [];
+  List<Erfolg> _allErfolge = [];
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _loadErfolge();
+    _initErfolge();
+  }
+
+  Future<void> _initErfolge() async {
+    await _loadUserErfolge();
+    await _loadAllErfolge();
   }
 
   Future<void> _loadUserData() async {
@@ -45,17 +51,37 @@ class _SettingsState extends State<Settings> {
     });
   }
 
-  Future<void> _loadErfolge() async {
+  Future<void> _loadUserErfolge() async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=1'); // auf $id ändern
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=$id');
     final response = await http.get(url);
     final result = json.decode(response.body);
     print(result);
     setState(() {
-      _erfolge = (result as List)
+      _userErfolge = (result as List)
         .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
         .toList();
+    });
+  }
+
+  Future<void> _loadAllErfolge() async {
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_allerfolge');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    print(result);
+    for (int x = 0; x < result.length; x++) {
+      final newErfolg = Erfolg.fromJson(result[x] as Map<String, dynamic>);
+
+      final alreadyExists = _userErfolge.any((e) => e.name == newErfolg.name);
+
+      if (!alreadyExists) {
+        _allErfolge.add(newErfolg);
+      }
+    }
+
+   setState(() {
+      _allErfolge = _allErfolge;
     });
   }
 
@@ -189,32 +215,32 @@ class _SettingsState extends State<Settings> {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                    ),
+                  ],
                   ),
-                  child: Column(
-                    children: [
-                      GridView.count(
-                      crossAxisCount: 4,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 25,
-                      mainAxisSpacing: 20,
-                      children: _erfolge.map((erfolg) {
-                        return Erfolgcircle(
-                        icon: Icons.check,
-                        text: erfolg.name,
-                        );
-                      }).toList(),
-                      ),
-                    ],
+                  child: GridView.count(
+                  crossAxisCount: 4,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 25,
+                  mainAxisSpacing: 0,
+                  children: [
+                    ..._userErfolge.map((erfolg) => Erfolgcircle(
+                      icon: Icons.check,
+                      text: erfolg.name,
+                      )),
+                    ..._allErfolge.map((erfolg) => Erfolgcircle(
+                      icon: Icons.lock_outline,
+                      text: erfolg.name,
+                      )),
+                  ],
                   ),
                 ),
               ],
