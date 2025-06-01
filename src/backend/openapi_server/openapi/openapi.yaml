@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  description: Eine API zur Verwaltung und Steuerung der Kaffeemaschine & Benutzerdaten
-  title: Kaffeemaschine API
+  description: Eine API zur Verwaltung und Steuerung der Hermes Appdaten
+  title: Hermes API
   version: 1.0.0
 paths:
   /erfolg/add_erfolg:
@@ -369,7 +369,6 @@ components:
       type: object
     UserErfolg:
       example:
-        Status: true
         UID: 0
         EID: 6
       properties:
@@ -379,9 +378,6 @@ components:
         EID:
           title: EID
           type: integer
-        Status:
-          title: Status
-          type: boolean
       title: UserErfolg
       type: object
     Ziel_Koordinaten:

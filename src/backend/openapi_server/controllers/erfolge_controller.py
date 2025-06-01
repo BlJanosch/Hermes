@@ -1,5 +1,6 @@
 import connexion
 import mariadb
+import datetime
 from openapi_server.models.erfolg import Erfolg  # noqa: E501
 from openapi_server.models.user_erfolg import UserErfolg  # noqa: E501
 from openapi_server.models.ziel import Ziel  # noqa: E501
@@ -25,14 +26,16 @@ def add_erfolg(body):  # noqa: E501
         try:
             conn = get_connection()
             cursor = conn.cursor()
+            today = datetime.datetime.now()
+            today = today.date()
             cursor.execute(
                 "INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)",
-                (user_erfolg.user_id, user_erfolg.erfolg_id, user_erfolg.datum)
+                (user_erfolg.uid, user_erfolg.eid, today)
             )
             conn.commit()
             cursor.close()
             conn.close()
-            return None, 201
+            return "Erfolg", 201
         except mariadb.Error as e:
             return {"error": str(e)}, 500
     return {"error": "Invalid input"}, 400
