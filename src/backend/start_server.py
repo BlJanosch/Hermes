@@ -52,7 +52,7 @@ def init_db():
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
             beschreibung TEXT,
-            bild VARCHAR(255)
+            schwierigkeit INTEGER
         )
     ''')
 

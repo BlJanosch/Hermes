@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  description: Eine API zur Verwaltung und Steuerung der Kaffeemaschine & Benutzerdaten
-  title: Kaffeemaschine API
+  description: Eine API zur Verwaltung und Steuerung der Hermes Appdaten
+  title: Hermes API
   version: 1.0.0
 paths:
   /erfolg/add_erfolg:
@@ -42,7 +42,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/erreichteziele:
     get:
-      operationId: erfolg_get
+      operationId: get_ziele
       parameters:
       - explode: true
         in: query
@@ -89,6 +89,24 @@ paths:
         "400":
           description: Ungültige Eingabe!
       summary: Gibt alle Erfolge vom jeweiligen User zurück
+      tags:
+      - Erfolge
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
+  /erfolg/get_allerfolge:
+    get:
+      operationId: get_allerfolge
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Erfolg'
+                type: array
+          description: Erfolge erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Gibt alle Erfolge zurück
       tags:
       - Erfolge
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
@@ -351,7 +369,6 @@ components:
       type: object
     UserErfolg:
       example:
-        Status: true
         UID: 0
         EID: 6
       properties:
@@ -361,9 +378,6 @@ components:
         EID:
           title: EID
           type: integer
-        Status:
-          title: Status
-          type: boolean
       title: UserErfolg
       type: object
     Ziel_Koordinaten:
