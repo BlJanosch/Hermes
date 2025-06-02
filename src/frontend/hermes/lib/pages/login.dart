@@ -47,7 +47,6 @@ class _LoginState extends State<Login> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', result);
     await prefs.setString('username', username);
-    await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);
 
     return true;
@@ -97,7 +96,6 @@ class _LoginState extends State<Login> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', resultLogin);
     await prefs.setString('username', username);
-    await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);
     return true;
   }

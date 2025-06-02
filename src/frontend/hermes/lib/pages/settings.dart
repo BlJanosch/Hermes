@@ -180,12 +180,12 @@ class _SettingsState extends State<Settings> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'km: $_kmgelaufen km',
+                            'km: ${_kmgelaufen.toStringAsFixed(2)} km',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Höhenmeter: $_hoehenmeter km',
+                            'Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} km',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),
