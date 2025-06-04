@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
+import 'package:hermes/components/nfc_reader.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +35,7 @@ class _SettingsState extends State<Settings> {
   Future<void> _initErfolge() async {
     await _loadUserErfolge();
     await _loadAllErfolge();
+    await readNfcTag();
   }
 
   Future<void> _loadUserData() async {
