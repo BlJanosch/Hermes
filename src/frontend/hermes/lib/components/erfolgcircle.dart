@@ -21,7 +21,7 @@ class Erfolgcircle extends StatelessWidget {
         text,
         style: TextStyle(
           fontSize: 16,
-          color: icon == Icons.check ? Colors.black : Colors.white,
+          color: Colors.black,
         ),
         textAlign: TextAlign.center,
       ),

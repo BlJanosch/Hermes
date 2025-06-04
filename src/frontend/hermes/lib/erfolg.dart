@@ -14,4 +14,17 @@ class Erfolg {
       Schwierigkeit.Bronze//Schwierigkeit.values.firstWhere((e) => e.toString() == 'Schwierigkeit.' + (json['schwierigkeit'] as String)),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Beschreibung': Beschreibung,
+      'Name': name,
+      'Schwierigkeit': schwierigkeit
+    };
+  }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

@@ -47,7 +47,6 @@ class _LoginState extends State<Login> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', result);
     await prefs.setString('username', username);
-    await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);
 
     return true;
@@ -89,10 +88,14 @@ class _LoginState extends State<Login> {
       return false;
     }
 
+    final urlLogin = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+    final responseLogin = await http.get(urlLogin);
+    final resultLogin = json.decode(responseLogin.body);
+    // User ist noch nicht erstellt bevor ich seine ID abrufe
+    print(resultLogin);
     final prefs = await SharedPreferences.getInstance();
-    //await prefs.setInt('id', result); // Hier mit User data abfrage noch ID holen oder noch in Request miteinbinden
+    await prefs.setInt('id', resultLogin);
     await prefs.setString('username', username);
-    await prefs.setString('password', password);
     await prefs.setBool('isLoggedIn', true);
     return true;
   }
