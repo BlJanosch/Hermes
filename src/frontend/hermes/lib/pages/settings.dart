@@ -19,7 +19,7 @@ class _SettingsState extends State<Settings> {
   String _username = '';
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
-  double _berge = 0;
+  final double _berge = 0;
   List<Erfolg> _userErfolge = [];
   List<Erfolg> _allErfolge = [];
 

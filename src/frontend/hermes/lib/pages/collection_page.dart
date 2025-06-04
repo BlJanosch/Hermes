@@ -31,6 +31,21 @@ class CollectionPage extends StatelessWidget {
             )
           ),
           Positioned(
+            bottom: 130.0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: FloatingActionButton(
+                onPressed: scan,
+                backgroundColor: Colors.black.withOpacity(0.5),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
           bottom: 10.0,
           left: 5,
           right: 5,
@@ -43,4 +58,6 @@ class CollectionPage extends StatelessWidget {
       ),
     );
   }
+
+  void scan(){}
 }
