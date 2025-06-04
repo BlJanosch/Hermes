@@ -4,6 +4,7 @@ import 'package:hermes/components/erfolgcircle.dart';
 import 'package:hermes/components/nfc_reader.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
+import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
 
@@ -28,66 +29,25 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    UserManager.loadUserData().then((userData) {
+      setState(() {
+      _username = userData['username'] ?? 'Unbekannt';
+      _kmgelaufen = userData['kmgelaufen'] ?? 0.0;
+      _hoehenmeter = userData['hoehenmeter'] ?? 0.0;
+      _berge = userData['berge'] ?? 0;
+      });
+    });
     _initErfolge();
   }
 
   Future<void> _initErfolge() async {
-    await _loadUserErfolge();
-    await _loadAllErfolge();
-  }
-
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Mittels http request km und berge holen
-    int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/user/datenabfrage?user_id=$id');
-    final response = await http.get(url);
-    final result = json.decode(response.body);
-    print(result);
-    final urlBerge = Uri.parse('http://194.118.174.149:8080/erfolg/erreichteziele?userID=$id');
-    final responseBerge = await http.get(urlBerge);
-    final resultBerge = json.decode(responseBerge.body);
-    print(resultBerge.length);
+    final erfolge = await UserManager.loadUserErfolge();
     setState(() {
-      _username = prefs.getString('username') ?? 'Unbekannt';
-      _kmgelaufen = result['kmgelaufen'];
-      _hoehenmeter = result['hoehenmeter'];
-      _berge = resultBerge.length;
+      _userErfolge.ergebnisse = erfolge;
     });
-  }
-
-  Future<void> _loadUserErfolge() async {
-    final prefs = await SharedPreferences.getInstance();
-    int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=$id');
-    final response = await http.get(url);
-    final result = json.decode(response.body);
-    print(result);
+    final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
     setState(() {
-      _userErfolge.ergebnisse = (result as List)
-        .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
-        .toList();
-    });
-  }
-
-  Future<void> _loadAllErfolge() async {
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_allerfolge');
-    final response = await http.get(url);
-    final result = json.decode(response.body);
-    print(result);
-    for (int x = 0; x < result.length; x++) {
-      final newErfolg = Erfolg.fromJson(result[x] as Map<String, dynamic>);
-
-      final alreadyExists = _userErfolge.ergebnisse.any((e) => e.name == newErfolg.name);
-
-      if (!alreadyExists) {
-        _allErfolge.ergebnisse.add(newErfolg);
-      }
-    }
-
-   setState(() {
-      _allErfolge.ergebnisse = _allErfolge.ergebnisse;
+      _allErfolge.ergebnisse = allErfolge;
     });
   }
 

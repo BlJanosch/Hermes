@@ -1,17 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hermes/erfolg.dart';
+import 'package:hermes/erfolgCollection.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManager {
   // Privater Konstruktor verhindert Instanziierung
   UserManager._();
-
-  void SaveUserToDB(){}
-  void UpdateUser(String benutzername, String passwort, String profilbild, double hoehenmeter, double kmgelaufen){}
-  void DelUser(String benutzername, String passwort){}
-
+  
   static Future<bool> Login(BuildContext context, String username, String password) async {
     final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
     final response = await http.get(url);
@@ -85,6 +83,50 @@ class UserManager {
     await prefs.setString('username', username);
     await prefs.setBool('isLoggedIn', true);
     return true;
+  }
+
+  static Future<Map<String, dynamic>> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/user/datenabfrage?user_id=$id');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    final urlBerge = Uri.parse('http://194.118.174.149:8080/erfolg/erreichteziele?userID=$id');
+    final responseBerge = await http.get(urlBerge);
+    final resultBerge = json.decode(responseBerge.body);
+    return {
+      'username': prefs.getString('username') ?? 'Unbekannt',
+      'kmgelaufen': result['kmgelaufen'],
+      'hoehenmeter': result['hoehenmeter'],
+      'berge': resultBerge.length,
+    };
+  }
+
+  static Future<List<Erfolg>> loadUserErfolge() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=$id');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    print(result);
+    return (result as List)
+      .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
+      .toList();
+  }
+
+  static Future<List<Erfolg>> loadAllErfolge(ErfolgCollection userErfolge) async {
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_allerfolge');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    ErfolgCollection allErfolge = ErfolgCollection();
+    for (int x = 0; x < result.length; x++) {
+      final newErfolg = Erfolg.fromJson(result[x] as Map<String, dynamic>);
+      final alreadyExists = userErfolge.ergebnisse.any((e) => e.name == newErfolg.name);
+      if (!alreadyExists) {
+        allErfolge.ergebnisse.add(newErfolg);
+      }
+    }
+    return allErfolge.ergebnisse;
   }
 
 }
