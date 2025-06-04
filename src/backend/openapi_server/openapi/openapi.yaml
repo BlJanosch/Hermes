@@ -119,7 +119,7 @@ paths:
           required: true
           schema:
             type: integer
-        - name: filter
+        - name: filterDB
           in: query
           required: true
           schema:
@@ -206,9 +206,9 @@ paths:
       tags:
       - Benutzer
       x-openapi-router-controller: openapi_server.controllers.benutzer_controller
-  /user/update_stats:
+  /user/update_data:
     put:
-      operationId: update_stats
+      operationId: update_userdata
       requestBody:
         content:
           application/json:
@@ -223,6 +223,36 @@ paths:
       summary: Aktualisiert die Statistiken eines Benutzers
       tags:
       - Benutzer
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
+  /user/update_stats:
+    put:
+      operationId: update_stats
+      summary: Aktualisiert die Statistiken eines Benutzers
+      tags:
+        - Benutzer
+      x-openapi-router-controller: openapi_server.controllers.benutzer_controller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                kmgelaufen:
+                  type: number
+                hoehenmeter:
+                  type: number
+              required:
+                - id
+                - kmgelaufen
+                - hoehenmeter
+      responses:
+        "200":
+          description: Statistiken aktualisiert
+        "400":
+          description: Fehlerhafte Eingabe
       x-openapi-router-controller: openapi_server.controllers.benutzer_controller
 components:
   schemas:

@@ -52,8 +52,8 @@ def user_get(user_id):  # noqa: E501
         return {"message": "User not found"}, 401
     
 
-def update_stats(body):  # noqa: E501
-    """Aktualisiert die Statistiken eines Benutzers, man muss ein Json mitgeben
+def update_userdata(body):  # noqa: E501
+    """Aktualisiert die Daten eines Benutzers, man muss ein Json mitgeben
 
      # noqa: E501
 
@@ -75,6 +75,46 @@ def update_stats(body):  # noqa: E501
     cur.execute(
     "UPDATE user SET kmgelaufen = ?, hoehenmeter = ?, passwort = ?, benutzername = ?, profilbild = ? WHERE id = ?",
     (user.kmgelaufen, user.hoehenmeter, user.passwort, user.benutzername, user.profilbild, user.id)
+    )
+
+    conn.commit()
+    cur.close()
+
+    return "Erfolg", 200
+
+
+def update_stats(body):  # noqa: E501
+    """Aktualisiert die Statistiken eines Benutzers. Erwartet JSON mit id, kmgelaufen und hoehenmeter.
+
+    :param body: JSON-Daten mit den Feldern 'id', 'kmgelaufen', 'hoehenmeter'
+    :type body: dict | bytes
+
+    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]]
+    """
+    if not connexion.request.is_json:
+        return {"message": "JSON erwartet"}, 400
+
+    data = connexion.request.get_json()
+
+    if not all(k in data for k in ("id", "kmgelaufen", "hoehenmeter")):
+        return {"message": "Felder 'id', 'kmgelaufen' und 'hoehenmeter' sind erforderlich"}, 400
+
+    try:
+        user_id = int(data["id"])
+        kmgelaufen = float(data["kmgelaufen"])
+        hoehenmeter = float(data["hoehenmeter"])
+    except (ValueError, TypeError):
+        return {"message": "Ungültige Datentypen für 'id', 'kmgelaufen' oder 'hoehenmeter'"}, 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT kmgelaufen, hoehenmeter FROM user WHERE id = ?", (user_id,))
+    row = cur.fetchone()
+
+    cur.execute(
+        "UPDATE user SET kmgelaufen = ?, hoehenmeter = ? WHERE id = ?",
+        (row[0] + kmgelaufen, row[1] + hoehenmeter, user_id)
     )
 
     conn.commit()
@@ -129,9 +169,11 @@ def user_register(body):  # noqa: E501
 
     cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (user.benutzername, user.passwort))
     row = cur.fetchone()
-    print(row[0])
-    if (row[0] != -1):
-        return "User existiert bereits", 409
+    try:
+        if (row[0] != -1):
+            return "User existiert bereits", 409
+    except:
+        pass
 
     try:
         cur.execute(

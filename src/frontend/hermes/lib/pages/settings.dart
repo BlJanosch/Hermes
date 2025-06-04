@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
+import 'package:hermes/components/nfc_reader.dart';
 import 'package:hermes/erfolg.dart';
+import 'package:hermes/erfolgCollection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
 
@@ -19,9 +21,9 @@ class _SettingsState extends State<Settings> {
   String _username = '';
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
-  final double _berge = 0;
-  List<Erfolg> _userErfolge = [];
-  List<Erfolg> _allErfolge = [];
+  int _berge = 0;
+  ErfolgCollection _userErfolge = new ErfolgCollection();
+  ErfolgCollection _allErfolge = new ErfolgCollection();
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _SettingsState extends State<Settings> {
   Future<void> _initErfolge() async {
     await _loadUserErfolge();
     await _loadAllErfolge();
+    await readNfcTag();
   }
 
   Future<void> _loadUserData() async {
@@ -43,11 +46,15 @@ class _SettingsState extends State<Settings> {
     final response = await http.get(url);
     final result = json.decode(response.body);
     print(result);
+    final urlBerge = Uri.parse('http://194.118.174.149:8080/erfolg/erreichteziele?userID=$id');
+    final responseBerge = await http.get(urlBerge);
+    final resultBerge = json.decode(responseBerge.body);
+    print(resultBerge.length);
     setState(() {
       _username = prefs.getString('username') ?? 'Unbekannt';
       _kmgelaufen = result['kmgelaufen'];
       _hoehenmeter = result['hoehenmeter'];
-      // Mit Berge noch machen
+      _berge = resultBerge.length;
     });
   }
 
@@ -59,7 +66,7 @@ class _SettingsState extends State<Settings> {
     final result = json.decode(response.body);
     print(result);
     setState(() {
-      _userErfolge = (result as List)
+      _userErfolge.ergebnisse = (result as List)
         .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
         .toList();
     });
@@ -73,15 +80,15 @@ class _SettingsState extends State<Settings> {
     for (int x = 0; x < result.length; x++) {
       final newErfolg = Erfolg.fromJson(result[x] as Map<String, dynamic>);
 
-      final alreadyExists = _userErfolge.any((e) => e.name == newErfolg.name);
+      final alreadyExists = _userErfolge.ergebnisse.any((e) => e.name == newErfolg.name);
 
       if (!alreadyExists) {
-        _allErfolge.add(newErfolg);
+        _allErfolge.ergebnisse.add(newErfolg);
       }
     }
 
    setState(() {
-      _allErfolge = _allErfolge;
+      _allErfolge.ergebnisse = _allErfolge.ergebnisse;
     });
   }
 
@@ -175,17 +182,17 @@ class _SettingsState extends State<Settings> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'km: $_kmgelaufen km',
+                            'km: ${_kmgelaufen.toStringAsFixed(2)} km',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Höhenmeter: $_hoehenmeter km',
+                            'Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} km',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Berge: 7',
+                            'Berge: $_berge',
                             style: TextStyle(fontSize: 13),
                           ),
                         ],
@@ -212,36 +219,69 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 SizedBox(height: 16),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                  // Berechne die Anzahl der Spalten abhängig von der verfügbaren Breite
+                  int crossAxisCount = 2;
+                  double width = constraints.maxWidth;
+                  if (width > 900) {
+                    crossAxisCount = 6;
+                  } else if (width > 700) {
+                    crossAxisCount = 5;
+                  } else if (width > 500) {
+                    crossAxisCount = 4;
+                  } else if (width > 350) {
+                    crossAxisCount = 3;
+                  }
+
+                  return Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                      ),
+                    ],
                     ),
-                  ],
-                  ),
-                  child: GridView.count(
-                  crossAxisCount: 4,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 25,
-                  mainAxisSpacing: 0,
-                  children: [
-                    ..._userErfolge.map((erfolg) => Erfolgcircle(
-                      icon: Icons.check,
-                      text: erfolg.name,
-                      )),
-                    ..._allErfolge.map((erfolg) => Erfolgcircle(
-                      icon: Icons.lock_outline,
-                      text: erfolg.name,
-                      )),
-                  ],
-                  ),
+                    child: LayoutBuilder(
+                      builder: (context, gridConstraints) {
+                      double itemWidth = (gridConstraints.maxWidth - (crossAxisCount - 1) * 25) / crossAxisCount;
+                      double itemHeight = itemWidth * 1.5; // Verhältnis anpassen je nach Bedarf
+
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 25,
+                        mainAxisSpacing: 0,
+                        childAspectRatio: itemWidth / itemHeight,
+                        ),
+                        itemCount: _userErfolge.ergebnisse.length + _allErfolge.ergebnisse.length,
+                        itemBuilder: (context, index) {
+                        if (index < _userErfolge.ergebnisse.length) {
+                          final erfolg = _userErfolge.ergebnisse[index];
+                          return Erfolgcircle(
+                          icon: Icons.check,
+                          text: erfolg.name,
+                          );
+                        } else {
+                          final erfolg = _allErfolge.ergebnisse[index - _userErfolge.ergebnisse.length];
+                          return Erfolgcircle(
+                          icon: Icons.lock_outline,
+                          text: erfolg.name,
+                          );
+                        }
+                        },
+                      );
+                      },
+                    ),
+                  );
+                  },
                 ),
               ],
             ),

@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/tracking_service.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,6 +21,7 @@ class _HomeState extends State<Home> {
   final MapController _mapController = MapController();
   final TrackingService trackingService = TrackingService();
   final Location _location = Location();
+  double distance = 0;
   Timer? _timer;
 
   @override
@@ -65,6 +69,28 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> _updateStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/user/update_stats');
+
+    final body = json.encode({
+      "hoehenmeter": 0,
+      "id": id,
+      "kmgelaufen": (distance / 1000)
+    });
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    );
+
+    print(response.statusCode);
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -100,7 +126,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final route = trackingService.trackedRoute;
-    final distance = trackingService.totalDistance;
+    distance = trackingService.totalDistance;
     final isTracking = trackingService.isTracking;
     final isTrackingStopped = !isTracking && route.isNotEmpty;
     final duration = trackingService.currentDuration;
@@ -163,7 +189,10 @@ class _HomeState extends State<Home> {
                           ),
                           IconButton(
                             icon: const Icon(Icons.check, color: Colors.white),
-                            onPressed: _resetTracking,
+                            onPressed: () {
+                              _resetTracking();
+                              _updateStats();
+                            },
                           ),
                         ],
                       ),

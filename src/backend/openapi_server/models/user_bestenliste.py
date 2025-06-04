@@ -12,9 +12,13 @@ class UserBestenliste(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, benutzername=None, profilbild=None, kmgelaufen=None, hoehenmeter=None):  # noqa: E501
+    def __init__(self, platzierung=None, id=None, benutzername=None, profilbild=None, kmgelaufen=None, hoehenmeter=None):  # noqa: E501
         """UserBestenliste - a model defined in OpenAPI
 
+        :param platzierung: The platzierung of this UserBestenliste.  # noqa: E501
+        :type platzierung: int  
+        :param id: The id of this UserBestenliste.  # noqa: E501
+        :type id: int    
         :param benutzername: The benutzername of this UserBestenliste.  # noqa: E501
         :type benutzername: str
         :param profilbild: The profilbild of this UserBestenliste.  # noqa: E501
@@ -25,6 +29,8 @@ class UserBestenliste(Model):
         :type hoehenmeter: float
         """
         self.openapi_types = {
+            'platzierung': int,
+            'id': int,
             'benutzername': str,
             'profilbild': str,
             'kmgelaufen': float,
@@ -32,12 +38,16 @@ class UserBestenliste(Model):
         }
 
         self.attribute_map = {
+            'platzierung': 'Platzierung',
+            'id': 'ID',
             'benutzername': 'Benutzername',
             'profilbild': 'Profilbild',
             'kmgelaufen': 'kmgelaufen',
             'hoehenmeter': 'hoehenmeter'
         }
 
+        self._platzierung = platzierung
+        self._id = id
         self._benutzername = benutzername
         self._profilbild = profilbild
         self._kmgelaufen = kmgelaufen
@@ -53,6 +63,48 @@ class UserBestenliste(Model):
         :rtype: UserBestenliste
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def platzierung(self) -> str:
+        """Gets the platzierung of this UserBestenliste.
+
+
+        :return: The platzierung of this UserBestenliste.
+        :rtype: int
+        """
+        return self._platzierung
+
+    @platzierung.setter
+    def platzierung(self, platzierung: int):
+        """Sets the platzierung of this UserBestenliste.
+
+
+        :param platzierung: The platzierung of this UserBestenliste.
+        :type platzierung: int
+        """
+
+        self._platzierung = platzierung
+
+    @property
+    def id(self) -> str:
+        """Gets the id of this UserBestenliste.
+
+
+        :return: The id of this UserBestenliste.
+        :rtype: int
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: int):
+        """Sets the id of this UserBestenliste.
+
+
+        :param id: The id of this UserBestenliste.
+        :type id: int
+        """
+
+        self._id = id
 
     @property
     def benutzername(self) -> str:
