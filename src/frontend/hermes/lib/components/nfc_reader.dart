@@ -1,11 +1,15 @@
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 
+int state = 0; // 0 = initial, 1 = reading, 2 = success, 3 = error
+
 Future<int> readNfcTag() async {
   try {
+    state = 1; // Set state to reading
     NFCTag tag = await FlutterNfcKit.poll();
 
     List<List<int>> data = <List<int>>[];
 
+    state = 2; // Set state to success
     print("NFC-Tag erkannt:");
     print("ID: ${tag.id}");
     print("Standard: ${tag.standard}");
@@ -31,10 +35,13 @@ Future<int> readNfcTag() async {
     print("ID: $ID");
 
     await FlutterNfcKit.finish();
+    state = 0; // Reset state to initial
     return ID;
   } catch (e) {
     print("Fehler beim Lesen: $e");
+    state = 3; // Set state to error
     await FlutterNfcKit.finish();
+    state = 0; // Reset state to initial
     return -1; // Rückgabe -1 im Fehlerfall
   }
 }
