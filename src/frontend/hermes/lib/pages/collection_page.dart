@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/nfc_reader.dart';
+import 'package:hermes/components/nfc_reader.dart';
 import 'package:hermes/components/sammelkarte.dart';
 
 
@@ -38,9 +39,11 @@ class CollectionPage extends StatelessWidget {
             child: Center(
               child: FloatingActionButton(
                 onPressed: readNfcTag,
-                backgroundColor: Colors.black.withOpacity(0.5),
+                backgroundColor: state > 0
+                    ? Colors.red.withOpacity(0.7)
+                    : Colors.black.withOpacity(0.5),
                 child: Icon(
-                  Icons.add,
+                  state == 0 ? Icons.add_rounded : state == 1 ? Icons.document_scanner_rounded : state == 2 ? Icons.check_rounded : Icons.close_rounded,
                   color: Colors.white,
                 ),
               ),
@@ -59,4 +62,5 @@ class CollectionPage extends StatelessWidget {
       ),
     );
   }
+
 }
