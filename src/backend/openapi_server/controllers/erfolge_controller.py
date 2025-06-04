@@ -44,12 +44,13 @@ def add_erreichtesziel(body):  # noqa: E501
     """Neues erreichtes Ziel hinzufügen"""
     if connexion.request.is_json:
         ziel_erreicht = ZielErreicht.from_dict(connexion.request.get_json())
+        print(ziel_erreicht)
         try:
             conn = get_connection()
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT INTO ziel_erreicht (user_id, ziel_id, datum) VALUES (?, ?, ?)",
-                (ziel_erreicht.user_id, ziel_erreicht.ziel_id, ziel_erreicht.datum)
+                (ziel_erreicht.uid, ziel_erreicht.zid, ziel_erreicht.datum)
             )
             conn.commit()
             cursor.close()
@@ -75,6 +76,8 @@ def get_ziele(user_id):  # noqa: E501
         cursor.close()
         conn.close()
 
+        print(rows)
+
         result = [Ziel(
             id=row["id"],
             name=row["name"],
@@ -96,7 +99,7 @@ def get_erfolge(user_id):  # noqa: E501
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute(
-            "SELECT e.id, e.name, e.beschreibung, e.bild "
+            "SELECT e.id, e.name, e.beschreibung, e.schwierigkeit "
             "FROM user_erfolg ue "
             "JOIN erfolg e ON ue.erfolg_id = e.id "
             "WHERE ue.user_id = ?",

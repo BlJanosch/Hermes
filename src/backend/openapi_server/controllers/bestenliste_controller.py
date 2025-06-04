@@ -19,48 +19,66 @@ def get_connection():
         print(f"Fehler beim Verbinden zu MariaDB: {e}")
         sys.exit(1)
 
-def bestenliste(user_id,filter):  # noqa: E501
+def bestenliste(user_id,filter_db):  # noqa: E501
     """Bestenliste nach Filter abrufen (hoehenmeter, kilometer_gelaufen)"""
 
     print("hallo")
-    print(user_id, filter)
-    if not user_id or not filter:
+    print("UserID:", user_id)
+    print("Filter:", filter_db)
+    if not user_id or not filter_db:
         return {"error": "userID und filter sind erforderlich"}, 400
 
     conn = get_connection()
     cur = conn.cursor(dictionary=True)  # <== wichtig für Spaltennamen
 
     query = """
-        SELECT u.id, u.benutzername, s.hoehenmeter, s.kilometer_gelaufen
-        FROM user u
-        JOIN stats s ON u.id = s.user_id
-        ORDER BY
+    SELECT id, profilbild, benutzername, hoehenmeter, kmgelaufen
+    FROM user
+    ORDER BY
     """
 
     valid_filters = ["hoehenmeter", "kmgelaufen"]
-    if filter not in valid_filters:
+    if filter_db not in valid_filters:
         return {"error": "Ungültiger Filterwert"}, 400
 
-
-    if filter == "hoehenmeter":
-        query += " s.hoehenmeter DESC"
-    elif filter == "kmgelaufen":
-        query += " s.kmgelaufen DESC"
+    # Entsprechend sortieren
+    if filter_db == "hoehenmeter":
+        query += " hoehenmeter DESC"
+    elif filter_db == "kmgelaufen":
+        query += " kmgelaufen DESC"
     else:
-        query += " s.kmgelaufen DESC"  # Default sort
+        query += " kmgelaufen DESC"  # Fallback, sollte nie erreicht werden
 
     cur.execute(query)
     rows = cur.fetchall()
 
+    
+    aktuelle_platzierung = 0
     result = []
     for row in rows:
+        aktuelle_platzierung += 1
         user_bestenliste = UserBestenliste(
+            platzierung=aktuelle_platzierung,
             id=row["id"],
             benutzername=row["benutzername"],
+            profilbild=row["profilbild"],
             hoehenmeter=row["hoehenmeter"],
-            kilometer_gelaufen=row["kilometer_gelaufen"]
+            kmgelaufen=row["kmgelaufen"]
         )
-        result.append(user_bestenliste)
+        if aktuelle_platzierung <= 10:
+            result.append(user_bestenliste)
+            print("Aktuelle Platzierung:", aktuelle_platzierung)
+            print("(Dazugefügt)", user_bestenliste.id)
+        if user_bestenliste.id == user_id:
+            if not user_bestenliste in result:
+                result.append(user_bestenliste)
+                print("Aktueller User gefunden und hinzugefügt:", user_bestenliste.id)
+            else:
+                print("Aktueller User gefunden, aber bereits in Liste", user_bestenliste.id)
+    
+    
+
+
 
     cur.close()
     conn.close()
