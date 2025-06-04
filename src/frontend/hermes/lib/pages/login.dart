@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hermes/pages/home.dart';
+import 'package:hermes/userManager.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -20,85 +21,6 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLogin = true;
-
-  Future<bool> _login() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
-    final response = await http.get(url);
-    final result = json.decode(response.body);
-    if (result == -1){
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Login fehlgeschlagen'),
-            content: Text('Benutzername oder Passwort ist falsch.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      return false;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('id', result);
-    await prefs.setString('username', username);
-    await prefs.setBool('isLoggedIn', true);
-
-    return true;
-  }
-
-  Future<bool> _register() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    final url = Uri.parse('http://194.118.174.149:8080/user/register');
-
-    final body = json.encode({
-      "Benutzername": username,
-      "Passwort": password,
-      "Profilbild": "Profilbild"
-    });
-
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    );
-
-    if (response.statusCode == 409){
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Regestrierung fehlgeschlagen'),
-            content: Text('User existiert bereits'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      return false;
-    }
-
-    final urlLogin = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
-    final responseLogin = await http.get(urlLogin);
-    final resultLogin = json.decode(responseLogin.body);
-    // User ist noch nicht erstellt bevor ich seine ID abrufe
-    print(resultLogin);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('id', resultLogin);
-    await prefs.setString('username', username);
-    await prefs.setBool('isLoggedIn', true);
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +126,11 @@ class _LoginState extends State<Login> {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
-                              bool login = await _login();
+                                bool login = await UserManager.Login(
+                                  context,
+                                  _usernameController.text,
+                                  _passwordController.text,
+                                );
                               setState(() {
                                 if (login){
                                   _isLogin = true;
@@ -231,7 +157,11 @@ class _LoginState extends State<Login> {
                               foregroundColor: Colors.black,
                             ),
                             onPressed: () async {
-                              bool register = await _register();
+                              bool register = await UserManager.Register(
+                                context,
+                                _usernameController.text,
+                                _passwordController.text,
+                              );
                               setState(() {
                                 if (register){
                                   _isLogin = true;
