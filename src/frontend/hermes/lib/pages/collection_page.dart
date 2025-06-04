@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/nfc_reader.dart';
+import 'package:hermes/components/nfc_reader.dart';
 import 'package:hermes/components/sammelkarte.dart';
 
 

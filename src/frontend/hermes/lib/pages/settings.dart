@@ -35,7 +35,6 @@ class _SettingsState extends State<Settings> {
   Future<void> _initErfolge() async {
     await _loadUserErfolge();
     await _loadAllErfolge();
-    await readNfcTag();
   }
 
   Future<void> _loadUserData() async {
