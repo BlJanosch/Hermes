@@ -130,6 +130,30 @@ class UserManager {
     return allErfolge.ergebnisse;
   }
 
+  static Future<void> checkErfolge(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://194.118.174.149:8080/erfolg/check_erfolge?userID=$id');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    
+    if (result){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Neuer Erfolg!'),
+            content: Text('Neuer Erfolg freischalten'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
   static Future<void> updateStats(double distance) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');

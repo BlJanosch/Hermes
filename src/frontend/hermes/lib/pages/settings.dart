@@ -41,6 +41,7 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> _initErfolge() async {
+    await UserManager.checkErfolge(context);
     final erfolge = await UserManager.loadUserErfolge();
     setState(() {
       _userErfolge.ergebnisse = erfolge;
