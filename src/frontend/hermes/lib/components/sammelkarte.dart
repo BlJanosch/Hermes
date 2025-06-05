@@ -6,7 +6,8 @@ class MySammelkarte extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 200,
+      margin: const EdgeInsets.all(15.0),
       padding: EdgeInsets.all(3.0),
       width: 140,
       color: Colors.red,
