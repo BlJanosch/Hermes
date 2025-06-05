@@ -19,8 +19,13 @@ class Validierungsmanager {
     final result = json.decode(response.body);
     Location _location = Location();
     final currentLocation = await _location.getLocation();
+
+    double distance = getDistanceFromLatLonInKm(
+      result['lat'], result['lng'],
+      currentLocation.latitude ?? 0, currentLocation.longitude ?? 0,
+    );
     
-    if (((result['lat'] - 20) <= currentLocation.latitude && (result['lat'] + 20) >= currentLocation.latitude) && ((result['lng'] - 20) <= currentLocation.longitude && (result['lng'] + 20) >= currentLocation.longitude)){
+    if (distance <= 1){
       // User ist in der nähe des Zieles & Ziel kann in DB gespeichert werden
       final url = Uri.parse('http://$serverIP:8080/erfolg/add_erreichtesziel');
 
@@ -69,4 +74,23 @@ class Validierungsmanager {
         );
     }
   }
+
+  // prompt: Wie kann ich prfügen, ob sich der User im Umkreis vom Ziel befindet.
+  static double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2) {
+    const R = 6371; // Erdradius in km
+    double dLat = _deg2rad(lat2 - lat1);
+    double dLon = _deg2rad(lon2 - lon1);
+    double a = 
+          sin(dLat / 2) * sin(dLat / 2) +
+          cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
+          sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double distance = R * c;
+    return distance;
+    }
+
+  static double _deg2rad(double deg) {
+    return deg * (pi / 180);
+  }
+
 }
