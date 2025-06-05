@@ -133,7 +133,7 @@ class UserManager {
   static Future<void> checkErfolge(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/check_erfolge?userID=$id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/check_erfolge?userID=$id');
     final response = await http.get(url);
     final result = json.decode(response.body);
     
@@ -160,7 +160,7 @@ class UserManager {
     final url = Uri.parse('http://$serverIP:8080/user/update_stats');
 
     final body = json.encode({
-      "hoehenmeter": 0,
+      "hoehenmeter": 0, // Höhenmeter noch umsetzen
       "id": id,
       "kmgelaufen": (distance / 1000)
     });
