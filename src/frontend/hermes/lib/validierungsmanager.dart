@@ -27,7 +27,7 @@ class Validierungsmanager {
     );
     
     if (distanceInMeters <= 500){
-      // User ist in der nähe des Zieles & Ziel kann in DB gespeichert werden
+      // User ist in der nähe des Zieles (500m) & Ziel kann in DB gespeichert werden
       final url = Uri.parse('http://$serverIP:8080/erfolg/add_erreichtesziel');
 
       final body = json.encode({

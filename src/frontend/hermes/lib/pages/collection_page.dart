@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/sammelkarte.dart';
+import 'package:hermes/validierungsmanager.dart';
 
 class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});
@@ -31,16 +32,19 @@ class _CollectionPageState extends State<CollectionPage> {
       }
 
       List<int> cleaned = data[1].sublist(3);
-      int? ID = int.tryParse(String.fromCharCodes(cleaned));
-      if (ID == null) {
+      int? id = int.tryParse(String.fromCharCodes(cleaned));
+      if (id == null) {
         throw Exception("ID konnte nicht extrahiert werden.");
       }
 
-      print("ID: $ID");
+      print("ID: $id");
       await FlutterNfcKit.finish();
       setState(() => state = 2); // success
       await Future.delayed(Duration(seconds: 1));
       setState(() => state = 0); // reset
+
+      Validierungsmanager.AddSammelkarteNFCGPS(context, id);
+
     } catch (e) {
       print("Fehler beim Lesen: $e");
       await FlutterNfcKit.finish();
