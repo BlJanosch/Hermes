@@ -5,13 +5,14 @@ import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hermes/components/globals.dart';
 
 class UserManager {
   // Privater Konstruktor verhindert Instanziierung
   UserManager._();
   
   static Future<bool> Login(BuildContext context, String username, String password) async {
-    final url = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+    final url = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
     final response = await http.get(url);
     final result = json.decode(response.body);
     if (result == -1){
@@ -40,7 +41,7 @@ class UserManager {
   }
 
   static Future<bool> Register(BuildContext context, String username, String password) async {
-    final url = Uri.parse('http://194.118.174.149:8080/user/register');
+    final url = Uri.parse('http://$serverIP:8080/user/register');
 
     final body = json.encode({
       "Benutzername": username,
@@ -73,7 +74,7 @@ class UserManager {
       return false;
     }
 
-    final urlLogin = Uri.parse('http://194.118.174.149:8080/user/login?benutzername=$username&passwort=$password');
+    final urlLogin = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
     final responseLogin = await http.get(urlLogin);
     final resultLogin = json.decode(responseLogin.body);
     // User ist noch nicht erstellt bevor ich seine ID abrufe
@@ -88,10 +89,10 @@ class UserManager {
   static Future<Map<String, dynamic>> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/user/datenabfrage?user_id=$id');
+    final url = Uri.parse('http://$serverIP:8080/user/datenabfrage?user_id=$id');
     final response = await http.get(url);
     final result = json.decode(response.body);
-    final urlBerge = Uri.parse('http://194.118.174.149:8080/erfolg/erreichteziele?userID=$id');
+    final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
     final responseBerge = await http.get(urlBerge);
     final resultBerge = json.decode(responseBerge.body);
     return {
@@ -105,7 +106,7 @@ class UserManager {
   static Future<List<Erfolg>> loadUserErfolge() async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_erfolge?userID=$id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/get_erfolge?userID=$id');
     final response = await http.get(url);
     final result = json.decode(response.body);
     print(result);
@@ -115,7 +116,7 @@ class UserManager {
   }
 
   static Future<List<Erfolg>> loadAllErfolge(ErfolgCollection userErfolge) async {
-    final url = Uri.parse('http://194.118.174.149:8080/erfolg/get_allerfolge');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/get_allerfolge');
     final response = await http.get(url);
     final result = json.decode(response.body);
     ErfolgCollection allErfolge = ErfolgCollection();
@@ -127,6 +128,28 @@ class UserManager {
       }
     }
     return allErfolge.ergebnisse;
+  }
+
+  static Future<void> updateStats(double distance) async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/user/update_stats');
+
+    final body = json.encode({
+      "hoehenmeter": 0,
+      "id": id,
+      "kmgelaufen": (distance / 1000)
+    });
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    );
+
+    print(response.statusCode);
   }
 
 }
