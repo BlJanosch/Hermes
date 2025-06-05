@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hermes/components/globals.dart';
 import 'package:hermes/pages/home.dart';
 import 'package:http/http.dart' as http;
@@ -20,12 +21,12 @@ class Validierungsmanager {
     Location _location = Location();
     final currentLocation = await _location.getLocation();
 
-    double distance = getDistanceFromLatLonInKm(
+    double distanceInMeters = Geolocator.distanceBetween(
       result['lat'], result['lng'],
       currentLocation.latitude ?? 0, currentLocation.longitude ?? 0,
     );
     
-    if (distance <= 1){
+    if (distanceInMeters <= 500){
       // User ist in der nähe des Zieles & Ziel kann in DB gespeichert werden
       final url = Uri.parse('http://$serverIP:8080/erfolg/add_erreichtesziel');
 
@@ -74,23 +75,4 @@ class Validierungsmanager {
         );
     }
   }
-
-  // prompt: Wie kann ich prfügen, ob sich der User im Umkreis vom Ziel befindet.
-  static double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371; // Erdradius in km
-    double dLat = _deg2rad(lat2 - lat1);
-    double dLon = _deg2rad(lon2 - lon1);
-    double a = 
-          sin(dLat / 2) * sin(dLat / 2) +
-          cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
-          sin(dLon / 2) * sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double distance = R * c;
-    return distance;
-    }
-
-  static double _deg2rad(double deg) {
-    return deg * (pi / 180);
-  }
-
 }
