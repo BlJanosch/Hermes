@@ -16,7 +16,15 @@ class _CollectionPageState extends State<CollectionPage> {
 
   Future<void> readNfcTag() async {
     try {
-      setState(() => state = 1); // reading
+      var availability = await FlutterNfcKit.nfcAvailability;
+      if (availability != NFCAvailability.available) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('NFC wird auf diesem Gerät nicht unterstützt oder ist deaktiviert.')),
+        );
+        return;
+      }
+
+      setState(() => state = 1); 
       NFCTag tag = await FlutterNfcKit.poll();
 
       List<List<int>> data = <List<int>>[];
@@ -39,9 +47,9 @@ class _CollectionPageState extends State<CollectionPage> {
 
       print("ID: $id");
       await FlutterNfcKit.finish();
-      setState(() => state = 2); // success
+      setState(() => state = 2); 
       await Future.delayed(Duration(seconds: 1));
-      setState(() => state = 0); // reset
+      setState(() => state = 0); 
 
       Validierungsmanager.AddSammelkarteNFCGPS(context, id);
 

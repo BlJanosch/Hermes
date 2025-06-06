@@ -22,18 +22,19 @@ class _SettingsState extends State<Settings> {
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
   int _berge = 0;
-  ErfolgCollection _userErfolge = new ErfolgCollection();
-  ErfolgCollection _allErfolge = new ErfolgCollection();
+  ErfolgCollection _userErfolge = ErfolgCollection();
+  ErfolgCollection _allErfolge = ErfolgCollection();
 
   @override
   void initState() {
     super.initState();
     UserManager.loadUserData().then((userData) {
+      if (!mounted) return;
       setState(() {
-      _username = userData['username'] ?? 'Unbekannt';
-      _kmgelaufen = userData['kmgelaufen'] ?? 0.0;
-      _hoehenmeter = userData['hoehenmeter'] ?? 0.0;
-      _berge = userData['berge'] ?? 0;
+        _username = userData['username'] ?? 'Unbekannt';
+        _kmgelaufen = userData['kmgelaufen'] ?? 0.0;
+        _hoehenmeter = userData['hoehenmeter'] ?? 0.0;
+        _berge = userData['berge'] ?? 0;
       });
     });
     _initErfolge();
@@ -42,13 +43,17 @@ class _SettingsState extends State<Settings> {
   Future<void> _initErfolge() async {
     await UserManager.checkErfolge(context);
     final erfolge = await UserManager.loadUserErfolge();
-    setState(() {
-      _userErfolge.ergebnisse = erfolge;
-    });
+    if (mounted) {
+      setState(() {
+        _userErfolge.ergebnisse = erfolge;
+      });
+    }
     final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
-    setState(() {
-      _allErfolge.ergebnisse = allErfolge;
-    });
+    if (mounted) {
+      setState(() {
+        _allErfolge.ergebnisse = allErfolge;
+      });
+    }
   }
 
   @override
@@ -72,15 +77,13 @@ class _SettingsState extends State<Settings> {
               title: Text('Abmelden'),
               onTap: () async {
                 Navigator.pop(context);
-                // Cache resetten
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.clear();
                 prefs.setBool('isLoggedIn', false);
-                // Abmelden
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Login()),
-                  );
+                );
               },
             ),
             ListTile(
@@ -178,69 +181,70 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 SizedBox(height: 16),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                  // Berechne die Anzahl der Spalten abhängig von der verfügbaren Breite
-                  int crossAxisCount = 2;
-                  double width = constraints.maxWidth;
-                  if (width > 900) {
-                    crossAxisCount = 6;
-                  } else if (width > 700) {
-                    crossAxisCount = 5;
-                  } else if (width > 500) {
-                    crossAxisCount = 4;
-                  } else if (width > 350) {
-                    crossAxisCount = 3;
-                  }
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      int crossAxisCount = 2;
+                      double width = constraints.maxWidth;
+                      if (width > 900) {
+                        crossAxisCount = 6;
+                      } else if (width > 700) {
+                        crossAxisCount = 5;
+                      } else if (width > 500) {
+                        crossAxisCount = 4;
+                      } else if (width > 350) {
+                        crossAxisCount = 3;
+                      }
 
-                  return Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                      ),
-                    ],
-                    ),
-                    child: LayoutBuilder(
-                      builder: (context, gridConstraints) {
-                      double itemWidth = (gridConstraints.maxWidth - (crossAxisCount - 1) * 25) / crossAxisCount;
-                      double itemHeight = itemWidth * 1.5; // Verhältnis anpassen je nach Bedarf
-
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 25,
-                        mainAxisSpacing: 0,
-                        childAspectRatio: itemWidth / itemHeight,
+                      return Container(
+                        padding: EdgeInsets.all(12),
+                        margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        itemCount: _userErfolge.ergebnisse.length + _allErfolge.ergebnisse.length,
-                        itemBuilder: (context, index) {
-                        if (index < _userErfolge.ergebnisse.length) {
-                          final erfolg = _userErfolge.ergebnisse[index];
-                          return Erfolgcircle(
-                          icon: Icons.check,
-                          text: erfolg.name,
-                          );
-                        } else {
-                          final erfolg = _allErfolge.ergebnisse[index - _userErfolge.ergebnisse.length];
-                          return Erfolgcircle(
-                          icon: Icons.lock_outline,
-                          text: erfolg.name,
-                          );
-                        }
-                        },
+                        child: LayoutBuilder(
+                          builder: (context, gridConstraints) {
+                            double itemWidth = (gridConstraints.maxWidth - (crossAxisCount - 1) * 25) / crossAxisCount;
+                            double itemHeight = itemWidth * 1.5;
+
+                            return GridView.builder(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 25,
+                                mainAxisSpacing: 0,
+                                childAspectRatio: itemWidth / itemHeight,
+                              ),
+                              itemCount: _userErfolge.ergebnisse.length + _allErfolge.ergebnisse.length,
+                              itemBuilder: (context, index) {
+                                if (index < _userErfolge.ergebnisse.length) {
+                                  final erfolg = _userErfolge.ergebnisse[index];
+                                  return Erfolgcircle(
+                                    icon: Icons.check,
+                                    text: erfolg.name,
+                                  );
+                                } else {
+                                  final erfolg = _allErfolge.ergebnisse[index - _userErfolge.ergebnisse.length];
+                                  return Erfolgcircle(
+                                    icon: Icons.lock_outline,
+                                    text: erfolg.name,
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
                       );
-                      },
-                    ),
-                  );
-                  },
+                    },
+                  ),
                 ),
               ],
             ),
