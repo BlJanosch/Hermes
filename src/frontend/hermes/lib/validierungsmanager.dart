@@ -15,7 +15,7 @@ class Validierungsmanager {
   static Future<void> AddSammelkarteNFCGPS(BuildContext context, int ZielID) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
-    final url = Uri.parse('http://$serverIP:8080/erfolg/ziel?zielID=$id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/ziel?zielID=$ZielID');
     final response = await http.get(url);
     final result = json.decode(response.body);
     Location _location = Location();
