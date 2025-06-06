@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hermes/pages/home.dart';
 import 'package:hermes/pages/collection_page.dart';
+import 'package:hermes/pages/leaderboard.dart';
 import 'package:hermes/pages/settings.dart';
 
 class MyBottomNavBar extends StatelessWidget {
@@ -24,7 +25,10 @@ class MyBottomNavBar extends StatelessWidget {
         );
         break;
       case 2:
-        // Hier ggf. Leaderboard-Seite einfügen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LeaderboardPage()),
+        );
         break;
       case 3:
         Navigator.pushReplacement(

@@ -59,7 +59,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.withOpacity(0.7),
+      backgroundColor: const Color(0xFF1E1E1E),
 
       endDrawer: Drawer(
         child: ListView(
@@ -98,12 +98,15 @@ class _SettingsState extends State<Settings> {
       ),
 
       appBar: AppBar(
-        title: Text('Einstellungen'),
+        title: Text(
+          'Einstellungen',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.transparent,
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: Icon(Icons.menu),
+              icon: Icon(Icons.menu, color: Colors.white,),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer(); 
               },
@@ -176,11 +179,11 @@ class _SettingsState extends State<Settings> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Erfolge",
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 10),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {

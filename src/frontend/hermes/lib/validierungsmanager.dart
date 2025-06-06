@@ -11,19 +11,40 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Validierungsmanager {
   Validierungsmanager._();
-
+  
   static Future<void> AddSammelkarteNFCGPS(BuildContext context, int ZielID) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/ziel?zielID=$ZielID');
-    final response = await http.get(url);
+    http.Response response;
+    try {
+      response = await http.get(url);
+      if (response.statusCode != 200) {
+        throw Exception('Server returned status code ${response.statusCode}');
+      }
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Verbindungsfehler'),
+          content: Text('Konnte keine Verbindung zum Server herstellen: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     final result = json.decode(response.body);
     Location _location = Location();
     final currentLocation = await _location.getLocation();
 
     double distanceInMeters = Geolocator.distanceBetween(
       result['lat'], result['lng'],
-      currentLocation.latitude ?? 0, currentLocation.longitude ?? 0,
+      result['lat'] ?? 0, result['lng'] ?? 0,
     );
     
     if (distanceInMeters <= 500){
@@ -43,7 +64,22 @@ class Validierungsmanager {
         body: body,
       );
 
-      if (response.statusCode != 201){
+      if (response.statusCode == 400){
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Fehler beim Hinzufügen!'),
+            content: Text('Ziel befindet sich bereits in deinem Besitz!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+      else if (response.statusCode != 201){
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
