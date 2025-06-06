@@ -31,16 +31,16 @@ class ServerOfflinePage extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 16),
-                Text(
+              Text(
                 'Die Verbindung zum Server konnte nicht hergestellt werden.\n'
                 'Bitte überprüfe deine Internetverbindung oder versuche es später erneut.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
+                      color: Colors.white,
+                    ),
+              ),
               const SizedBox(height: 32),
-                ElevatedButton.icon(
+              ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFBBA430),
                   foregroundColor: Colors.white,
@@ -49,23 +49,32 @@ class ServerOfflinePage extends StatelessWidget {
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
                   showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => Center(child: CircularProgressIndicator(color: const Color(0xFFBBA430),)),
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFBBA430),
+                      ),
+                    ),
                   );
+
                   final online = await isServerOnline('http://$serverIP:8080/ui');
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyApp(isLoggedIn: isLoggedIn, online: online),
-                  ),
+
+                  Navigator.of(context, rootNavigator: true).pop();
+
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MyApp(isLoggedIn: isLoggedIn, online: online),
+                    ),
                   );
                 },
-                icon: Icon(Icons.refresh, color: Colors.white),
-                label: Text('Erneut versuchen', style: const TextStyle(color: Colors.white)),
-                ),
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                label: const Text('Erneut versuchen',
+                    style: TextStyle(color: Colors.white)),
+              ),
             ],
           ),
         ),
@@ -75,8 +84,9 @@ class ServerOfflinePage extends StatelessWidget {
 
   Future<bool> isServerOnline(String url) async {
     try {
-      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 2));
-      return true;
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 2));
+      return response.statusCode == 200;
     } catch (e) {
       return false;
     }
