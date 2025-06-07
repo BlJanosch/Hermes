@@ -4,6 +4,7 @@ import 'package:hermes/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Logging included
 class ServerOfflinePage extends StatelessWidget {
   const ServerOfflinePage({Key? key}) : super(key: key);
 
@@ -86,8 +87,10 @@ class ServerOfflinePage extends StatelessWidget {
     try {
       final response =
           await http.get(Uri.parse(url)).timeout(const Duration(seconds: 2));
+      logger.i('Server ist wieder online');
       return response.statusCode == 200;
     } catch (e) {
+      logger.w('Server ist offline');
       return false;
     }
   }

@@ -12,6 +12,7 @@ import 'package:hermes/pages/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// Logging included
 class Settings extends StatefulWidget {
   const Settings({super.key});
 

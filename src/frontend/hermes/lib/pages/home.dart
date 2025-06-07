@@ -56,6 +56,7 @@ class _HomeState extends State<Home> {
     final hasPermission = await _location.hasPermission();
     if (hasPermission == PermissionStatus.denied) {
       await _location.requestPermission();
+      logger.i('Berechtigung zum Orten nicht erteilt... Erlaubnis wird angefragt');
     }
 
     final serviceEnabled = await _location.serviceEnabled();

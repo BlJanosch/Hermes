@@ -29,6 +29,7 @@ void main() async {
   runApp(MyApp(isLoggedIn: isLoggedIn, online: online));
 }
 
+// Logging included
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
   final bool online;
@@ -40,9 +41,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hermes',
-      home: online
-          ? (isLoggedIn ? const Home() : const Login())
-          : const ServerOfflinePage(),
+      home: Builder(
+        builder: (context) {
+          if (!online) {
+            logger.w('Server is offline');
+            return const ServerOfflinePage();
+          }
+          if (isLoggedIn) {
+            logger.i('Benutzer ist bereits angemeldet... Login wird übersprungen');
+            return const Home();
+          } else {
+            logger.i('Benutzer ist noch nicht angemeldet... Wird auf Login Page weitergeleitet');
+            return const Login();
+          }
+        }
+      ),
       theme: ThemeData(
         primarySwatch: Colors.yellow,
         fontFamily: "Sans",
