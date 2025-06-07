@@ -170,7 +170,24 @@ class _HomeState extends State<Home> {
                             icon: const Icon(Icons.check, color: Colors.white),
                             onPressed: () {
                               _resetTracking();
-                              UserManager.updateStats(distance);
+                              try{
+                                UserManager.updateStats(distance);
+                              }
+                              catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Aktualisieren der Stats ist fehlgeschlagen'),
+                                    content: Text('Fehler: $e'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],

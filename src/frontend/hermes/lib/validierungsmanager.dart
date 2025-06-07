@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Validierungsmanager {
   Validierungsmanager._();
   
+  // Logging included
   static Future<void> AddSammelkarteNFCGPS(BuildContext context, int ZielID) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
@@ -20,6 +22,7 @@ class Validierungsmanager {
     try {
       response = await http.get(url);
       if (response.statusCode != 200) {
+        logger.w('Fehler beim Abfragen des Ziel $ZielID');
         throw Exception('Server returned status code ${response.statusCode}');
       }
     } catch (e) {
@@ -65,6 +68,7 @@ class Validierungsmanager {
       );
 
       if (response.statusCode == 400){
+        logger.w('User $id hat Ziel $ZielID schon');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -80,6 +84,7 @@ class Validierungsmanager {
         );
       }
       else if (response.statusCode != 201){
+        logger.w('Fehler beim Hinzufügend des Ziels $ZielID zum User $id');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -96,6 +101,7 @@ class Validierungsmanager {
       }
     }
     else{
+      logger.w('Fehler beim Hinzufügend des Ziels $ZielID zum User $id, da er sich nicht in der Nähe davon befindet --> $distanceInMeters m entfernt');
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -109,6 +115,7 @@ class Validierungsmanager {
             ],
           ),
         );
+      logger.i('Ziel $ZielID erfolgreich zum User $id hinzugefügt!');
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
@@ -28,7 +30,8 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    UserManager.loadUserData().then((userData) {
+    try{
+      UserManager.loadUserData().then((userData) {
       if (!mounted) return;
       setState(() {
         _username = userData['username'] ?? 'Unbekannt';
@@ -37,22 +40,55 @@ class _SettingsState extends State<Settings> {
         _berge = userData['berge'] ?? 0;
       });
     });
+    }
+    catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Fehler beim Laden der Benutzerdaten'),
+            content: Text('Fehler: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+    }
     _initErfolge();
   }
 
   Future<void> _initErfolge() async {
-    await UserManager.checkErfolge(context);
-    final erfolge = await UserManager.loadUserErfolge();
-    if (mounted) {
-      setState(() {
-        _userErfolge.ergebnisse = erfolge;
-      });
+    try{
+      await UserManager.checkErfolge(context);
+      final erfolge = await UserManager.loadUserErfolge();
+      if (mounted) {
+        setState(() {
+          _userErfolge.ergebnisse = erfolge;
+        });
+      }
+      final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
+      if (mounted) {
+        setState(() {
+          _allErfolge.ergebnisse = allErfolge;
+        });
+      }
     }
-    final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
-    if (mounted) {
-      setState(() {
-        _allErfolge.ergebnisse = allErfolge;
-      });
+    catch (e){
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Fehler beim Laden der Erfolge'),
+            content: Text('Fehler: $e'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
     }
   }
 
