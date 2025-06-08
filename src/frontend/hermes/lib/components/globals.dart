@@ -1,3 +1,6 @@
 library my_globals;
 
-String serverIP = "100.76.123.83";
+import 'package:logger/logger.dart';
+
+String serverIP = "10.0.0.27";
+var logger = Logger();

@@ -11,7 +11,7 @@ class Erfolg {
     return Erfolg(
       json['Name'] as String,
       json['Beschreibung'] as String,
-      Schwierigkeit.Bronze//Schwierigkeit.values.firstWhere((e) => e.toString() == 'Schwierigkeit.' + (json['schwierigkeit'] as String)),
+      Schwierigkeit.Bronze
     );
   }
 

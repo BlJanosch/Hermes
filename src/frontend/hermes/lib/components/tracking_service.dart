@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:hermes/components/globals.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
+// Logging included
 class TrackingService {
   static final TrackingService _instance = TrackingService._internal();
 
@@ -24,6 +26,7 @@ class TrackingService {
   Function()? onLocationUpdated; // Optional callback to notify UI
 
   void startTracking() {
+    logger.i('Tracking gestartet');
     trackedRoute.clear();
     totalDistance = 0.0;
     accumulatedDuration = Duration.zero;
@@ -41,6 +44,7 @@ class TrackingService {
   }
 
   void stopTracking() {
+    logger.i('Tracking gestoppt');
     _locationSubscription?.cancel();
     _locationSubscription = null;
 
@@ -53,6 +57,7 @@ class TrackingService {
   }
 
   void resumeTracking() {
+    logger.i('Tracking fortgesetzt');
     startTime = DateTime.now();
     isTracking = true;
 
@@ -72,6 +77,7 @@ class TrackingService {
   }
 
   void reset() {
+    logger.i('Tracking zurückgesetzt');
     stopTracking();
     trackedRoute.clear();
     totalDistance = 0.0;

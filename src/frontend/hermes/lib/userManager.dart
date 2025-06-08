@@ -11,11 +11,13 @@ class UserManager {
   // Privater Konstruktor verhindert Instanziierung
   UserManager._();
   
+  // Logging included
   static Future<bool> Login(BuildContext context, String username, String password) async {
     final url = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
     final response = await http.get(url);
     final result = json.decode(response.body);
     if (result == -1){
+      logger.w('Login fehlgeschlagen!');
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -37,9 +39,11 @@ class UserManager {
     await prefs.setString('username', username);
     await prefs.setBool('isLoggedIn', true);
 
+    logger.i('Login erfolgreich');
     return true;
   }
 
+  // Logging included
   static Future<bool> Register(BuildContext context, String username, String password) async {
     final url = Uri.parse('http://$serverIP:8080/user/register');
 
@@ -57,7 +61,8 @@ class UserManager {
       body: body,
     );
 
-    if (response.statusCode == 409){
+    if (response.statusCode != 200){
+      logger.w("Regestrierung fehlgeschlagen");
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -77,47 +82,69 @@ class UserManager {
     final urlLogin = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
     final responseLogin = await http.get(urlLogin);
     final resultLogin = json.decode(responseLogin.body);
-    // User ist noch nicht erstellt bevor ich seine ID abrufe
     print(resultLogin);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', resultLogin);
     await prefs.setString('username', username);
     await prefs.setBool('isLoggedIn', true);
+
+    logger.i('Regestrierung war erfolgreich');
     return true;
   }
 
+  // Logging inclueded
   static Future<Map<String, dynamic>> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/user/datenabfrage?user_id=$id');
     final response = await http.get(url);
+    if (response.statusCode == 401){
+      logger.w('User not found');
+      throw Exception('User not found');
+    }
     final result = json.decode(response.body);
     final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
     final responseBerge = await http.get(urlBerge);
+    if (responseBerge.statusCode != 200){
+      logger.w('Ungülte Eingabe/Fehler bei Ziel-Abfrage');
+      throw Exception('Ungültige Eingabe/Fehler bei Ziel-Abfrage');
+    }
     final resultBerge = json.decode(responseBerge.body);
+    logger.i('Benutzerdaten erfolgreich geladen');
     return {
       'username': prefs.getString('username') ?? 'Unbekannt',
-      'kmgelaufen': result['kmgelaufen'],
-      'hoehenmeter': result['hoehenmeter'],
-      'berge': resultBerge.length,
+      'kmgelaufen': result['kmgelaufen'] ?? 0,
+      'hoehenmeter': result['hoehenmeter'] ?? 0,
+      'berge': resultBerge.length ?? 0,
     };
   }
 
+  // Logging included
   static Future<List<Erfolg>> loadUserErfolge() async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/get_erfolge?userID=$id');
     final response = await http.get(url);
+    if (response.statusCode != 200){
+      logger.w('Fehler beim Laden der Erfolge');
+      throw Exception('Fehler beim Laden der Erfolge!');
+    }
     final result = json.decode(response.body);
     print(result);
+    logger.i('Erfolge erfolgreich geladen');
     return (result as List)
       .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
       .toList();
   }
 
+  // Logging included
   static Future<List<Erfolg>> loadAllErfolge(ErfolgCollection userErfolge) async {
     final url = Uri.parse('http://$serverIP:8080/erfolg/get_allerfolge');
     final response = await http.get(url);
+    if (response.statusCode != 200){
+      logger.w('Fehler beim Laden aller Erfolge');
+      throw Exception('Fehler beim Laden aller Erfolge');
+    }
     final result = json.decode(response.body);
     ErfolgCollection allErfolge = ErfolgCollection();
     for (int x = 0; x < result.length; x++) {
@@ -127,17 +154,24 @@ class UserManager {
         allErfolge.ergebnisse.add(newErfolg);
       }
     }
+    logger.i('Alle Erfolge erfolgreich geladen');
     return allErfolge.ergebnisse;
   }
 
+  // Logging included
   static Future<void> checkErfolge(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/check_erfolge?userID=$id');
     final response = await http.get(url);
+    if (response.statusCode != 200){
+      logger.w('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
+      throw Exception('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
+    }
     final result = json.decode(response.body);
     
     if (result){
+      logger.i('Erfolge erfolgreich überprüft');
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -154,6 +188,7 @@ class UserManager {
     }
   }
 
+  // Logging included
   static Future<void> updateStats(double distance) async {
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
@@ -174,6 +209,11 @@ class UserManager {
     );
 
     print(response.statusCode);
+    if (response.statusCode != 200){
+      logger.w('Fehler beim Aktualisierung der Stats');
+      throw Exception('Fehler beim Aktualisierung der Stats');
+    }
+    logger.i('Stats erfolgreich aktualisiert');
   }
 
 }
