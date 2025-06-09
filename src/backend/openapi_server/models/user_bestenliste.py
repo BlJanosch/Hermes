@@ -12,7 +12,7 @@ class UserBestenliste(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, platzierung=None, id=None, benutzername=None, profilbild=None, kmgelaufen=None, hoehenmeter=None):  # noqa: E501
+    def __init__(self, platzierung=None, id=None, benutzername=None, profilbild=None, kmgelaufen=None, hoehenmeter=None, anzahlBerge=None):  # noqa: E501
         """UserBestenliste - a model defined in OpenAPI
 
         :param platzierung: The platzierung of this UserBestenliste.  # noqa: E501
@@ -27,6 +27,8 @@ class UserBestenliste(Model):
         :type kmgelaufen: float
         :param hoehenmeter: The hoehenmeter of this UserBestenliste.  # noqa: E501
         :type hoehenmeter: float
+        :param anzahlBerge: The anzahlBerge of this UserBestenliste.  # noqa: E501
+        :type anzahlBerge: int
         """
         self.openapi_types = {
             'platzierung': int,
@@ -34,7 +36,8 @@ class UserBestenliste(Model):
             'benutzername': str,
             'profilbild': str,
             'kmgelaufen': float,
-            'hoehenmeter': float
+            'hoehenmeter': float,
+            'anzahlBerge': int
         }
 
         self.attribute_map = {
@@ -43,7 +46,8 @@ class UserBestenliste(Model):
             'benutzername': 'Benutzername',
             'profilbild': 'Profilbild',
             'kmgelaufen': 'kmgelaufen',
-            'hoehenmeter': 'hoehenmeter'
+            'hoehenmeter': 'hoehenmeter',
+            'anzahlBerge': 'anzahlBerge'
         }
 
         self._platzierung = platzierung
@@ -52,6 +56,7 @@ class UserBestenliste(Model):
         self._profilbild = profilbild
         self._kmgelaufen = kmgelaufen
         self._hoehenmeter = hoehenmeter
+        self._anzahlBerge = anzahlBerge
 
     @classmethod
     def from_dict(cls, dikt) -> 'UserBestenliste':
@@ -189,3 +194,24 @@ class UserBestenliste(Model):
         """
 
         self._hoehenmeter = hoehenmeter
+
+    @property
+    def anzahlBerge(self) -> int:
+        """Gets the anzahlBerge of this UserBestenliste.
+
+
+        :return: The anzahlBerge of this UserBestenliste.
+        :rtype: int
+        """
+        return self._anzahlBerge
+
+    @anzahlBerge.setter
+    def anzahlBerge(self, anzahlBerge: int):
+        """Sets the anzahlBerge of this UserBestenliste.
+
+
+        :param anzahlBerge: The anzahlBerge of this UserBestenliste.
+        :type anzahlBerge: int
+        """
+
+        self._anzahlBerge = anzahlBerge
