@@ -7,7 +7,6 @@ import 'package:hermes/validierungsmanager.dart';
 import 'package:hermes/components/globals.dart';
 import 'package:hermes/userManager.dart';
 
-
 class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});
 
@@ -20,6 +19,15 @@ class _CollectionPageState extends State<CollectionPage> {
   SammelkarteCollection collection = SammelkarteCollection();
   bool isLoading = true;
 
+  final List<String> sortierKriterien = ['seltenheit', 'neueste', 'name', 'hoehe'];
+  final List<IconData> sortierIcons = [
+    Icons.star,          // Seltenheit
+    Icons.schedule,      // Neueste
+    Icons.sort_by_alpha, // Name
+    Icons.straighten,    // Höhe
+  ];
+  int aktuellerSortIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +38,15 @@ class _CollectionPageState extends State<CollectionPage> {
     final result = await UserManager.getZiele();
     setState(() {
       collection = result;
+      collection.sortierenNach(sortierKriterien[aktuellerSortIndex]); // Sortiere initial
       isLoading = false;
+    });
+  }
+
+  void wechsleSortierung() {
+    setState(() {
+      aktuellerSortIndex = (aktuellerSortIndex + 1) % sortierKriterien.length;
+      collection.sortierenNach(sortierKriterien[aktuellerSortIndex]);
     });
   }
 
@@ -93,9 +109,24 @@ class _CollectionPageState extends State<CollectionPage> {
             padding: const EdgeInsets.only(top: 45.0),
             child: Column(
               children: [
-                const Text(
-                  "Deine Sammelkarten",
-                  style: TextStyle(fontSize: 35, fontFamily: "Sans", color: Colors.white),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Deine Sammelkarten",
+                      style: TextStyle(fontSize: 28, fontFamily: "Sans", color: Colors.white),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: wechsleSortierung,
+                      icon: Icon(
+                        sortierIcons[aktuellerSortIndex],
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      tooltip: 'Sortieren nach: ${sortierKriterien[aktuellerSortIndex]}',
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: isLoading
