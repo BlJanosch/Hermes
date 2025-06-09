@@ -22,7 +22,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color.fromRGBO(30, 30, 30, 1),
       body: Stack(
         children: [
           Column(

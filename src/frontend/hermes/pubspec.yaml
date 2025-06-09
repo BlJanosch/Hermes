@@ -72,6 +72,21 @@ flutter:
   assets:
     - lib/assets/hermes_logo.svg
     - lib/assets/icon/hermes_logo.png
+    - lib/assets/holz.png
+    - lib/assets/stein.png
+    - lib/assets/bronze.png
+    - lib/assets/silber.png
+    - lib/assets/gold.png
+    - lib/assets/galaktisch.png
+    - lib/assets/watzmann.png
+    - lib/assets/brocken.png
+    - lib/assets/zugspitze.png
+    - lib/assets/tschaggunser_mittagsspitze.png
+    - lib/assets/drei_tuerme.png
+    - lib/assets/sulzfluh.png
+    - lib/assets/itonskopf.png
+    - lib/assets/mount_everest.png
+    
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

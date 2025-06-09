@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
+import 'package:hermes/sammelkarte.dart';
+import 'package:hermes/sammelkarteCollection.dart';
+import 'package:hermes/schwierigkeit.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/components/globals.dart';
@@ -216,4 +219,35 @@ class UserManager {
     logger.i('Stats erfolgreich aktualisiert');
   }
 
+  static Future<SammelkarteCollection> getZiele() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
+    final response = await http.get(url);
+
+    if (response.statusCode != 200) {
+      logger.w('Fehler beim Abrufen der erreichten Ziele');
+      throw Exception('Fehler beim Abrufen der erreichten Ziele');
+    }
+
+    logger.i('Ziele erfolgreich abgerufen');
+    final List<dynamic> jsonList = json.decode(response.body);
+    logger.i('Ziele: $jsonList');
+
+    final collection = SammelkarteCollection();
+
+    for (var ziel in jsonList) {
+      final karte = Sammelkarte(
+        ziel['Name'],
+        ziel['Bild'],
+        Schwierigkeit.values[ziel['Schwierigkeit']],
+        ziel['hoehe'].toDouble(),
+        DateTime.parse(ziel['datum']),
+      );
+      collection.sammelkarten.add(karte);
+    }
+
+
+    return collection;
+  }
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
-import 'package:hermes/components/sammelkarte.dart';
+import 'package:hermes/components/sammelkarteGUI.dart';
+import 'package:hermes/sammelkarteCollection.dart';
 import 'package:hermes/validierungsmanager.dart';
+import 'package:hermes/components/globals.dart';
+import 'package:hermes/userManager.dart';
+
 
 class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});
@@ -12,7 +16,23 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
-  int state = 0; // 0 = idle, 1 = reading, 2 = success, 3 = error
+  int state = 0;
+  SammelkarteCollection collection = SammelkarteCollection();
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadZiele();
+  }
+
+  Future<void> loadZiele() async {
+    final result = await UserManager.getZiele();
+    setState(() {
+      collection = result;
+      isLoading = false;
+    });
+  }
 
   Future<void> readNfcTag() async {
     try {
@@ -24,7 +44,7 @@ class _CollectionPageState extends State<CollectionPage> {
         return;
       }
 
-      setState(() => state = 1); 
+      setState(() => state = 1);
       NFCTag tag = await FlutterNfcKit.poll();
 
       List<List<int>> data = <List<int>>[];
@@ -47,18 +67,18 @@ class _CollectionPageState extends State<CollectionPage> {
 
       print("ID: $id");
       await FlutterNfcKit.finish();
-      setState(() => state = 2); 
+      setState(() => state = 2);
       await Future.delayed(Duration(seconds: 1));
-      setState(() => state = 0); 
+      setState(() => state = 0);
 
-      Validierungsmanager.AddSammelkarteNFCGPS(context, id);
-
+      await Validierungsmanager.AddSammelkarteNFCGPS(context, id);
+      await loadZiele();
     } catch (e) {
       print("Fehler beim Lesen: $e");
       await FlutterNfcKit.finish();
-      setState(() => state = 3); // error
+      setState(() => state = 3);
       await Future.delayed(Duration(seconds: 1));
-      setState(() => state = 0); // reset
+      setState(() => state = 0);
     }
   }
 
@@ -68,33 +88,28 @@ class _CollectionPageState extends State<CollectionPage> {
       body: Stack(
         children: [
           Container(
-            color: const Color.fromRGBO(187, 164, 48, 1.00),
+            color: const Color.fromRGBO(30, 30, 30, 1),
             width: double.infinity,
             padding: const EdgeInsets.only(top: 45.0),
             child: Column(
-              
               children: [
                 const Text(
                   "Deine Sammelkarten",
-                  style: TextStyle(fontSize: 35, fontFamily: "Sans"),
+                  style: TextStyle(fontSize: 35, fontFamily: "Sans", color: Colors.white),
                 ),
-                Expanded( 
-                  child: Scrollbar(
-                    thumbVisibility: true, 
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        children: const [
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                        ],
-                      ),
-                    ),
-                  ),
+                Expanded(
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Scrollbar(
+                          thumbVisibility: true,
+                          child: SingleChildScrollView(
+                            child: Wrap(
+                              children: collection.sammelkarten
+                                  .map((karte) => MySammelkarte(karte: karte))
+                                  .toList(),
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 200),
               ],
@@ -109,7 +124,7 @@ class _CollectionPageState extends State<CollectionPage> {
                 onPressed: readNfcTag,
                 backgroundColor: state == 1
                     ? Colors.red.withOpacity(0.7)
-                    : Colors.black.withOpacity(0.5),
+                    : const Color.fromARGB(255, 178, 180, 16).withOpacity(0.5),
                 child: Icon(
                   state == 0
                       ? Icons.add_rounded
