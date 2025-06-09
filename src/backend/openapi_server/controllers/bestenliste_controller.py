@@ -20,7 +20,7 @@ def get_connection():
         sys.exit(1)
 
 def bestenliste(user_id,filter_db):  # noqa: E501
-    """Bestenliste nach Filter abrufen (hoehenmeter, kilometer_gelaufen)"""
+    """Bestenliste nach Filter abrufen (hoehenmeter, kilometer_gelaufen, berge)"""
 
     print("hallo")
     print("UserID:", user_id)
@@ -37,7 +37,7 @@ def bestenliste(user_id,filter_db):  # noqa: E501
     ORDER BY
     """
 
-    valid_filters = ["hoehenmeter", "kmgelaufen"]
+    valid_filters = ["hoehenmeter", "kmgelaufen", "berge"]
     if filter_db not in valid_filters:
         return {"error": "Ungültiger Filterwert"}, 400
 
@@ -46,6 +46,8 @@ def bestenliste(user_id,filter_db):  # noqa: E501
         query += " hoehenmeter DESC"
     elif filter_db == "kmgelaufen":
         query += " kmgelaufen DESC"
+    elif filter_db == "berge":
+        query = "SELECT ziel_erreicht.user_id as id, user.benutzername as benutzername, user.profilbild as profilbild, user.hoehenmeter as hoehenmeter, user.kmgelaufen as kmgelaufen, COUNT(ziel_erreicht.user_id) AS anzahlBerge FROM ziel_erreicht JOIN user ON ziel_erreicht.user_id = user.id GROUP BY ziel_erreicht.user_id, user.benutzername, user.profilbild, user.kmgelaufen, user.hoehenmeter ORDER BY anzahlBerge DESC;"
     else:
         query += " kmgelaufen DESC"  # Fallback, sollte nie erreicht werden
 
@@ -63,7 +65,8 @@ def bestenliste(user_id,filter_db):  # noqa: E501
             benutzername=row["benutzername"],
             profilbild=row["profilbild"],
             hoehenmeter=row["hoehenmeter"],
-            kmgelaufen=row["kmgelaufen"]
+            kmgelaufen=row["kmgelaufen"],
+            anzahlBerge=row["anzahlBerge"] if "anzahlBerge" in row else None
         )
         if aktuelle_platzierung <= 10:
             result.append(user_bestenliste)

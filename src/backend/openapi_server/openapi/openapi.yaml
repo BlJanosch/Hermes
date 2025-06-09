@@ -29,7 +29,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ZielErreicht'
+              type: object
+              properties:
+                UID:
+                  type: integer
+                ZID:
+                  type: integer
+              required:
+                - UID
+                - ZID
         required: true
       responses:
         "201":
@@ -38,7 +46,7 @@ paths:
           description: Ungültige Eingabe!
       summary: Neues erreichtes Ziel hinzufügen
       tags:
-      - Erfolge
+      - Ziele
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/erreichteziele:
     get:
@@ -64,7 +72,33 @@ paths:
           description: Ungültige Eingabe!
       summary: Alle erreichten Ziele vom jeweiligen User erhalten
       tags:
-      - Erfolge
+      - Ziele
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
+  /erfolg/ziel:
+    get:
+      operationId: get_ziel
+      parameters:
+      - explode: true
+        in: query
+        name: zielID
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Ziel'
+                type: array
+          description: Ziel erfolgreich geladen
+        "400":
+          description: Ungültige Eingabe!
+      summary: Gibt Ziel abhängig von der ID zurück
+      tags:
+      - Ziele
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
   /erfolg/get_erfolge:
     get:
@@ -89,6 +123,30 @@ paths:
         "400":
           description: Ungültige Eingabe!
       summary: Gibt alle Erfolge vom jeweiligen User zurück
+      tags:
+      - Erfolge
+      x-openapi-router-controller: openapi_server.controllers.erfolge_controller
+  /erfolg/check_erfolge:
+    get:
+      operationId: check_erfolge
+      parameters:
+      - explode: true
+        in: query
+        name: userID
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: User hat neuen Erfolg!
+        "400":
+          description: Fehler!
+      summary: Prüft ob User neuen Erfolg hat und fügt ihn dann auch dementsprechend dazu
       tags:
       - Erfolge
       x-openapi-router-controller: openapi_server.controllers.erfolge_controller
@@ -126,6 +184,7 @@ paths:
             enum:
             - kmgelaufen
             - hoehenmeter
+            - berge
             type: string
       responses:
         "200":
@@ -310,6 +369,7 @@ components:
         kmgelaufen: 0.8008281904610115
         Benutzername: Benutzername
         Profilbild: Profilbild
+        anzahlBerge: 0
       properties:
         Benutzername:
           title: Benutzername
@@ -324,6 +384,10 @@ components:
         hoehenmeter:
           format: double
           title: hoehenmeter
+          type: number
+        anzahlBerge:
+          title: anzahlBerge
+          format: integer
           type: number
       title: UserBestenliste
       type: object

@@ -44,11 +44,15 @@ class Validierungsmanager {
     final result = json.decode(response.body);
     Location _location = Location();
     final currentLocation = await _location.getLocation();
+    logger.i(currentLocation);
 
     double distanceInMeters = Geolocator.distanceBetween(
       result['lat'], result['lng'],
       result['lat'] ?? 0, result['lng'] ?? 0,
+
     );
+
+    logger.i(distanceInMeters);
     
     if (distanceInMeters <= 500){
       // User ist in der nähe des Zieles (500m) & Ziel kann in DB gespeichert werden
