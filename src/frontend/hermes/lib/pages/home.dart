@@ -229,7 +229,7 @@ class _HomeState extends State<Home> {
                           : Colors.grey,
                 ),
               ),
-            ),
+            ), 
           ),
           Positioned(
             bottom: 10.0,
