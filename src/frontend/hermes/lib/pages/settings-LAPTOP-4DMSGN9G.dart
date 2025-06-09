@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
@@ -12,7 +10,6 @@ import 'package:hermes/pages/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Logging included
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -31,8 +28,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    try{
-      UserManager.loadUserData().then((userData) {
+    UserManager.loadUserData().then((userData) {
       if (!mounted) return;
       setState(() {
         _username = userData['username'] ?? 'Unbekannt';
@@ -41,62 +37,29 @@ class _SettingsState extends State<Settings> {
         _berge = userData['berge'] ?? 0;
       });
     });
-    }
-    catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Fehler beim Laden der Benutzerdaten'),
-            content: Text('Fehler: $e'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-    }
     _initErfolge();
   }
 
   Future<void> _initErfolge() async {
-    try{
-      await UserManager.checkErfolge(context);
-      final erfolge = await UserManager.loadUserErfolge();
-      if (mounted) {
-        setState(() {
-          _userErfolge.ergebnisse = erfolge;
-        });
-      }
-      final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
-      if (mounted) {
-        setState(() {
-          _allErfolge.ergebnisse = allErfolge;
-        });
-      }
+    await UserManager.checkErfolge(context);
+    final erfolge = await UserManager.loadUserErfolge();
+    if (mounted) {
+      setState(() {
+        _userErfolge.ergebnisse = erfolge;
+      });
     }
-    catch (e){
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Fehler beim Laden der Erfolge'),
-            content: Text('Fehler: $e'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+    final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
+    if (mounted) {
+      setState(() {
+        _allErfolge.ergebnisse = allErfolge;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: Colors.grey.withOpacity(0.7),
 
       endDrawer: Drawer(
         child: ListView(
@@ -135,15 +98,12 @@ class _SettingsState extends State<Settings> {
       ),
 
       appBar: AppBar(
-        title: Text(
-          'Einstellungen',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Einstellungen'),
         backgroundColor: Colors.transparent,
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: Icon(Icons.menu, color: Colors.white,),
+              icon: Icon(Icons.menu),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer(); 
               },
@@ -216,11 +176,11 @@ class _SettingsState extends State<Settings> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Erfolge",
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    style: TextStyle(fontSize: 24),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 16),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {

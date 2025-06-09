@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:hermes/components/globals.dart';
+import 'package:hermes/userManager.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
@@ -10,6 +12,7 @@ import 'package:hermes/components/tracking_service.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Logging included
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -53,6 +56,7 @@ class _HomeState extends State<Home> {
     final hasPermission = await _location.hasPermission();
     if (hasPermission == PermissionStatus.denied) {
       await _location.requestPermission();
+      logger.i('Berechtigung zum Orten nicht erteilt... Erlaubnis wird angefragt');
     }
 
     final serviceEnabled = await _location.serviceEnabled();
@@ -67,28 +71,7 @@ class _HomeState extends State<Home> {
         20.0, 
       );
     }
-  }
-
-  Future<void> _updateStats() async {
-    final prefs = await SharedPreferences.getInstance();
-    int? id = prefs.getInt('id');
-    final url = Uri.parse('http://194.118.174.149:8080/user/update_stats');
-
-    final body = json.encode({
-      "hoehenmeter": 0,
-      "id": id,
-      "kmgelaufen": (distance / 1000)
-    });
-
-    final response = await http.put(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    );
-
-    print(response.statusCode);
+    logger.i('Zum aktuellen Standort gezoomt');
   }
 
   @override
@@ -98,6 +81,7 @@ class _HomeState extends State<Home> {
   }
 
   void _startTimer() {
+    logger.i('Timer gestartet');
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted && trackingService.isTracking) {
         setState(() {});
@@ -107,11 +91,14 @@ class _HomeState extends State<Home> {
 
   void _toggleTracking() {
     if (trackingService.isTracking) {
+      logger.i('Tracking Stop wurde gedrückt');
       trackingService.stopTracking();
     } else {
       if (trackingService.startTime != null) {
+        logger.i('Tracking Fortsetzung wurde gedrückt');
         trackingService.resumeTracking();
       } else {
+        logger.i('Tracking Start wurde gedrückt');
         trackingService.startTracking();
       }
     }
@@ -119,6 +106,7 @@ class _HomeState extends State<Home> {
   }
 
   void _resetTracking() {
+    logger.i('Zurücksetzen gestartet');
     trackingService.reset();
     setState(() {});
   }
@@ -191,7 +179,24 @@ class _HomeState extends State<Home> {
                             icon: const Icon(Icons.check, color: Colors.white),
                             onPressed: () {
                               _resetTracking();
-                              _updateStats();
+                              try{
+                                UserManager.updateStats(distance);
+                              }
+                              catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Aktualisieren der Stats ist fehlgeschlagen'),
+                                    content: Text('Fehler: $e'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],

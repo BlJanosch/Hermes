@@ -72,31 +72,22 @@ class _CollectionPageState extends State<CollectionPage> {
             width: double.infinity,
             padding: const EdgeInsets.only(top: 45.0),
             child: Column(
-              
               children: [
                 const Text(
                   "Deine Sammelkarten",
                   style: TextStyle(fontSize: 35, fontFamily: "Sans"),
                 ),
-                Expanded( 
-                  child: Scrollbar(
-                    thumbVisibility: true, 
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        children: const [
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                          MySammelkarte(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 200),
+                Wrap(
+                  children: const [
+                    MySammelkarte(),
+                    MySammelkarte(),
+                    MySammelkarte(),
+                    MySammelkarte(),
+                    MySammelkarte(),
+                    MySammelkarte(),
+                    MySammelkarte(),
+                  ],
+                )
               ],
             ),
           ),
