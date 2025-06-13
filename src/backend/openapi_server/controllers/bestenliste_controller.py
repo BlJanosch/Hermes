@@ -22,6 +22,7 @@ def get_connection():
         logging.error(f"Fehler beim Verbinden zu MariaDB: {e}")
         sys.exit(1)
 
+# Logging included
 def bestenliste(user_id,filter_db):  # noqa: E501
     """Bestenliste nach Filter abrufen (hoehenmeter, kilometer_gelaufen, berge)"""
 
