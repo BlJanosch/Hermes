@@ -8,7 +8,6 @@ import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Importiere deine Login-Funktion hier korrekt
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
