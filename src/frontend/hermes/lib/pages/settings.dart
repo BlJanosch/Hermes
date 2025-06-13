@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,9 @@ import 'package:hermes/erfolgCollection.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
