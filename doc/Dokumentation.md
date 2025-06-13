@@ -77,12 +77,44 @@ Logging zu BenutzerController hinzugefügt | Jannik | 9. Juni |
 UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 9. Juni |
  
 ## Projektplanung
+Keine Ahnung was hier her kommt
 
-## Umsetzungsdetails
+## Umsetzungsdetails#
 
 ### Softwarevoraussetzungen (Versionen)
+- flutter_map: ^6.0.0
+- flutter_svg: ^2.0.0
+- latlong2: ^0.9.0
+- pdf : ^3.10.6
+- path_provider: ^2.1.2
+- flutter_map: ^6.0.0    
+- flutter_svg: ^2.0.0
+- latlong2: ^0.9.0
+- pdf: ^3.10.6
+- path_provider: ^2.1.2
+- cupertino_icons: ^1.0.8
+- google_nav_bar: ^5.0.6
+- geolocator: ^10.0.0
+- flutter_map_location_marker: any
+- flutter_background_service: ^5.0.1
+- location: ^5.0.0
+- http: ^1.2.0
+- shared_preferences: ^2.2.2
+- flutter_nfc_kit: ^3.3.1
+- logger: ^2.0.2
 
 ### Umsetzung
+
+#### Tracking
+
+
+#### Sammelkarten
+
+#### Leaderboard
+
+#### Login/Registrierung
+
+#### Einstellungen
 
 ### Probleme und Lösungen
 
