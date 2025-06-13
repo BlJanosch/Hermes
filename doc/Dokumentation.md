@@ -44,7 +44,37 @@ Freigeschaltete und nicht Freigeschaltete Erfolge zur Einstellungsseite hinzugef
 Gelaufene Distand und Berge/Ziele in DB speichern (also wenn man seine Wanderung trackt und dann beendet wird die Distanz in die DB geschrieben) | Jannik | 1. Juni |
 Erfolge in der Einstellungsseite responsive gemacht | Jannik | 2. Juni |
 Passwort aus dem Cache entfernt | Jannik | 2. Juni |
-Bestenliste_Controller fertig gemacht (10 Plätze und den eingeloggten User, wenn er nicht unter den Top 10 ist) |
+Bestenliste_Controller fertig gemacht (10 Plätze und den eingeloggten User, wenn er nicht unter den Top 10 ist) | Noah | 4. Juni |
+NFC-Reader (Klasse) hinzugefügt | Jannik | 4. Juni |
+Hinzufügen Button zur Sammelkarten-Seite hinzugefügt | Noah | 4. Juni |
+NFC-Reader in Sammelkarten-Seite integriert | Jannik | 4. Juni |
+Hinzufügen Button in Sammelkarten-Seite geändert | Noah | 4. Juni |
+Login- und Regestrierungsfunktion in UserManager integriert | Jannik | 4. Juni |
+LoadUserData, Erfolge, ... in UserManager integriert | Jannik | 4. Juni |
+System erkennt wenn neuer Erfolg freigeschaltet wurde und zeigt diesen an (Settingsseite) | Jannik | 4. Juni |
+Globale Variable ServerIP hinzugefügt (Connection via Tailscale) | Jannik | 5. Juni |
+Beim Hinzufügen von Sammelkarten wird nun geprüft ob man sich in der Nähe vom Ziel befindet (500 m) | Jannik | 5. Juni |
+NFC-Reader Funktion von Klasse in Sammelkarten-Seite integriert | Noah | 5. Juni |
+ValidierungsManager in Sammelkarten-Seite integriert (Hinzufügen von Zielen/Sammelkarten) | Noah | 5. Juni |
+Erfolg-Abschnitt in Settings-Seite responsive gemacht | Jannik | 5. Juni |
+Login Page responsive gemacht | Jannik | 6. Juni |
+App prüft bevor dem Starten ob der Server erreichbar ist | Jannik | 6. Juni |
+Fixed Bug (CircularProgressIndicator ging nicht weg) | Jannik | 6. Juni |
+Leaderboard-Seite hinzugefügt | Jannik | 6. Juni |
+Logging zu UserManger und ValidierungsManager hinzugefügt | Jannik | 6. Juni |
+Logging zu TrackingService hinzugefügt | Jannik | 6. Juni |
+Logging zu Main, ServerOffline und Settings hinzugefügt | Jannik | 6. Juni |
+Scrollbar zur Sammelkarten-Seite hinzugefügt | Noah | 6. Juni |
+Änderungen am Backend | Noah | 9. Juni |
+Sammelkarten-Seite fertig gemacht (coole Effekte, Schwirigkeit und Bilder) | Noah | 9. Juni |
+Erster Entwurf von UnitTests | Jannik | 9. Juni |
+Filter-Funktion in Sammelkarten-Seite hinzugefügt | Noah | 9. Juni |
+Fixed Bug (Platzierung im Leaderboard) | Jannik | 9. Juni |
+Logging zu Sammelkarten-Seite hinzugefügt | Jannik | 9. Juni |
+Logging zu ErfolgController hinzugefügt | Jannik | 9. Juni |
+Logging zu BestenlisteController hinzugefügt | Jannik | 9. Juni |
+Logging zu BenutzerController hinzugefügt | Jannik | 9. Juni |
+UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 9. Juni |
  
 ## Projektplanung
 
