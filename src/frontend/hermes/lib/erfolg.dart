@@ -6,7 +6,6 @@ class Erfolg {
   Schwierigkeit schwierigkeit;
   Erfolg(this.name, this.Beschreibung, this.schwierigkeit);
 
-  // 👇 DAS brauchst du:
   factory Erfolg.fromJson(Map<String, dynamic> json) {
     return Erfolg(
       json['Name'] as String,
