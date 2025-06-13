@@ -69,7 +69,7 @@ class BestenlistePage extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 itemCount: leaderboardData.length,
                 itemBuilder: (context, index) {
-                  final place = index + 1;
+                  final place = index != leaderboardData.length - 1 ? index + 1 : leaderboardData[index]["Platzierung"];
                   final entry = leaderboardData[index];
                   final entryId = entry[1];
               

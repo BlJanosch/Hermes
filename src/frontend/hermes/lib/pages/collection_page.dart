@@ -47,6 +47,7 @@ class _CollectionPageState extends State<CollectionPage> {
     setState(() {
       aktuellerSortIndex = (aktuellerSortIndex + 1) % sortierKriterien.length;
       collection.sortierenNach(sortierKriterien[aktuellerSortIndex]);
+      logger.i('Ziele wurden nach ${sortierKriterien[aktuellerSortIndex]} sortiert');
     });
   }
 
@@ -54,6 +55,7 @@ class _CollectionPageState extends State<CollectionPage> {
     try {
       var availability = await FlutterNfcKit.nfcAvailability;
       if (availability != NFCAvailability.available) {
+        logger.w('NFC wird auf diesem Gerät nicht unterstützt oder ist deaktiviert!');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('NFC wird auf diesem Gerät nicht unterstützt oder ist deaktiviert.')),
         );
@@ -70,7 +72,7 @@ class _CollectionPageState extends State<CollectionPage> {
         for (var record in ndef) {
           if (record.payload != null) {
             data.add(record.payload!.toList());
-            print('NDEF Record: ${record.payload}');
+            logger.i('NDEF Record: ${record.payload}');
           }
         }
       }
@@ -78,10 +80,12 @@ class _CollectionPageState extends State<CollectionPage> {
       List<int> cleaned = data[1].sublist(3);
       int? id = int.tryParse(String.fromCharCodes(cleaned));
       if (id == null) {
+        logger.e('ID konnte nicht von NFC Chip extrahiert werden');
         throw Exception("ID konnte nicht extrahiert werden.");
       }
 
       print("ID: $id");
+      logger.i('ID erfolgreich extrahiert: $id');
       await FlutterNfcKit.finish();
       setState(() => state = 2);
       await Future.delayed(Duration(seconds: 1));
@@ -91,6 +95,7 @@ class _CollectionPageState extends State<CollectionPage> {
       await loadZiele();
     } catch (e) {
       print("Fehler beim Lesen: $e");
+      logger.w('Fehler beim Lesen des NFC Chips: $e');
       await FlutterNfcKit.finish();
       setState(() => state = 3);
       await Future.delayed(Duration(seconds: 1));
