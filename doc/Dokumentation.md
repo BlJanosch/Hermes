@@ -354,7 +354,7 @@ Das Problem hierbei war, dass wenn sich der User nicht unter den Top 10 befand, 
 Die Software wurde größtenteils auf unseren Smartphones getestet aber auch auf Emulatoren, sowie auf einem Tablet. Zudem haben wir auch Unit-Tests für den `UserManager` und den `ValidierungsManager` geschrieben, welche hautpsächlich testen, ob die Funktionen richtig auf die Responses des Server reagieren. Dies wurde mithilfe von `mockito` umgesetzt, um die HTTP-Requests zu mocken.
 
 ## Bedienungsanleiten
-siehe readme.md
+siehe `readme.md`
 
 ## Quellen
 Noah
