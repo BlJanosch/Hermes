@@ -22,3 +22,29 @@ Now you have two options:
 - Continue the tracking
 
 ## Collection
+
+![](doc/BedienungsanleitungBilder/Sammelkarten.png)
+
+Here you can see all your collection cards / mountains you have collected. You can also click on the cards to see a detailed view of the mountain. If you click on the button on the top right corner you can sort your cards by rarity, hight or date.
+
+![](doc/BedienungsanleitungBilder/SammelkartenDetail.png)
+
+This is the detailed view of a mountain.
+
+## Leaderboard
+
+![](doc/BedienungsanleitungBilder/Platzierung.png)
+
+This is the leaderboard... You can switch between three different categories:
+- km
+- altitude meter
+- mountains
+Your own position is highlighted green.
+
+## Settings
+
+![](doc/BedienungsanleitungBilder/Settings.png)
+
+This is the settings page. Here you can see your stats like the total distance, altitude and mountains you have collected. You also see achievements you have unlocked and those you can still unlock. If you click on the button on the top right corner you can logout.
+
+![](doc/BedienungsanleitungBilder/Abmelden.png)
