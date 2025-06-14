@@ -15,13 +15,16 @@ class UserManager {
   UserManager._();
   
   // Logging included
-  static Future<bool> Login(BuildContext context, String username, String password) async {
+  // UnitTest
+  static Future<bool> Login(BuildContext? context, String username, String password, {http.Client? client,}) async {
+    client ??= http.Client(); // Normalfall, das andere ist nur für die Unit-Tests
     final url = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
-    final response = await http.get(url);
+    final response = await client.get(url);
     final result = json.decode(response.body);
     if (result == -1){
       logger.w('Login fehlgeschlagen!');
-      showDialog(
+      if (context != null){
+        showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Login fehlgeschlagen'),
@@ -34,6 +37,7 @@ class UserManager {
             ],
           ),
         );
+      }
       return false;
     }
 
@@ -47,7 +51,9 @@ class UserManager {
   }
 
   // Logging included
-  static Future<bool> Register(BuildContext context, String username, String password) async {
+  // UnitTest
+  static Future<bool> Register(BuildContext? context, String username, String password, {http.Client? client, }) async {
+    client ??= http.Client();
     final url = Uri.parse('http://$serverIP:8080/user/register');
 
     final body = json.encode({
@@ -56,7 +62,7 @@ class UserManager {
       "Profilbild": "Profilbild"
     });
 
-    final response = await http.post(
+    final response = await client.post(
       url,
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +72,8 @@ class UserManager {
 
     if (response.statusCode != 200){
       logger.w("Regestrierung fehlgeschlagen");
-      showDialog(
+      if (context != null){
+        showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Regestrierung fehlgeschlagen'),
@@ -79,11 +86,12 @@ class UserManager {
             ],
           ),
         );
+      }
       return false;
     }
 
     final urlLogin = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
-    final responseLogin = await http.get(urlLogin);
+    final responseLogin = await client.get(urlLogin);
     final resultLogin = json.decode(responseLogin.body);
     print(resultLogin);
     final prefs = await SharedPreferences.getInstance();
@@ -96,18 +104,20 @@ class UserManager {
   }
 
   // Logging inclueded
-  static Future<Map<String, dynamic>> loadUserData() async {
+  // UnitTest
+  static Future<Map<String, dynamic>> loadUserData({http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/user/datenabfrage?user_id=$id');
-    final response = await http.get(url);
+    final response = await client.get(url);
     if (response.statusCode == 401){
       logger.w('User not found');
       throw Exception('User not found');
     }
     final result = json.decode(response.body);
     final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
-    final responseBerge = await http.get(urlBerge);
+    final responseBerge = await client.get(urlBerge);
     if (responseBerge.statusCode != 200){
       logger.w('Ungülte Eingabe/Fehler bei Ziel-Abfrage');
       throw Exception('Ungültige Eingabe/Fehler bei Ziel-Abfrage');
@@ -123,11 +133,13 @@ class UserManager {
   }
 
   // Logging included
-  static Future<List<Erfolg>> loadUserErfolge() async {
+  // UnitTest
+  static Future<List<Erfolg>> loadUserErfolge({http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/get_erfolge?userID=$id');
-    final response = await http.get(url);
+    final response = await client.get(url);
     if (response.statusCode != 200){
       logger.w('Fehler beim Laden der Erfolge');
       throw Exception('Fehler beim Laden der Erfolge!');
@@ -141,9 +153,11 @@ class UserManager {
   }
 
   // Logging included
-  static Future<List<Erfolg>> loadAllErfolge(ErfolgCollection userErfolge) async {
+  // UnitTest
+  static Future<List<Erfolg>> loadAllErfolge(ErfolgCollection userErfolge, {http.Client? client, }) async {
+    client ??= http.Client();
     final url = Uri.parse('http://$serverIP:8080/erfolg/get_allerfolge');
-    final response = await http.get(url);
+    final response = await client.get(url);
     if (response.statusCode != 200){
       logger.w('Fehler beim Laden aller Erfolge');
       throw Exception('Fehler beim Laden aller Erfolge');
@@ -162,11 +176,13 @@ class UserManager {
   }
 
   // Logging included
-  static Future<void> checkErfolge(BuildContext context) async {
+  // UnitTest
+  static Future<void> checkErfolge(BuildContext? context, {http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/check_erfolge?userID=$id');
-    final response = await http.get(url);
+    final response = await client.get(url);
     if (response.statusCode != 200){
       logger.w('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
       throw Exception('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
@@ -175,7 +191,8 @@ class UserManager {
     
     if (result){
       logger.i('Erfolge erfolgreich überprüft');
-      showDialog(
+      if (context != null){
+        showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Neuer Erfolg!'),
@@ -188,11 +205,14 @@ class UserManager {
             ],
           ),
         );
+      }  
     }
   }
 
   // Logging included
-  static Future<void> updateStats(double distance) async {
+  // UnitTest
+  static Future<void> updateStats(double distance, {http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/user/update_stats');
@@ -203,7 +223,7 @@ class UserManager {
       "kmgelaufen": (distance / 1000)
     });
 
-    final response = await http.put(
+    final response = await client.put(
       url,
       headers: {
         "Content-Type": "application/json",
@@ -219,11 +239,14 @@ class UserManager {
     logger.i('Stats erfolgreich aktualisiert');
   }
 
-  static Future<SammelkarteCollection> getZiele() async {
+  // Logging included
+  // UnitTest
+  static Future<SammelkarteCollection> getZiele({http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
-    final response = await http.get(url);
+    final response = await client.get(url);
 
     if (response.statusCode != 200) {
       logger.w('Fehler beim Abrufen der erreichten Ziele');

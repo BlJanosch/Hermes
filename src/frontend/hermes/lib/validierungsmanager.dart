@@ -14,19 +14,22 @@ class Validierungsmanager {
   Validierungsmanager._();
   
   // Logging included
-  static Future<void> AddSammelkarteNFCGPS(BuildContext context, int ZielID) async {
+  static Future<void> AddSammelkarteNFCGPS(BuildContext? context, int ZielID, {http.Client? client, }) async {
+    client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/erfolg/ziel?zielID=$ZielID');
     http.Response response;
     try {
-      response = await http.get(url);
+      response = await client.get(url);
       if (response.statusCode != 200) {
         logger.w('Fehler beim Abfragen des Ziel $ZielID');
         throw Exception('Server returned status code ${response.statusCode}');
       }
     } catch (e) {
-      showDialog(
+      logger.w('Konnte keine Verbindung zum Server herstellen: $e');
+      if (context != null){
+        showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Verbindungsfehler'),
@@ -39,17 +42,17 @@ class Validierungsmanager {
           ],
         ),
       );
+      }
       return;
     }
     final result = json.decode(response.body);
     Location _location = Location();
-    final currentLocation = await _location.getLocation();
-    logger.i(currentLocation);
 
+    final currentPosition = await Geolocator.getCurrentPosition();
+    logger.i(currentPosition);
     double distanceInMeters = Geolocator.distanceBetween(
       result['lat'], result['lng'],
-      result['lat'] ?? 0, result['lng'] ?? 0,
-
+      currentPosition.latitude, currentPosition.longitude,
     );
 
     logger.i(distanceInMeters);
@@ -63,7 +66,7 @@ class Validierungsmanager {
         "ZID": ZielID
       });
 
-      final response = await http.post(
+      final response = await client.post(
         url,
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +76,8 @@ class Validierungsmanager {
 
       if (response.statusCode == 400){
         logger.w('User $id hat Ziel $ZielID schon');
-        showDialog(
+        if (context != null){
+          showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Fehler beim Hinzufügen!'),
@@ -86,10 +90,12 @@ class Validierungsmanager {
             ],
           ),
         );
+        }  
       }
       else if (response.statusCode != 201){
         logger.w('Fehler beim Hinzufügend des Ziels $ZielID zum User $id');
-        showDialog(
+        if (context != null){
+          showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Fehler beim Hinzufügen!'),
@@ -102,11 +108,13 @@ class Validierungsmanager {
             ],
           ),
         );
+        }
       }
     }
     else{
       logger.w('Fehler beim Hinzufügend des Ziels $ZielID zum User $id, da er sich nicht in der Nähe davon befindet --> $distanceInMeters m entfernt');
-      showDialog(
+      if (context != null){
+        showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Fehler beim Hinzufügen!'),
@@ -119,6 +127,7 @@ class Validierungsmanager {
             ],
           ),
         );
+      }
       logger.i('Ziel $ZielID erfolgreich zum User $id hinzugefügt!');
     }
   }

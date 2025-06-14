@@ -7,6 +7,9 @@ from typing import Union
 
 from openapi_server.models.user import User  # noqa: E501
 from openapi_server import util
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 def get_connection():
     try:
@@ -18,10 +21,11 @@ def get_connection():
             database="hermes" 
         )
     except mariadb.Error as e:
+        logging.error(f"Fehler beim Verbinden zu MariaDB: {e}")
         print(f"Fehler beim Verbinden zu MariaDB: {e}")
         sys.exit(1)
 
-
+# Logging included
 def user_get(user_id):  # noqa: E501
     """Gibt die Daten eines Benutzers anhand der ID zurück
 
@@ -47,11 +51,13 @@ def user_get(user_id):  # noqa: E501
             benutzername=row[4],
             profilbild=row[5]
         )
+        logging.info(f"User mit ID {user_id} gefunden: {user.benutzername}")
         return user, 200
     else:
+        logging.error(f"User mit ID {user_id} nicht gefunden")
         return {"message": "User not found"}, 401
     
-
+# Logging included
 def update_userdata(body):  # noqa: E501
     """Aktualisiert die Daten eines Benutzers, man muss ein Json mitgeben
 
@@ -67,6 +73,7 @@ def update_userdata(body):  # noqa: E501
         user = User.from_dict(connexion.request.get_json())  # noqa: E501
 
     if not isinstance(user, User):
+        logging.error("Falsche Eingabe: User-Objekt im JSON-Format erwartet")
         return {"message": "Wrong input: user object json expected"}, 400
 
     conn = get_connection()
@@ -80,9 +87,11 @@ def update_userdata(body):  # noqa: E501
     conn.commit()
     cur.close()
 
+    logging.info(f"User-Daten für ID {user.id} aktualisiert: {user.benutzername}")
+    logging.debug(f"Neue Daten: kmgelaufen={user.kmgelaufen}, hoehenmeter={user.hoehenmeter}, benutzername={user.benutzername}, profilbild={user.profilbild}")
     return "Erfolg", 200
 
-
+# Logging included
 def update_stats(body):  # noqa: E501
     """Aktualisiert die Statistiken eines Benutzers. Erwartet JSON mit id, kmgelaufen und hoehenmeter.
 
@@ -92,11 +101,13 @@ def update_stats(body):  # noqa: E501
     :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]]
     """
     if not connexion.request.is_json:
+        logging.error("Falsche Eingabe: JSON erwartet")
         return {"message": "JSON erwartet"}, 400
 
     data = connexion.request.get_json()
 
     if not all(k in data for k in ("id", "kmgelaufen", "hoehenmeter")):
+        logging.error("Felder 'id', 'kmgelaufen' und 'hoehenmeter' sind erforderlich")
         return {"message": "Felder 'id', 'kmgelaufen' und 'hoehenmeter' sind erforderlich"}, 400
 
     try:
@@ -104,6 +115,7 @@ def update_stats(body):  # noqa: E501
         kmgelaufen = float(data["kmgelaufen"])
         hoehenmeter = float(data["hoehenmeter"])
     except (ValueError, TypeError):
+        logging.error("Ungültige Datentypen für 'id', 'kmgelaufen' oder 'hoehenmeter'")
         return {"message": "Ungültige Datentypen für 'id', 'kmgelaufen' oder 'hoehenmeter'"}, 400
 
     conn = get_connection()
@@ -120,9 +132,10 @@ def update_stats(body):  # noqa: E501
     conn.commit()
     cur.close()
 
+    logging.info(f"Statistiken für User ID {user_id} aktualisiert: kmgelaufen={row[0] + kmgelaufen}, hoehenmeter={row[1] + hoehenmeter}")
     return "Erfolg", 200
 
-
+# Logging included
 def user_login(benutzername, passwort):  # noqa: E501
     """Prüft, ob ein User existiert, gibt Integer ID zurück (-1, wenn User nicht vorhanden)
 
@@ -135,18 +148,19 @@ def user_login(benutzername, passwort):  # noqa: E501
 
     :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
-    print("hallo")
     conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (benutzername, passwort))
     row = cur.fetchone()
     if row:
+        logging.info(f"User {benutzername} erfolgreich eingeloggt, ID: {row[0]}")
         return row[0], 200
     else:
+        logging.warning(f"Login fehlgeschlagen für User {benutzername}")
         return -1, 404
 
-
+# Logging included
 def user_register(body):  # noqa: E501
     """Neuen Benutzer registrieren
 
@@ -162,6 +176,7 @@ def user_register(body):  # noqa: E501
         user = User.from_dict(connexion.request.get_json())  # noqa: E501
 
     if not isinstance(user, User):
+        logging.error("Falsche Eingabe: User-Objekt im JSON-Format erwartet")
         return {"message": "Wrong input: user object json expected"}, 400
 
     conn = get_connection()
@@ -171,6 +186,7 @@ def user_register(body):  # noqa: E501
     row = cur.fetchone()
     try:
         if (row[0] != -1):
+            logging.warning(f"User {user.benutzername} existiert bereits")
             return "User existiert bereits", 409
     except:
         pass
@@ -181,8 +197,10 @@ def user_register(body):  # noqa: E501
         (0, 0, user.passwort, user.benutzername, user.profilbild)
         )
     except: 
+        logging.error("Fehler beim Einfügen des Benutzers in die Datenbank")
         return "Falsche Daten eingegeben", 400
     conn.commit()
     cur.close()
     conn.close()
+    logging.info(f"User {user.benutzername} erfolgreich registriert")
     return "Erfolg", 200
