@@ -27,7 +27,7 @@ Now you have two options:
 
 Here you can see all your collection cards / mountains you have collected. You can also click on the cards to see a detailed view of the mountain. If you click on the button on the top right corner you can sort your cards by rarity, hight or date.
 
-![](doc/BedienungsanleitungBilder/SammelkartenDetail.png)
+![](doc/BedienungsanleitungBilder/SammelkarteDetail.png)
 
 This is the detailed view of a mountain.
 
