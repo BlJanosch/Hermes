@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
   final TrackingService trackingService = TrackingService();
   final Location _location = Location();
   double distance = 0;
+  double altitude = 0;
   Timer? _timer;
 
   @override
@@ -115,6 +116,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final route = trackingService.trackedRoute;
     distance = trackingService.totalDistance;
+    altitude = trackingService.totalAltitudeGain;
     final isTracking = trackingService.isTracking;
     final isTrackingStopped = !isTracking && route.isNotEmpty;
     final duration = trackingService.currentDuration;
@@ -180,7 +182,7 @@ class _HomeState extends State<Home> {
                             onPressed: () {
                               _resetTracking();
                               try{
-                                UserManager.updateStats(distance);
+                                UserManager.updateStats(distance, altitude);
                               }
                               catch (e) {
                                 showDialog(

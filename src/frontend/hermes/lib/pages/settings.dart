@@ -193,7 +193,7 @@ class _SettingsState extends State<Settings> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} km',
+                            'Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} m',
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 2),

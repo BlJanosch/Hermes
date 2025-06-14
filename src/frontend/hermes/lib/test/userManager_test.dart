@@ -276,7 +276,7 @@ void main() {
       });
 
       expect(
-        () async => await UserManager.updateStats(0, client: client),
+        () async => await UserManager.updateStats(0, 0, client: client),
         throwsA(isA<Exception>()),
       );
     });
@@ -296,7 +296,7 @@ void main() {
         return http.Response('', 200);
       });
 
-      await UserManager.updateStats(1500, client: client);
+      await UserManager.updateStats(1500, 50, client: client);
     });
 
     test('GetZiele: sollte eine Exception werfen wenn der http Request eine andere response als 200 hat', () async {

@@ -211,14 +211,14 @@ class UserManager {
 
   // Logging included
   // UnitTest
-  static Future<void> updateStats(double distance, {http.Client? client, }) async {
+  static Future<void> updateStats(double distance, double altitude, {http.Client? client, }) async {
     client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
     final url = Uri.parse('http://$serverIP:8080/user/update_stats');
 
     final body = json.encode({
-      "hoehenmeter": 0, // Höhenmeter noch umsetzen
+      "hoehenmeter": altitude,
       "id": id,
       "kmgelaufen": (distance / 1000)
     });

@@ -16,6 +16,8 @@ class TrackingService {
 
   List<LatLng> trackedRoute = [];
   double totalDistance = 0.0;
+  double totalAltitudeGain = 0.0;
+  double? _lastAltitude;
   bool isTracking = false;
 
   final Distance _distanceCalculator = Distance();
@@ -29,6 +31,7 @@ class TrackingService {
     logger.i('Tracking gestartet');
     trackedRoute.clear();
     totalDistance = 0.0;
+    totalAltitudeGain = 0.0;
     accumulatedDuration = Duration.zero;
     startTime = DateTime.now();
     isTracking = true;
@@ -38,6 +41,14 @@ class TrackingService {
       if (trackedRoute.isNotEmpty) {
         totalDistance += _distanceCalculator(trackedRoute.last, newPoint);
       }
+      if (_lastAltitude != null && loc.altitude != null) {
+        double altitudeDiff = loc.altitude! - _lastAltitude!;
+        if (altitudeDiff > 1.0 && altitudeDiff < 100) {
+          totalAltitudeGain += altitudeDiff;
+        }
+      }
+      _lastAltitude = loc.altitude;
+
       trackedRoute.add(newPoint);
       onLocationUpdated?.call();
     });
@@ -66,6 +77,14 @@ class TrackingService {
       if (trackedRoute.isNotEmpty) {
         totalDistance += _distanceCalculator(trackedRoute.last, newPoint);
       }
+      if (_lastAltitude != null && loc.altitude != null) {
+        double altitudeDiff = loc.altitude! - _lastAltitude!;
+        if (altitudeDiff > 1.0 && altitudeDiff < 100) {
+          totalAltitudeGain += altitudeDiff;
+        }
+      }
+      _lastAltitude = loc.altitude;
+
       trackedRoute.add(newPoint);
       onLocationUpdated?.call();
     });
@@ -81,6 +100,7 @@ class TrackingService {
     stopTracking();
     trackedRoute.clear();
     totalDistance = 0.0;
+    totalAltitudeGain = 0.0;
     accumulatedDuration = Duration.zero;
   }
 }
