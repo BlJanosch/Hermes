@@ -196,7 +196,7 @@ class UserManager {
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Neuer Erfolg!'),
-            content: Text('Neuer Erfolg freischalten'),
+            content: Text('Neuer Erfolg freigeschaltet'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
