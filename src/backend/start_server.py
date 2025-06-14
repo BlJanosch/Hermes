@@ -3,22 +3,26 @@ import sys
 import connexion
 from connexion import FlaskApp
 from openapi_server import __main__
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 def get_connection():
     try:
         return mariadb.connect(
-            user="root",
-            password="Hermes!1234",
+            user="app",
+            password="hermes",
             host="127.0.0.1",
             port=3306,
             database="hermes"
         )
     except mariadb.Error as e:
-        print(f"Fehler beim Verbinden zu MariaDB: {e}")
+        logging.error(f"Fehler beim Verbinden zu MariaDB: {e}")
         sys.exit(1)
 
 def init_db():
     conn = get_connection()
+    logging.info("Erfolgreich verbunden mit MariaDB")
     cursor = conn.cursor()
 
     # Nutzer-Tabelle
