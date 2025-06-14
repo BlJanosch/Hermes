@@ -1,4 +1,5 @@
 # Hermes
+Hermes is a mobile app that allows you to track your hikes and collect mountains as cards. You can see your current location, start tracking, and view your collection of mountains. The app also features a leaderboard to compare your achievements with others. 
 
 ## Login/Register
 ![](doc/BedienungsanleitungBilder/Login_Register.png)
