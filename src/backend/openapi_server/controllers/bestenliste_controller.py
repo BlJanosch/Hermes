@@ -9,8 +9,8 @@ from openapi_server import util
 def get_connection():
     try:
         return mariadb.connect(
-            user="root",              
-            password="Hermes!1234",  
+            user="app",
+            password="hermes", 
             host="localhost",          
             port=3306,
             database="hermes" 

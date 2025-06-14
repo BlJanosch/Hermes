@@ -11,8 +11,8 @@ from datetime import date
 def get_connection():
     try:
         return mariadb.connect(
-            user="root",
-            password="Hermes!1234",
+            user="app",
+            password="hermes",
             host="127.0.0.1",
             port=3306,
             database="hermes"
