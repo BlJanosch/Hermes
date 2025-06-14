@@ -79,7 +79,7 @@ UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 9. Juni |
 ## Projektplanung
 Keine Ahnung was hier her kommt
 
-## Umsetzungsdetails#
+## Umsetzungsdetails
 
 ### Softwarevoraussetzungen (Versionen)
 - flutter_map: ^6.0.0
@@ -107,20 +107,254 @@ Keine Ahnung was hier her kommt
 
 #### Tracking
 
+Das Tracking bzw. die Karte wurde mit OpenStreetMap (`flutter_map`) umgesetzt. Zudem wurde die `flutter_map_location_marker`-Bibliothek verwendet, um den aktuellen Standort des Benutzers anzuzeigen. Die Karte kann gezoomt und verschoben werden, und es gibt eine Funktion, die den Benutzer auf seine aktuelle Position zentriert. Das `location`-Paket wird verwendet, um die Standortberechtigungen zu verwalten und den aktuellen Standort des Benutzers zu erhalten. Die Strecke die man gelaufen ist, wird dann mithilfe einer Polyline auf der Karte angezeigt.
+
+Das wär z.B. die Funktion um das Tracking zu starten:
+```dart
+void startTracking() {
+    logger.i('Tracking gestartet');
+    trackedRoute.clear();
+    totalDistance = 0.0;
+    accumulatedDuration = Duration.zero;
+    startTime = DateTime.now();
+    isTracking = true;
+
+    _locationSubscription = location.onLocationChanged.listen((loc) {
+      final LatLng newPoint = LatLng(loc.latitude!, loc.longitude!);
+      if (trackedRoute.isNotEmpty) {
+        totalDistance += _distanceCalculator(trackedRoute.last, newPoint);
+      }
+      trackedRoute.add(newPoint);
+      onLocationUpdated?.call();
+    });
+  }
+```
+
+Dies ist die Funktion, die verwendet wird um die aktuelle Position zu zoomen:
+```dart
+Future<void> _zoomToCurrentLocation() async {
+    final hasPermission = await _location.hasPermission();
+    if (hasPermission == PermissionStatus.denied) {
+      await _location.requestPermission();
+      logger.i('Berechtigung zum Orten nicht erteilt... Erlaubnis wird angefragt');
+    }
+
+    final serviceEnabled = await _location.serviceEnabled();
+    if (!serviceEnabled) {
+      await _location.requestService();
+    }
+
+    final currentLocation = await _location.getLocation();
+    if (mounted) {
+      _mapController.move(
+        LatLng(currentLocation.latitude!, currentLocation.longitude!),
+        20.0, 
+      );
+    }
+    logger.i('Zum aktuellen Standort gezoomt');
+  }
+```
+
+Das ist die Funktion, die aufgerufen wird wenn der Button auf der HomePage gedrückt wird und je nach Status des Trackings wird es dann entweder gestartet, fortsetzt oder gestoppt:
+```dart
+void _toggleTracking() {
+    if (trackingService.isTracking) {
+      logger.i('Tracking Stop wurde gedrückt');
+      trackingService.stopTracking();
+    } else {
+      if (trackingService.startTime != null) {
+        logger.i('Tracking Fortsetzung wurde gedrückt');
+        trackingService.resumeTracking();
+      } else {
+        logger.i('Tracking Start wurde gedrückt');
+        trackingService.startTracking();
+      }
+    }
+    setState(() {});
+  }
+```
 
 #### Sammelkarten
+Noah
 
 #### Leaderboard
+Das Leaderboard wurde mithilfe einer PageView erstellt, welche das Wechseln zwischen den einzelnen Kategorieren ermöglicht. Zudem gibt es eine Klasse `leaderboardsingle`, welche das jeweilige Leaderboard je nach Kategorie anzeigt. Die ersten drei Plätze sind mit Gold, Silber und Bronze gekennzeichnet und der eingeloggte User mit Grün (Funktion `getMedalColor`). Befindet er sich nicht unter den Top 10, wird noch eine Platzierung unterhalb der Top 10 angezeigt.
+
+Hier holt man z.B. die Daten für das Leaderboard:
+```dart
+Future<List<Map<String, dynamic>>> loadleaderboard() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/user/bestenliste?userID=$id&filterDB=$category');
+    final response = await http.get(url);
+    final result = json.decode(response.body);
+    print(result);
+
+    return List<Map<String, dynamic>>.from(result);
+  }
+```
+
+Funktion für die Farben der Platzierungen:
+```dart
+Future<Color> getMedalColor(int place, Map<String, dynamic> entry) async {
+    int? userID = await getUserId();
+    switch (place) {
+      case 1:
+        return const Color(0xFFFFD700); // Gold
+      case 2:
+        return const Color(0xFFC0C0C0); // Silber
+      case 3:
+        return const Color(0xFFCD7F32); // Bronze
+      case _ when entry['ID'] == userID:
+        return const Color(0xFF4A742F); // Aktueller User hervorheben
+      default:
+        return Colors.white;
+    }
+  }
+```
 
 #### Login/Registrierung
+Das Login bzw. die Registierung wurden hauptsächlich einfach mit HTTP-Requests umgesetzt. Um sich nicht jedes Mal neu anmelden zu müssen, wurde der Benutzername, ID und ein Bool `isLoggedIn` mithilfe von `shared_preferences` gecached. Beim Start der App wird dann geprüft, ob `isLoggedIn` true ist und je nach dem wird dann das Login übersrprungen und direkt zur HomePage weitergeleitet.
+
+Login-Funktion in `UserManager`:
+```dart
+static Future<bool> Login(BuildContext? context, String username, String password, {http.Client? client,}) async {
+    client ??= http.Client(); // Normalfall, das andere ist nur für die Unit-Tests
+    final url = Uri.parse('http://$serverIP:8080/user/login?benutzername=$username&passwort=$password');
+    final response = await client.get(url);
+    final result = json.decode(response.body);
+    if (result == -1){
+      logger.w('Login fehlgeschlagen!');
+      if (context != null){
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Login fehlgeschlagen'),
+            content: Text('Benutzername oder Passwort ist falsch.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('id', result); // Cachen der Daten, damit man sich nicht jedes Mal neu anmelden muss
+    await prefs.setString('username', username);
+    await prefs.setBool('isLoggedIn', true);
+
+    logger.i('Login erfolgreich');
+    return true;
+  }
+```
 
 #### Einstellungen
+Die Einstellungsseite ist im Prinzip die Übersicht über die Stats und Erfolge eines Users. Sie biete auch die Möglichkeit sich wieder abzumelden und eine Funktion um den User zu bearbeiten wäre auch vorgesehen, aber noch nicht umgesetzt. Die Seite holt sich die Userdaten über den `UserManager`, genauer gesagt über die Funktion `loadUserData` und zeigt diese an. Zudem werden die Erfolge angezeigt, die ein User freigeschaltet hat und die es noch gibt. Zuerst werden dafür die Erfolge des Users mit der Funktion `loadUserErfolge` und anschließend der Funktion `loadAllErfolge` mitgeben, welche die noch fehlenden Erfolge ermittelt. Anschließend werden sie dann angezeigt, je nach Bildschirmgröße, werden verschieden viele in einer Reihe angezeigt. Zusätzlich wird immer wenn man die Einstellungsseite öffnet, geprüft, ob neue Erfolge freigeschaltet wurden mithilfe der Funktion `checkErfolge`. Diese zeigt dann auch kurz einen Dialog, wenn man einen neuen Erfolg fregeschaltet hat.
+
+Die Funktion `loadUserData`:
+```dart
+static Future<Map<String, dynamic>> loadUserData({http.Client? client, }) async {
+    client ??= http.Client();
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/user/datenabfrage?user_id=$id');
+    final response = await client.get(url);
+    if (response.statusCode == 401){
+      logger.w('User not found');
+      throw Exception('User not found');
+    }
+    final result = json.decode(response.body);
+    final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
+    final responseBerge = await client.get(urlBerge);
+    if (responseBerge.statusCode != 200){
+      logger.w('Ungülte Eingabe/Fehler bei Ziel-Abfrage');
+      throw Exception('Ungültige Eingabe/Fehler bei Ziel-Abfrage');
+    }
+    final resultBerge = json.decode(responseBerge.body);
+    logger.i('Benutzerdaten erfolgreich geladen');
+    return {
+      'username': prefs.getString('username') ?? 'Unbekannt',
+      'kmgelaufen': result['kmgelaufen'] ?? 0,
+      'hoehenmeter': result['hoehenmeter'] ?? 0,
+      'berge': resultBerge.length ?? 0,
+    };
+  }
+```
+
+Die Funktion `loadUserErfolge`:
+```dart
+static Future<List<Erfolg>> loadUserErfolge({http.Client? client, }) async {
+    client ??= http.Client();
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/get_erfolge?userID=$id');
+    final response = await client.get(url);
+    if (response.statusCode != 200){
+      logger.w('Fehler beim Laden der Erfolge');
+      throw Exception('Fehler beim Laden der Erfolge!');
+    }
+    final result = json.decode(response.body);
+    print(result);
+    logger.i('Erfolge erfolgreich geladen');
+    return (result as List)
+      .map((e) => Erfolg.fromJson(e as Map<String, dynamic>))
+      .toList();
+  }
+```
+
+Die Funktion `checkErfolge`:
+```dart
+static Future<void> checkErfolge(BuildContext? context, {http.Client? client, }) async {
+    client ??= http.Client();
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/erfolg/check_erfolge?userID=$id');
+    final response = await client.get(url);
+    if (response.statusCode != 200){
+      logger.w('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
+      throw Exception('Fehler bei der Abfrage, ob ein neuer Erfolg freigeschaltet wurde');
+    }
+    final result = json.decode(response.body);
+    
+    if (result){
+      logger.i('Erfolge erfolgreich überprüft');
+      if (context != null){
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Neuer Erfolg!'),
+            content: Text('Neuer Erfolg freischalten'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }  
+    }
+  }
+```
 
 ### Probleme und Lösungen
 
+#### Tracking
+Also das größte Problem hierbei war, dass das Tracking auch im Hintergrund weiterlaufen soll, wenn der Benutzer die App verlässt oder auf eine ander Page wechselt. Zuerst wurde das Ganze mit `background_locator_2` umgesetzt, aber dabei hat es jedoch sehr viele Probleme mit Versionen usw. gegeben, weshalb wir uns dann für das `location`-Paket entschieden haben, welches bis zum jeztigen Zeitpunkt keine Probleme gemacht hat.
+
+#### Leaderboard
+Das Problem hierbei war, dass wenn sich der User nicht unter den Top 10 befand, dass man nicht im Frontend nicht wusste, welche Platzierung er hat. Deshalb hat Noah noch ein zusätzliches Attribut hinzugefügt, welches die Platzierung des jeweiligen Users angibt und somit war das Problem auch wieder behoben.
+
 ## Softwaretests 
+Die Software wurde größtenteils auf unseren Smartphones getestet aber auch auf Emulatoren, sowie auf einem Tablet. Zudem haben wir auch Unit-Tests für den `UserManager` und den `ValidierungsManager` geschrieben, welche hautpsächlich testen, ob die Funktionen richtig auf die Responses des Server reagieren. Dies wurde mithilfe von `mockito` umgesetzt, um die HTTP-Requests zu mocken.
 
 ## Bedienungsanleiten
 siehe readme.md
 
 ## Quellen
+Noah
