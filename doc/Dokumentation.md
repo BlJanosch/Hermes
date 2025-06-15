@@ -70,11 +70,15 @@ Sammelkarten-Seite fertig gemacht (coole Effekte, Schwirigkeit und Bilder) | Noa
 Erster Entwurf von UnitTests | Jannik | 9. Juni |
 Filter-Funktion in Sammelkarten-Seite hinzugefügt | Noah | 9. Juni |
 Fixed Bug (Platzierung im Leaderboard) | Jannik | 9. Juni |
-Logging zu Sammelkarten-Seite hinzugefügt | Jannik | 9. Juni |
-Logging zu ErfolgController hinzugefügt | Jannik | 9. Juni |
-Logging zu BestenlisteController hinzugefügt | Jannik | 9. Juni |
-Logging zu BenutzerController hinzugefügt | Jannik | 9. Juni |
-UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 9. Juni |
+Logging zu Sammelkarten-Seite hinzugefügt | Jannik | 13. Juni |
+Logging zu ErfolgController hinzugefügt | Jannik | 13. Juni |
+Logging zu BestenlisteController hinzugefügt | Jannik | 13. Juni |
+Logging zu BenutzerController hinzugefügt | Jannik | 13. Juni |
+UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 13. Juni |
+Datenbank Rolle (app) hinzugefügt | Jannik | 14. Juni |
+An Doku gearbeitet | Jannik | 14. Juni |
+An Doku gearbeitet | Jannik | 15. Juni |
+
  
 ## Projektplanung
 Keine Ahnung was hier her kommt
