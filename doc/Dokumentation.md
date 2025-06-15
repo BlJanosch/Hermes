@@ -96,7 +96,6 @@ Keine Ahnung was hier her kommt
 - google_nav_bar: ^5.0.6
 - geolocator: ^10.0.0
 - flutter_map_location_marker: any
-- flutter_background_service: ^5.0.1
 - location: ^5.0.0
 - http: ^1.2.0
 - shared_preferences: ^2.2.2
