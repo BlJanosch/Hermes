@@ -40,6 +40,7 @@ This is the leaderboard... You can switch between three different categories:
 - km
 - altitude meter
 - mountains
+
 Your own position is highlighted green.
 
 ## Settings
