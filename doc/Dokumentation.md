@@ -41,7 +41,7 @@ Daten in Einstellungsseite laden und anzeigen | Jannik | 30. Mai |
 Endpunkte umbenannt und DB verbessert | Noah | 1. Juni |
 add_erfolg Endpunkt aktualisiert | Noah | 1. Juni |
 Freigeschaltete und nicht Freigeschaltete Erfolge zur Einstellungsseite hinzugefügt | Jannik | 1. Juni |
-Gelaufene Distand und Berge/Ziele in DB speichern (also wenn man seine Wanderung trackt und dann beendet wird die Distanz in die DB geschrieben) | Jannik | 1. Juni |
+Gelaufene Distanz und Berge/Ziele in DB speichern (also wenn man seine Wanderung trackt und dann beendet wird die Distanz in die DB geschrieben) | Jannik | 1. Juni |
 Erfolge in der Einstellungsseite responsive gemacht | Jannik | 2. Juni |
 Passwort aus dem Cache entfernt | Jannik | 2. Juni |
 Bestenliste_Controller fertig gemacht (10 Plätze und den eingeloggten User, wenn er nicht unter den Top 10 ist) | Noah | 4. Juni |
@@ -66,7 +66,7 @@ Logging zu TrackingService hinzugefügt | Jannik | 6. Juni |
 Logging zu Main, ServerOffline und Settings hinzugefügt | Jannik | 6. Juni |
 Scrollbar zur Sammelkarten-Seite hinzugefügt | Noah | 6. Juni |
 Änderungen am Backend | Noah | 9. Juni |
-Sammelkarten-Seite fertig gemacht (coole Effekte, Schwirigkeit und Bilder) | Noah | 9. Juni |
+Sammelkarten-Seite fertig gemacht (coole Effekte, Schwierigkeit und Bilder) | Noah | 9. Juni |
 Erster Entwurf von UnitTests | Jannik | 9. Juni |
 Filter-Funktion in Sammelkarten-Seite hinzugefügt | Noah | 9. Juni |
 Fixed Bug (Platzierung im Leaderboard) | Jannik | 9. Juni |
@@ -81,7 +81,7 @@ An Doku gearbeitet | Jannik | 15. Juni |
 
  
 ## Projektplanung
-Keine Ahnung was hier her kommt
+Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei ProjektIdee.md. Die weiteren Dateien, wie z.B. ERM und RM - Diagramm sind ebenfalls im Ordner DOC zu finden.
 
 ## Umsetzungsdetails
 
@@ -178,7 +178,153 @@ void _toggleTracking() {
 ```
 
 #### Sammelkarten
-Noah
+Die Seite Sammelkarten wurde erstellt mithilfe eines Stateless Widgets. Dieses ermöglicht, Änderungen sichtbar zu machen, wenn der NFC-Chip gescannt wird. Die Funktionen in dieser Seite beinhalten das Scannen von NFC-Chips, die Anzeige von den Sammelkarten des jeweiligen Users, die Sortierung der Sammelkarten nach bestimmten Kriterien und somit einen der Kerninhalte der App Hermes. Das ganze wurde aufgeteilt in mehrere Dateien.
+##### 1. Die Datei collection_page.dart
+Hier gibt es die Funktion:
+
+```dart
+Future<void> readNfcTag() async {
+    try {
+      var availability = await FlutterNfcKit.nfcAvailability;
+      if (availability != NFCAvailability.available) {
+        logger.w('NFC wird auf diesem Gerät nicht unterstützt oder ist deaktiviert!');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('NFC wird auf diesem Gerät nicht unterstützt oder ist deaktiviert.')),
+        );
+        return;
+      }
+
+      setState(() => state = 1);
+      NFCTag tag = await FlutterNfcKit.poll();
+
+      List<List<int>> data = <List<int>>[];
+
+      if (tag.ndefAvailable == true) {
+        var ndef = await FlutterNfcKit.readNDEFRecords();
+        for (var record in ndef) {
+          if (record.payload != null) {
+            data.add(record.payload!.toList());
+            logger.i('NDEF Record: ${record.payload}');
+          }
+        }
+      }
+
+      List<int> cleaned = data[1].sublist(3);
+      int? id = int.tryParse(String.fromCharCodes(cleaned));
+      if (id == null) {
+        logger.e('ID konnte nicht von NFC Chip extrahiert werden');
+        throw Exception("ID konnte nicht extrahiert werden.");
+      }
+
+      print("ID: $id");
+      logger.i('ID erfolgreich extrahiert: $id');
+      await FlutterNfcKit.finish();
+      setState(() => state = 2);
+      await Future.delayed(Duration(seconds: 1));
+      setState(() => state = 0);
+
+      await Validierungsmanager.AddSammelkarteNFCGPS(context, id);
+      await loadZiele();
+    } catch (e) {
+      print("Fehler beim Lesen: $e");
+      logger.w('Fehler beim Lesen des NFC Chips: $e');
+      await FlutterNfcKit.finish();
+      setState(() => state = 3);
+      await Future.delayed(Duration(seconds: 1));
+      setState(() => state = 0);
+    }
+  }
+```
+Diese liest den NFC-Chip mithilfe des Pakets FlutterNfcKit ein und gibt die Daten, die darauf sind, dementsprechend zurück - Bei uns ist das einfach die ID des Zieles.
+
+Die folgende Widget-Struktur ermöglicht eine übersichtliche Darstellung der bereits im Besitz befinden Sammelkarten.
+```dart
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            color: const Color.fromRGBO(30, 30, 30, 1),
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 45.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Deine Sammelkarten",
+                      style: TextStyle(fontSize: 28, fontFamily: "Sans", color: Colors.white),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: wechsleSortierung,
+                      icon: Icon(
+                        sortierIcons[aktuellerSortIndex],
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      tooltip: 'Sortieren nach: ${sortierKriterien[aktuellerSortIndex]}',
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Scrollbar(
+                          thumbVisibility: true,
+                          child: SingleChildScrollView(
+                            child: Wrap(
+                              children: collection.sammelkarten
+                                  .map((karte) => MySammelkarte(karte: karte))
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 200),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 130.0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: FloatingActionButton(
+                onPressed: readNfcTag,
+                backgroundColor: state == 1
+                    ? Colors.red.withOpacity(0.7)
+                    : const Color.fromARGB(255, 178, 180, 16).withOpacity(0.5),
+                child: Icon(
+                  state == 0
+                      ? Icons.add_rounded
+                      : state == 1
+                          ? Icons.document_scanner_rounded
+                          : state == 2
+                              ? Icons.check_rounded
+                              : Icons.close_rounded,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            bottom: 10.0,
+            left: 5,
+            right: 5,
+            child: MyBottomNavBar(
+              currentIndex: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+```
+
+Der ansprechende Effekt der Sammelkarten wird durch ein selbst erstelltes Widget sammelkarte_GUI.dart gelöst. Dieses wird erweitert durch die Variante, bei der die Sammelkarte vergrößert ist und nur aufgerufen wird, wenn die Sammelkarte angeklickt wird.
 
 #### Leaderboard
 Das Leaderboard wurde mithilfe einer PageView erstellt, welche das Wechseln zwischen den einzelnen Kategorieren ermöglicht. Zudem gibt es eine Klasse `leaderboardsingle`, welche das jeweilige Leaderboard je nach Kategorie anzeigt. Die ersten drei Plätze sind mit Gold, Silber und Bronze gekennzeichnet und der eingeloggte User mit Grün (Funktion `getMedalColor`). Befindet er sich nicht unter den Top 10, wird noch eine Platzierung unterhalb der Top 10 angezeigt.
@@ -353,6 +499,12 @@ Also das größte Problem hierbei war, dass das Tracking auch im Hintergrund wei
 #### Leaderboard
 Das Problem hierbei war, dass wenn sich der User nicht unter den Top 10 befand, dass man nicht im Frontend nicht wusste, welche Platzierung er hat. Deshalb hat Noah noch ein zusätzliches Attribut hinzugefügt, welches die Platzierung des jeweiligen Users angibt und somit war das Problem auch wieder behoben.
 
+#### Die richtigen Endpunkte machen
+Es ist eine Challenge gewesen, im Backend alle Endpunkte sinnvoll zu nutzen und keine unnötigen Dinge zu implementieren. Also hat man hier vergleichsmäßig viel Zeit investiert, um ein anständiges Ergebnis zu erhalten.
+
+#### Die Sammelkarten vergrößerbar machen.
+Die Vergrößerung der Sammelkarten für bessere Sichtbarkeit war eine Challenge in der selben Datei umzusetzen. Für dieses Feature benötigten wir deswegen eine zusätzliche Datei, da sonst die Funktionalität nicht gegangen wäre.
+
 ## Softwaretests 
 Die Software wurde größtenteils auf unseren Smartphones getestet aber auch auf Emulatoren, sowie auf einem Tablet. Zudem haben wir auch Unit-Tests für den `UserManager` und den `ValidierungsManager` geschrieben, welche hautpsächlich testen, ob die Funktionen richtig auf die Responses des Server reagieren. Dies wurde mithilfe von `mockito` umgesetzt, um die HTTP-Requests zu mocken.
 
@@ -360,4 +512,30 @@ Die Software wurde größtenteils auf unseren Smartphones getestet aber auch auf
 siehe `readme.md`
 
 ## Quellen
-Noah
+
+### Für die Bilder der Sammelkarten nahmen wir uns Bilder aus dem Internet, hier die Quellen:
+
+#### Vecteezy
+
+Diese Bilder sind unter der Fraktion "kostenlos" in der Website zu finden. Es ist lediglich von Nöten, den Urheber dieser Bilder anzugeben, welcher ebenfalls ersichtlich ist, wenn man diesen Links folgt.
+
+- https://de.vecteezy.com/vektorkunst/48189557-himmel-sternenklar-universum-hintergrund-dunkelblau-himmel-galaxis-raum-wolke-mit-nebel-und-sterne-im-winter-nacht-natur-sternenstaub-feld-im-tief-universum-milchig-weg-galaxis
+- https://de.vecteezy.com/vektorkunst/15973314-abstrakter-vektorhintergrund-mit-goldenem-farbverlauf-und-weich-leuchtender-hintergrund-luxurioses-goldhintergrunddesign-vektor-design-hintergrund
+- https://de.vecteezy.com/vektorkunst/50384759-einfach-grau-gradient-hintergrund-design
+- https://de.vecteezy.com/vektorkunst/46436817-gradient-bunt-hintergrund
+- https://de.vecteezy.com/vektorkunst/447228-eine-mauer-aus-stein
+- https://de.vecteezy.com/vektorkunst/237970-abstrakter-realistischer-holzerner-beschaffenheitshintergrund
+
+#### Bilder der Berge:
+
+Da diese Bilder nicht alle Copyright enthalten, ist es unsere Aufgabe, falls die App öffentlich wird, diese Bilder auszutauschen.
+
+- https://www.vorarlberg.travel/wp-content/uploads/2021/04/pois/sulzfluh-1617833582.jpg
+- https://img.oastatic.com/img2/6830545/2048x2048f/variant.jpg
+- https://cdn.britannica.com/17/83817-050-67C814CD/Mount-Everest.jpg
+- https://www.alpenverein.at/vorarlberg-bezirk-montafon_wAssets/oeavoffice_bilder/8f6b904e-5608-4dc1-81ae-cf2d4cc3f269.jpg
+- https://upload.wikimedia.org/wikipedia/commons/8/8b/20150824_Watzmann%2C_Berchtesgaden_%2801982%29.jpg
+- https://www.alpenklimagipfel.jetzt/media/multikarussell/26.png
+- https://upload.wikimedia.org/wikipedia/commons/4/4a/Drei_tuerme_montafon.JPG
+- https://upload.wikimedia.org/wikipedia/commons/a/a7/Brocken_vom_Torfhaus_neu.jpg
+- https://img.oastatic.com/img2/71685665/max/variant.jpg
