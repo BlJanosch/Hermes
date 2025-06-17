@@ -1,3 +1,9 @@
+"""
+@file
+@brief Enthält die Controller-Funktionen für die Endpunkte, die mit Erfolgen und Zielen zu tun haben
+"""
+
+
 import connexion
 import mariadb
 import datetime

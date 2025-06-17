@@ -1,3 +1,9 @@
+"""
+@file
+@brief enthält den Controller für jegliche Benutzer-Funktionalität.
+"""
+
+
 import connexion
 import mariadb
 import sys
@@ -8,6 +14,7 @@ from typing import Union
 from openapi_server.models.user import User  # noqa: E501
 from openapi_server import util
 import logging
+import bcrypt
 
 logging.basicConfig(level=logging.INFO)
 
@@ -40,6 +47,8 @@ def user_get(user_id):  # noqa: E501
     row = cur.fetchone()
     cur.close()
     conn.close()
+
+    print(row[3])
 
     if row:
         user = User(
@@ -83,7 +92,7 @@ def update_userdata(body):  # noqa: E501
 
     cur.execute(
     "UPDATE user SET kmgelaufen = ?, hoehenmeter = ?, passwort = ?, benutzername = ?, profilbild = ? WHERE id = ?",
-    (user.kmgelaufen, user.hoehenmeter, user.passwort, user.benutzername, user.profilbild, user.id)
+    (user.kmgelaufen, user.hoehenmeter, bcrypt.hashpw(user.passwort.encode(), bcrypt.gensalt()), user.benutzername, user.profilbild, user.id)
     )
 
     conn.commit()
@@ -153,8 +162,14 @@ def user_login(benutzername, passwort):  # noqa: E501
     """
     conn = get_connection()
     cur = conn.cursor()
-
-    cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (benutzername, passwort))
+    cur.execute("SELECT passwort FROM user WHERE benutzername = ?", (benutzername,))
+    currentPasswort = cur.fetchone()[0]
+    print(currentPasswort)
+    if (bcrypt.checkpw(passwort.encode(), currentPasswort.encode())):
+        cur.execute("SELECT id FROM user WHERE benutzername = ?", (benutzername,))
+    else:
+        logging.warning(f"Login fehlgeschlagen für User {benutzername}: Passwort ist falsch!")
+        return -1, 404
     row = cur.fetchone()
     if row:
         logging.info(f"User {benutzername} erfolgreich eingeloggt, ID: {row[0]}")
@@ -181,7 +196,7 @@ def user_register(body):  # noqa: E501
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT id FROM user WHERE benutzername = ? AND passwort = ?", (user.benutzername, user.passwort))
+    cur.execute("SELECT id FROM user WHERE benutzername = ?", (user.benutzername,))
     row = cur.fetchone()
     try:
         if (row[0] != -1):
@@ -193,7 +208,7 @@ def user_register(body):  # noqa: E501
     try:
         cur.execute(
         "INSERT INTO user (kmgelaufen, hoehenmeter, passwort, benutzername, profilbild) VALUES (?, ?, ?, ?, ?)",
-        (0, 0, user.passwort, user.benutzername, user.profilbild)
+        (0, 0, bcrypt.hashpw(user.passwort.encode(), bcrypt.gensalt()), user.benutzername, user.profilbild)
         )
     except: 
         logging.error("Fehler beim Einfügen des Benutzers in die Datenbank")
