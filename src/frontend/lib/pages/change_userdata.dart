@@ -3,6 +3,7 @@ import 'package:hermes/components/globals.dart';
 import 'package:hermes/pages/more_settings.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class ChangeUserdata extends StatefulWidget {
   final String ChangeType;
@@ -163,7 +164,7 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
               );
             }
             else{
-              if (_ersterInput.text == oldPassword){
+              if (BCrypt.checkpw(_ersterInput.text, oldPassword)){
                 if (_zweiterInput.text == _dritterInput.text){
                   try{
                     UserManager.updateData(username, _dritterInput.text, hoehenmeter, kmgelaufen, profilbild);
