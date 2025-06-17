@@ -8,6 +8,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 def get_connection():
+    """
+    @brief Erstellt eine Verbindung zur MariaDB-Datenbank.
+    @return Gibt eine Verbindung zu MariaDB zurück. Im Fehlerfall wird eine Fehlermeldung geloggt und das Programm beendet.
+    """
     try:
         return mariadb.connect(
             user="app",
@@ -21,6 +25,12 @@ def get_connection():
         sys.exit(1)
 
 def init_db():
+    """
+    @brief Erstellt alle Tabellen der Datenbank, falls sie noch nicht existieren.
+    @details Diese Funktion wird beim Start des Servers aufgerufen, um sicherzustellen, dass die Datenbankstruktur vorhanden ist.
+    """
+
+
     conn = get_connection()
     logging.info("Erfolgreich verbunden mit MariaDB")
     cursor = conn.cursor()

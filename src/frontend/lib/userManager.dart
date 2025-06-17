@@ -128,6 +128,8 @@ class UserManager {
       'username': prefs.getString('username') ?? 'Unbekannt',
       'kmgelaufen': result['kmgelaufen'] ?? 0,
       'hoehenmeter': result['hoehenmeter'] ?? 0,
+      'passwort': result['Passwort'] ?? '',
+      'profilbild': result['Profilbild'] ?? '',
       'berge': resultBerge.length ?? 0,
     };
   }
@@ -272,5 +274,37 @@ class UserManager {
 
 
     return collection;
+  }
+
+  // Logging included
+  static Future<void> updateData(String username, String password, double hoehenmeter, double kmgelaufen, String probilbild, {http.Client? client, }) async {
+    client ??= http.Client();
+    final prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    final url = Uri.parse('http://$serverIP:8080/user/update_data');
+
+    final body = json.encode({
+      "Benutzername": username,
+      "ID": id,
+      "Passwort": password, 
+      "Profilbild": probilbild,
+      "hoehenmeter": hoehenmeter,
+      "kmgelaufen": kmgelaufen
+    });
+
+    final response = await client.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    );
+
+    print(response.statusCode);
+    if (response.statusCode != 200){
+      logger.w('Fehler beim Aktualisierung der Daten');
+      throw Exception('Fehler beim Aktualisierung der Datem');
+    }
+    logger.i('Daten erfolgreich aktualisiert');
   }
 }

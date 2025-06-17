@@ -28,12 +28,11 @@ def get_connection():
 
 # Logging included
 def user_get(user_id):  # noqa: E501
-    """Gibt die Daten eines Benutzers anhand der ID zurück
+    """
+    @brief Sucht einen User anhand der ID und gibt die User-Daten zurück
+    @param user_id: ID des Benutzers
 
-    :param id:
-    :type id: int
-
-    :rtype: Union[User, Tuple[User, int], Tuple[User, int, Dict[str, str]]]
+    @return Ein User-Objekt mit den Daten des Benutzers mit der angegebenen ID, und im Fehlerfall eine dementsprechende Fehlermeldung
     """
     conn = get_connection()
     cur = conn.cursor()
@@ -62,14 +61,11 @@ def user_get(user_id):  # noqa: E501
     
 # Logging included
 def update_userdata(body):  # noqa: E501
-    """Aktualisiert die Daten eines Benutzers, man muss ein Json mitgeben
+    """
+    @brief Aktualisiert die Daten eines Benutzers.
+    @param body: JSON-Objekt mit den Attributen des Benutzers, auch die Attribute, die nicht aktualisiert werden.
 
-     # noqa: E501
-
-    :param user: 
-    :type user: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
+    @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
     """
     user = body
     if connexion.request.is_json:
@@ -81,6 +77,12 @@ def update_userdata(body):  # noqa: E501
 
     conn = get_connection()
     cur = conn.cursor()
+
+    cur.execute("SELECT id FROM user WHERE id = ?", (user.id,))
+    if cur.fetchone() is None:
+        logging.warning(f"Update fehlgeschlagen: Kein Benutzer mit ID {user.id} gefunden")
+        cur.close()
+        return {"message": f"User with ID {user.id} not found"}, 404
 
     cur.execute(
     "UPDATE user SET kmgelaufen = ?, hoehenmeter = ?, passwort = ?, benutzername = ?, profilbild = ? WHERE id = ?",
@@ -96,12 +98,11 @@ def update_userdata(body):  # noqa: E501
 
 # Logging included
 def update_stats(body):  # noqa: E501
-    """Aktualisiert die Statistiken eines Benutzers. Erwartet JSON mit id, kmgelaufen und hoehenmeter.
+    """
+    @brief Aktualisiert einzig und allein die Stats des Benutzers, nicht seine Daten, indem er die erhaltenen Daten zu den vorhandenen addiert.
+    @param body: JSON-Objekt mit den Attributen des Benutzers (id, kmgelaufen, hoehenmeter), die aktualisiert werden sollen.
 
-    :param body: JSON-Daten mit den Feldern 'id', 'kmgelaufen', 'hoehenmeter'
-    :type body: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]]
+    @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
     """
     if not connexion.request.is_json:
         logging.error("Falsche Eingabe: JSON erwartet")
@@ -124,6 +125,12 @@ def update_stats(body):  # noqa: E501
     conn = get_connection()
     cur = conn.cursor()
 
+    cur.execute("SELECT id FROM user WHERE id = ?", (user_id,))
+    if cur.fetchone() is None:
+        logging.warning(f"Update fehlgeschlagen: Kein Benutzer mit ID {user_id} gefunden")
+        cur.close()
+        return {"message": f"User with ID {user_id} not found"}, 404
+
     cur.execute("SELECT kmgelaufen, hoehenmeter FROM user WHERE id = ?", (user_id,))
     row = cur.fetchone()
 
@@ -140,16 +147,12 @@ def update_stats(body):  # noqa: E501
 
 # Logging included
 def user_login(benutzername, passwort):  # noqa: E501
-    """Prüft, ob ein User existiert, gibt Integer ID zurück (-1, wenn User nicht vorhanden)
+    """
+    @brief Gibt einfach die ID des Benutzers zurück, wenn er vorhanden ist.
+    @param benutzername: Benutzername des Benutzers
+    @param passwort: Passwort des Benutzers
 
-     # noqa: E501
-
-    :param benutzername: 
-    :type benutzername: str
-    :param passwort: 
-    :type passwort: str
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
+    @return Die ID des Benutzers, wenn er vorhanden ist, sonst -1.
     """
     conn = get_connection()
     cur = conn.cursor()
@@ -171,14 +174,10 @@ def user_login(benutzername, passwort):  # noqa: E501
 
 # Logging included
 def user_register(body):  # noqa: E501
-    """Neuen Benutzer registrieren
-
-     # noqa: E501
-
-    :param user: 
-    :type user: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
+    """
+    @brief Legt einen neuen Benutzer an, wenn dieser noch nicht existiert.
+    @param body: JSON-Body, der ein User-Objekt repräsentiert, mit 0 kmgelaufen, 0 hoehenmeter, einem Passwort, einem Benutzernamen und einem Profilbild.
+    @return Meldung "Erfolg" bei erfolgreicher Registrierung, sonst eine dementsprechende Fehlermeldung.
     """
     user = body
     if connexion.request.is_json:
