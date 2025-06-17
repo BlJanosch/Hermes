@@ -120,7 +120,11 @@ def get_ziele(user_id):  # noqa: E501
 
 # Logging included
 def get_erfolge(user_id):  # noqa: E501
-    """Gibt alle Erfolge vom jeweiligen User zurück"""
+    """
+    @brief Gibt alle Erfolge eines Users zurück
+    @param user_id: ID des aktiven Benutzers
+    @return Gibt eine Liste zurück, die alle Erfolge des Users enthält (id, name, beschreibung), oder eine dementsprechende Fehlermeldung im Fehlerfall
+    """
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -149,7 +153,10 @@ def get_erfolge(user_id):  # noqa: E501
     
 # Logging included
 def get_allerfolge():  # noqa: E501
-    """Gibt alle Erfolge zurück"""
+    """
+    @brief Gibt alle Erfolge zurück, die im System verfügbar sind
+    @return Gibt eine Liste zurück, die alle verfügbaren Erfolge enthält (id, name, beschreibung), oder eine dementsprechende Fehlermeldung im Fehlerfall
+    """
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -175,7 +182,11 @@ def get_allerfolge():  # noqa: E501
 
 # Logging included
 def check_erfolge(user_id):  # noqa: E501
-    """Schaut, ob ein User einen neuen Erfolg erreicht hat, fügt ihn dann auch hinzu und gibt dann entweder True oder False zurück"""
+    """
+    @brief Schaut, ob ein User einen neuen Erfolg erreicht hat, fügt ihn dann auch hinzu und gibt dann entweder True oder False zurück
+    @param user_id: ID des aktiven Benutzers
+    @return Gibt ein Bool zurück, das angibt, ob ein neuer Erfolg freigeschaltet wurde (True/False)
+    """
     newErfolg = False
     try:
         conn = get_connection()
@@ -226,7 +237,10 @@ def check_erfolge(user_id):  # noqa: E501
     
 # Logging included
 def get_ziel(ziel_id):  # noqa: E501
-    """Gibt die Infos eines Zieles zurück"""
+    """
+    @brief Gibt die Infos eines Zieles zurück
+    @param ziel_id: ID des Ziels
+    @return Gibt ein Ziel-Objekt zurück, das die Informationen des Ziels enthält (id, name, hoehe, schwierigkeit, bild, lat, lng), oder eine dementsprechende Fehlermeldung im Fehlerfall"""
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
