@@ -1,3 +1,9 @@
+"""
+@file
+@brief Initialisiert die Connexion App und hilft den Server zu starten.
+"""
+
+
 import connexion
 from flask_cors import CORS
 from openapi_server import encoder

@@ -1,3 +1,9 @@
+"""
+@file
+@brief enthält den Controller für jegliche Benutzer-Funktionalität.
+"""
+
+
 import connexion
 import mariadb
 import sys

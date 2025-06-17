@@ -1,3 +1,9 @@
+"""
+@file
+@brief Initialisiert die Datenbank und startet den Server.
+"""
+
+
 import mariadb
 import sys
 import connexion
