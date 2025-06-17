@@ -6,13 +6,14 @@ import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
-import 'package:hermes/pages/more_settings.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
+import 'package:hermes/pages/change_userdata.dart';
+import 'package:hermes/pages/info.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -129,12 +130,41 @@ class _SettingsState extends State<Settings> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Mehr Einstellungen'),
+              leading: Icon(Icons.manage_accounts),
+              title: Text(
+                "Benutzername",
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MoreSettings()),
+                context,
+                MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Benutzername",)),
+              );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.password),
+              title: Text(
+                "Passwort",
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Passwort",)),
+              );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text(
+                "Info",
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Info()),
                 );
               },
             ),

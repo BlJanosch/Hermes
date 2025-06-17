@@ -1,3 +1,8 @@
+"""
+@file
+@brief enthält den Controller für die Bestenliste-Funktionalität.
+"""
+
 import connexion
 import mariadb
 import sys

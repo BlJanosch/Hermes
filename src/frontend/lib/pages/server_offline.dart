@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/globals.dart';
 import 'package:hermes/main.dart';
+import 'package:hermes/userManager.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,13 +63,15 @@ class ServerOfflinePage extends StatelessWidget {
                   );
 
                   final online = await isServerOnline('http://$serverIP:8080/ui');
+                  var data = await UserManager.loadUserData();
+                  bool AccountStillExists = data.length == 0 ? false : true;
 
                   Navigator.of(context, rootNavigator: true).pop();
 
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) =>
-                          MyApp(isLoggedIn: isLoggedIn, online: online),
+                          MyApp(isLoggedIn: isLoggedIn, online: online, AccountStillExists: AccountStillExists,),
                     ),
                   );
                 },
