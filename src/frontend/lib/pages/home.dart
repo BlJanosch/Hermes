@@ -149,18 +149,22 @@ class _HomeState extends State<Home> {
                 ),
               CurrentLocationLayer(),
             ],
-          ),
-          Positioned(
-            bottom: 100,
-            left: 100,
-            child: SimpleAttributionWidget(
-              source: Text(
-                'OpenStreetMap contributors',
-                style: TextStyle(fontSize: 12),
-              ),
-              backgroundColor: Colors.transparent,
             ),
-          ),
+            Positioned(
+              bottom: MediaQuery.of(context).size.height * 0.10 + 15,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  color: Colors.transparent,
+                  child: Text(
+                    'flutter_map | © OpenStreetMap contributors',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            ),
+
           if (isTracking || isTrackingStopped)
             Positioned(
               top: 40,

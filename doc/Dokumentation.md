@@ -88,6 +88,7 @@ Erfolge_Controller und alle wichtigen Python Dateien dokumentiert mit Doxygen | 
 Password Hashing hinzugefügt | Jannik | 17. Juni |
 Doxygen fertiggestellt | Noah | 17. Juni |
 Bei Autlogin wird nun geprüft, ob der User noch exisitert | Jannik | 17. Juni |
+Info Seite hinzugefügt | Jannik | 17. Juni |
  
 ## Projektplanung
 Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei `ProjektIdee.md`. Die ersten Entwürfe vom ERM bzw. RM sind im Ordner `ERM_RM` zu finden, jedoch sind diese nicht mehr aktuell. Das Klassendiagramm ist dementsprechend auch im Ordner `Klassendiagramm` zu finden. Im Ordern `Bilder` sind Designs von der UI und den Sammelkarten, sowie das Logo. In der Datei `REST-API.md` ist auch der erste Entwurf der Endpunkte zu finden.
@@ -114,6 +115,8 @@ Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die g
 - shared_preferences: ^2.2.2
 - flutter_nfc_kit: ^3.3.1
 - logger: ^2.0.2
+- bcrypt: ^1.1.3
+- url_launcher: ^6.2.5
 
 ### Umsetzung
 
@@ -412,7 +415,7 @@ static Future<bool> Login(BuildContext? context, String username, String passwor
 ```
 
 #### Einstellungen
-Die Einstellungsseite ist im Prinzip die Übersicht über die Stats und Erfolge eines Users. Sie biete auch die Möglichkeit sich wieder abzumelden und eine Funktion um den User zu bearbeiten wäre auch vorgesehen, aber noch nicht umgesetzt. Die Seite holt sich die Userdaten über den `UserManager`, genauer gesagt über die Funktion `loadUserData` und zeigt diese an. Zudem werden die Erfolge angezeigt, die ein User freigeschaltet hat und die es noch gibt. Zuerst werden dafür die Erfolge des Users mit der Funktion `loadUserErfolge` und anschließend der Funktion `loadAllErfolge` mitgeben, welche die noch fehlenden Erfolge ermittelt. Anschließend werden sie dann angezeigt, je nach Bildschirmgröße, werden verschieden viele in einer Reihe angezeigt. Zusätzlich wird immer wenn man die Einstellungsseite öffnet, geprüft, ob neue Erfolge freigeschaltet wurden mithilfe der Funktion `checkErfolge`. Diese zeigt dann auch kurz einen Dialog, wenn man einen neuen Erfolg fregeschaltet hat.
+Die Einstellungsseite ist im Prinzip die Übersicht über die Stats und Erfolge eines Users. Sie biete auch die Möglichkeit sich wieder abzumelden und eine Funktion um den User zu bearbeiten, sowie eine Information über die App wie Version, Quellen, usw. Die Seite holt sich die Userdaten über den `UserManager`, genauer gesagt über die Funktion `loadUserData` und zeigt diese an. Zudem werden die Erfolge angezeigt, die ein User freigeschaltet hat und die es noch gibt. Zuerst werden dafür die Erfolge des Users mit der Funktion `loadUserErfolge` und anschließend der Funktion `loadAllErfolge` mitgeben, welche die noch fehlenden Erfolge ermittelt. Anschließend werden sie dann angezeigt, je nach Bildschirmgröße, werden verschieden viele in einer Reihe angezeigt. Zusätzlich wird immer wenn man die Einstellungsseite öffnet, geprüft, ob neue Erfolge freigeschaltet wurden mithilfe der Funktion `checkErfolge`. Diese zeigt dann auch kurz einen Dialog, wenn man einen neuen Erfolg fregeschaltet hat.
 
 Die Funktion `loadUserData`:
 ```dart
