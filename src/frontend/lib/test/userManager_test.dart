@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hermes/components/globals.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
 import 'package:hermes/schwierigkeit.dart';
@@ -343,5 +344,33 @@ void main() {
       expect(collection.sammelkarten[1].Hoehe, 3798);
       expect(collection.sammelkarten[1].schwierigkeit, Schwierigkeit.Silber);
     });
+
+    test('updateData sendet korrekte Daten', () async {
+    SharedPreferences.setMockInitialValues({'id': 42});
+
+    final mockClient = MockClient((request) async {
+      expect(request.method, 'PUT');
+      expect(request.url.toString(), 'http://$serverIP:8080/user/update_data');
+
+      final body = jsonDecode(request.body);
+      expect(body['Benutzername'], 'testuser');
+      expect(body['ID'], 42);
+      expect(body['Passwort'], 'password123');
+      expect(body['Profilbild'], 'profilbild.jpg');
+      expect(body['hoehenmeter'], 123.4);
+      expect(body['kmgelaufen'], 56.7);
+
+      return http.Response('', 200);
+    });
+
+    await UserManager.updateData(
+      'testuser',
+      'password123',
+      123.4,
+      56.7,
+      'profilbild.jpg',
+      client: mockClient,
+    );
+  });
   });
 }
