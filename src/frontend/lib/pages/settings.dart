@@ -6,6 +6,7 @@ import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/erfolgcircle.dart';
 import 'package:hermes/erfolg.dart';
 import 'package:hermes/erfolgCollection.dart';
+import 'package:hermes/pages/more_settings.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
@@ -131,7 +132,10 @@ class _SettingsState extends State<Settings> {
               leading: Icon(Icons.settings),
               title: Text('Mehr Einstellungen'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MoreSettings()),
+                );
               },
             ),
           ],

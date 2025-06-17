@@ -81,7 +81,7 @@ An Doku gearbeitet | Jannik | 15. Juni |
 
  
 ## Projektplanung
-Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei ProjektIdee.md. Die weiteren Dateien, wie z.B. ERM und RM - Diagramm sind ebenfalls im Ordner DOC zu finden.
+Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei `ProjektIdee.md`. Die ersten Entwürfe vom ERM bzw. RM sind im Ordner `ERM_RM` zu finden, jedoch sind diese nicht mehr aktuell. Das Klassendiagramm ist dementsprechend auch im Ordner `Klassendiagramm` zu finden. Im Ordern `Bilder` sind Designs von der UI und den Sammelkarten, sowie das Logo. In der Datei `REST-API.md` ist auch der erste Entwurf der Endpunkte zu finden.
 
 ## Umsetzungsdetails
 
