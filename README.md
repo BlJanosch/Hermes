@@ -47,6 +47,6 @@ Your own position is highlighted green.
 
 ![](doc/BedienungsanleitungBilder/Settings.png)
 
-This is the settings page. Here you can see your stats like the total distance, altitude and mountains you have collected. You also see achievements you have unlocked and those you can still unlock. If you click on the button on the top right corner you can logout, change your username/password or see the information about the app.
+This is the settings page. Here you can see your stats like the total distance, altitude and mountains you have collected. You also see achievements you have unlocked and those you can still unlock. If you click on the button on the top right corner you can logout, change your username/password or see the information about the app like version or sources.
 
 ![](doc/BedienungsanleitungBilder/Abmelden.png)
