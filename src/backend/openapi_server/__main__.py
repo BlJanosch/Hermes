@@ -12,6 +12,9 @@ app.add_api('openapi.yaml',
             pythonic_params=True)
 
 def main():
+    """
+    @brief Startet den Server, bzw. die open erstellte Connexion App.
+    """
     app.run(port=8080)
 
 

@@ -24,17 +24,19 @@ def get_connection():
 
 # Logging included
 def bestenliste(user_id,filter_db):  # noqa: E501
-    """Bestenliste nach Filter abrufen (hoehenmeter, kilometer_gelaufen, berge)"""
+    """
+    @brief Ruft eine Liste von Usern ab sortiert nach Hoehenmeter, kmgelaufen oder Anzahl Berge.
+    @param user_id: ID des aktiven Benutzers
+    @param filter_db: String, der angibt, nach welchem Kriterium die Bestenliste sortiert werden soll. Mögliche Werte sind "hoehenmeter", "kmgelaufen" oder "berge".
+    @return Gibt eine Liste zurück, die die 10 besten User enthält, sortiert nach dem angegebenen Kriterium. Falls der aktive User nicht unter den Top 10 ist, wird er zu einem weiteren Eintrag am Ende der Liste.
+    """
 
-    print("hallo")
-    print("UserID:", user_id)
-    print("Filter:", filter_db)
     if not user_id or not filter_db:
         logging.error("userID und filter sind erforderlich")
         return {"error": "userID und filter sind erforderlich"}, 400
 
     conn = get_connection()
-    cur = conn.cursor(dictionary=True)  # <== wichtig für Spaltennamen
+    cur = conn.cursor(dictionary=True) 
 
     query = """
     SELECT id, profilbild, benutzername, hoehenmeter, kmgelaufen
@@ -47,7 +49,6 @@ def bestenliste(user_id,filter_db):  # noqa: E501
         logging.error(f"Ungültiger Filterwert: {filter_db}")
         return {"error": "Ungültiger Filterwert"}, 400
 
-    # Entsprechend sortieren
     if filter_db == "hoehenmeter":
         logging.info("Sortiere nach Hoehenmeter")
         query += " hoehenmeter DESC"
@@ -58,7 +59,7 @@ def bestenliste(user_id,filter_db):  # noqa: E501
         logging.info("Sortiere nach Anzahl Berge")
         query = "SELECT ziel_erreicht.user_id as id, user.benutzername as benutzername, user.profilbild as profilbild, user.hoehenmeter as hoehenmeter, user.kmgelaufen as kmgelaufen, COUNT(ziel_erreicht.user_id) AS anzahlBerge FROM ziel_erreicht JOIN user ON ziel_erreicht.user_id = user.id GROUP BY ziel_erreicht.user_id, user.benutzername, user.profilbild, user.kmgelaufen, user.hoehenmeter ORDER BY anzahlBerge DESC;"
     else:
-        query += " kmgelaufen DESC"  # Fallback, sollte nie erreicht werden
+        query += " kmgelaufen DESC" 
 
     cur.execute(query)
     rows = cur.fetchall()
