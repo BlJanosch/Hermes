@@ -11,6 +11,7 @@ import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/tracking_service.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Logging included
 class Home extends StatefulWidget {
@@ -135,6 +136,7 @@ class _HomeState extends State<Home> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.app',
               ),
+
               if (route.length > 1)
                 PolylineLayer(
                   polylines: [
@@ -147,6 +149,17 @@ class _HomeState extends State<Home> {
                 ),
               CurrentLocationLayer(),
             ],
+          ),
+          Positioned(
+            bottom: 100,
+            left: 100,
+            child: SimpleAttributionWidget(
+              source: Text(
+                'OpenStreetMap contributors',
+                style: TextStyle(fontSize: 12),
+              ),
+              backgroundColor: Colors.transparent,
+            ),
           ),
           if (isTracking || isTrackingStopped)
             Positioned(

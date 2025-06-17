@@ -78,7 +78,16 @@ UnitTests für UserManager, ValidierungsManager (KI) | Jannik | 13. Juni |
 Datenbank Rolle (app) hinzugefügt | Jannik | 14. Juni |
 An Doku gearbeitet | Jannik | 14. Juni |
 An Doku gearbeitet | Jannik | 15. Juni |
-
+An UnitTests gearbeitet | Noah | 15. Juni |
+An Doku gearbeitet | Noah | 16. Juni |
+Ordner organisiert | Jannik | 16. Juni |
+Benutzername und Passwort verändern Funktion hinzugefügt | Jannik | 17. Juni |
+Benutzer_Controller dokumentiert mit Doxygen | Noah | 17. Juni |
+Bestenliste_Controller dokumentiert mit Doxygen | Noah | 17. Juni |
+Erfolge_Controller und alle wichtigen Python Dateien dokumentiert mit Doxygen | Noah | 17. Juni |
+Password Hashing hinzugefügt | Jannik | 17. Juni |
+Doxygen fertiggestellt | Noah | 17. Juni |
+Bei Autlogin wird nun geprüft, ob der User noch exisitert | Jannik | 17. Juni |
  
 ## Projektplanung
 Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei `ProjektIdee.md`. Die ersten Entwürfe vom ERM bzw. RM sind im Ordner `ERM_RM` zu finden, jedoch sind diese nicht mehr aktuell. Das Klassendiagramm ist dementsprechend auch im Ordner `Klassendiagramm` zu finden. Im Ordern `Bilder` sind Designs von der UI und den Sammelkarten, sowie das Logo. In der Datei `REST-API.md` ist auch der erste Entwurf der Endpunkte zu finden.
