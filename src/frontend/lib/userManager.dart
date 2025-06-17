@@ -113,7 +113,7 @@ class UserManager {
     final response = await client.get(url);
     if (response.statusCode == 401){
       logger.w('User not found');
-      throw Exception('User not found');
+      return {};
     }
     final result = json.decode(response.body);
     final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
