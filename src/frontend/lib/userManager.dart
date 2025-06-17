@@ -120,7 +120,6 @@ class UserManager {
     final responseBerge = await client.get(urlBerge);
     if (responseBerge.statusCode != 200){
       logger.w('Ungülte Eingabe/Fehler bei Ziel-Abfrage');
-      throw Exception('Ungültige Eingabe/Fehler bei Ziel-Abfrage');
     }
     final resultBerge = json.decode(responseBerge.body);
     logger.i('Benutzerdaten erfolgreich geladen');
@@ -277,7 +276,7 @@ class UserManager {
   }
 
   // Logging included
-  static Future<void> updateData(String username, String password, double hoehenmeter, double kmgelaufen, String probilbild, {http.Client? client, }) async {
+  static Future<void> updateData(String username, String? password, double hoehenmeter, double kmgelaufen, String probilbild, {http.Client? client, }) async {
     client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
