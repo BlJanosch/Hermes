@@ -37,7 +37,13 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   bool online = await isServerOnline('http://$serverIP:8080/ui');
-  var data = await UserManager.loadUserData();
+  var data;
+  try{
+    data = await UserManager.loadUserData();
+  }
+  catch (e){
+    data = [];
+  }
   bool AccountStillExists = data.length == 0 ? false : true;
 
   runApp(MyApp(isLoggedIn: isLoggedIn, online: online, AccountStillExists: AccountStillExists,));
