@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the getZiele method from the UserManager class, for the Dart programming language.">
+  <title>getZiele method - UserManager class - userManager library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">hermes</a></li>
+    <li><a href="../../userManager">userManager.dart</a></li>
+    <li><a href="../../userManager/UserManager-class.html">UserManager</a></li>
+    <li class="self-crumb">getZiele static method</li>
+  </ol>
+  <div class="self-name">getZiele</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="userManager&#47;UserManager-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">getZiele</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/flutter_test/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../sammelkarteCollection/SammelkarteCollection-class.html">SammelkarteCollection</a></span>&gt;</span></span>
+<span class="name ">getZiele</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="getZiele-param-client"><span class="type-annotation"><a href="https://pub.dev/documentation/http/1.4.0/http/Client-class.html">Client</a>?</span> <span class="parameter-name">client</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Lädt die vom Benutzer erreichten Ziele als <a href="../../sammelkarteCollection/SammelkarteCollection-class.html">SammelkarteCollection</a>.</p>
+<p>Optionale Übergabe eines HTTP-Clients <code>client</code>.</p>
+<p>Wirft eine Exception bei Fehlern.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;SammelkarteCollection&gt; getZiele({http.Client? client}) async {
+  client ??= http.Client();
+  final prefs = await SharedPreferences.getInstance();
+  int? id = prefs.getInt(&#39;id&#39;);
+  final url = Uri.parse(&#39;http:&#47;&#47;$serverIP:8080&#47;erfolg&#47;erreichteziele?userID=$id&#39;);
+  final response = await client.get(url);
+
+  if (response.statusCode != 200) {
+    logger.w(&#39;Fehler beim Abrufen der erreichten Ziele&#39;);
+    throw Exception(&#39;Fehler beim Abrufen der erreichten Ziele&#39;);
+  }
+
+  logger.i(&#39;Ziele erfolgreich abgerufen&#39;);
+  final List&lt;dynamic&gt; jsonList = json.decode(response.body);
+  logger.i(&#39;Ziele: $jsonList&#39;);
+
+  final collection = SammelkarteCollection();
+
+  for (var ziel in jsonList) {
+    final karte = Sammelkarte(
+      ziel[&#39;Name&#39;],
+      ziel[&#39;Bild&#39;],
+      Schwierigkeit.values[ziel[&#39;Schwierigkeit&#39;]],
+      ziel[&#39;hoehe&#39;].toDouble(),
+      DateTime.parse(ziel[&#39;datum&#39;]),
+    );
+    collection.sammelkarten.add(karte);
+  }
+
+  return collection;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">hermes</a></li>
+    <li><a href="../../userManager">userManager</a></li>
+    <li><a href="../../userManager/UserManager-class.html">UserManager</a></li>
+    <li class="self-crumb">getZiele static method</li>
+</ol>
+
+    <h5>UserManager class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    hermes
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

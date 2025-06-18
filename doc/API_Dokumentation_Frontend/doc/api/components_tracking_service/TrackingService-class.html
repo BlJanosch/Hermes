@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the TrackingService class from the tracking_service library, for the Dart programming language.">
+  <title>TrackingService class - tracking_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">hermes</a></li>
+    <li><a href="../components_tracking_service">components\tracking_service.dart</a></li>
+    <li class="self-crumb">TrackingService class</li>
+  </ol>
+  <div class="self-name">TrackingService</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="components_tracking_service&#47;components_tracking_service-library-sidebar.html"
+    data-below-sidebar="components_tracking_service&#47;TrackingService-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">TrackingService</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Singleton-Service zur Erfassung und Verwaltung von Standort-Tracking-Daten.</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="TrackingService" class="callable">
+          <span class="name"><a href="../components_tracking_service/TrackingService/TrackingService.html">TrackingService</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Factory-Konstruktor, der immer dieselbe Instanz zurückgibt.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="accumulatedDuration" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/accumulatedDuration.html">accumulatedDuration</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a></span>
+  
+
+</dt>
+<dd>
+  Akkumulierte Tracking-Dauer vor dem letzten Start/Resume.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="currentDuration" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/currentDuration.html">currentDuration</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a></span>
+  
+
+</dt>
+<dd>
+  Gibt die aktuell gemessene Gesamtdauer des Trackings zurück,
+inklusive der Zeit seit dem letzten Start/Resume.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isTracking" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/isTracking.html">isTracking</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Status, ob das Tracking gerade läuft.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="location" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/location.html">location</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/location/5.0.3/location/Location-class.html">Location</a></span>
+  
+
+</dt>
+<dd>
+  Location-Plugin zur Standortabfrage.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="onLocationUpdated" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/onLocationUpdated.html">onLocationUpdated</a></span>
+  <span class="signature">&#8596; dynamic Function<span class="signature">()</span>?</span>
+  
+
+</dt>
+<dd>
+  Callback-Funktion, die bei Standortänderungen aufgerufen wird.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="startTime" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/startTime.html">startTime</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/DateTime-class.html">DateTime</a>?</span>
+  
+
+</dt>
+<dd>
+  Zeitpunkt, zu dem das Tracking gestartet oder fortgesetzt wurde.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="totalAltitudeGain" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/totalAltitudeGain.html">totalAltitudeGain</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Gesamter Höhenanstieg in Metern.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="totalDistance" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/totalDistance.html">totalDistance</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Gesamtstrecke in Metern.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="trackedRoute" class="property">
+  <span class="name"><a href="../components_tracking_service/TrackingService/trackedRoute.html">trackedRoute</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/latlong2/0.9.1/latlong2/LatLng-class.html">LatLng</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Liste der bisher getrackten GPS-Koordinaten.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="reset" class="callable">
+  <span class="name"><a href="../components_tracking_service/TrackingService/reset.html">reset</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Setzt alle Tracking-Daten zurück und stoppt das Tracking.
+  
+
+</dd>
+
+        <dt id="resumeTracking" class="callable">
+  <span class="name"><a href="../components_tracking_service/TrackingService/resumeTracking.html">resumeTracking</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Setzt das Tracking fort, ohne die bisherigen Daten zu löschen.
+  
+
+</dd>
+
+        <dt id="startTracking" class="callable">
+  <span class="name"><a href="../components_tracking_service/TrackingService/startTracking.html">startTracking</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Startet das Tracking und setzt alle relevanten Werte zurück.
+  
+
+</dd>
+
+        <dt id="stopTracking" class="callable">
+  <span class="name"><a href="../components_tracking_service/TrackingService/stopTracking.html">stopTracking</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Stoppt das Tracking und summiert die bisherige Dauer.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">hermes</a></li>
+    <li><a href="../components_tracking_service">tracking_service</a></li>
+    <li class="self-crumb">TrackingService class</li>
+</ol>
+
+    <h5>tracking_service library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    hermes
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
