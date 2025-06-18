@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hermes/components/bottom_nav_bar.dart';
 import 'package:hermes/components/leaderboardsingle.dart'; // deine Navbar importieren
 
+/// Seite, die eine mehrseitige Bestenliste mit einer Bottom Navigation anzeigt.
+///
+/// Die Seite beinhaltet drei verschiedene Kategorien (km gelaufen, Höhenmeter, Berge),
+/// die per PageView horizontal geswiped werden können. Eine kleine Indikatorleiste zeigt
+/// an, auf welcher Seite man sich befindet.
+///
+/// Die untere Navigation (`MyBottomNavBar`) ist fest am unteren Bildschirmrand positioniert.
 class LeaderboardPage extends StatefulWidget {
   const LeaderboardPage({super.key});
 
@@ -10,13 +17,17 @@ class LeaderboardPage extends StatefulWidget {
 }
 
 class _LeaderboardPageState extends State<LeaderboardPage> {
+  /// Controller zur Steuerung und Überwachung der PageView.
   final PageController _controller = PageController();
+
+  /// Index der aktuell aktiven Seite im PageView.
   int _currentPage = 0;
 
+  /// Liste der Seiten (Widgets) mit unterschiedlichen Kategorien für die Bestenliste.
   final List<Widget> _pages = [
-    Center(child: BestenlistePage(category: "kmgelaufen",)),
-    Center(child: BestenlistePage(category: "hoehenmeter",)),
-    Center(child: BestenlistePage(category: "berge",)),
+    Center(child: BestenlistePage(category: "kmgelaufen")),
+    Center(child: BestenlistePage(category: "hoehenmeter")),
+    Center(child: BestenlistePage(category: "berge")),
   ];
 
   @override
@@ -27,19 +38,27 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
         children: [
           Column(
             children: [
+              /// Der Hauptbereich: Ein PageView, das durch verschiedene Kategorien der Bestenliste swiped.
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
                   itemCount: _pages.length,
+
+                  /// Aktualisiert den aktuellen Seitenindex, wenn der Nutzer swiped.
                   onPageChanged: (index) {
                     setState(() {
                       _currentPage = index;
                     });
                   },
+
+                  /// Baut die aktuelle Seite im PageView.
                   itemBuilder: (context, index) => _pages[index],
                 ),
               ),
+
               const SizedBox(height: 16),
+
+              /// Die Indikatorleiste, die anzeigt, welche Seite aktuell aktiv ist.
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(_pages.length, (index) {
@@ -57,9 +76,12 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                   );
                 }),
               ),
+
               const SizedBox(height: 130),
             ],
           ),
+
+          /// Die Bottom Navigation Bar, fest am unteren Bildschirmrand positioniert.
           Positioned(
             bottom: 10.0,
             left: 5,

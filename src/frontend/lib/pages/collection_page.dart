@@ -7,6 +7,10 @@ import 'package:hermes/validierungsmanager.dart';
 import 'package:hermes/components/globals.dart';
 import 'package:hermes/userManager.dart';
 
+/// Seite, die die Sammlung von Sammelkarten des Benutzers anzeigt.
+///
+/// Die Seite ermöglicht das Sortieren der Sammlung nach verschiedenen Kriterien,
+/// sowie das Einlesen von NFC-Tags, um neue Sammelkarten hinzuzufügen.
 class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});
 
@@ -15,34 +19,48 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
+  /// Status der NFC-Leseaktion
+  /// 0: idle, 1: scanning, 2: erfolgreich, 3: Fehler
   int state = 0;
+
+  /// Sammlung der Sammelkarten
   SammelkarteCollection collection = SammelkarteCollection();
+
+  /// Ladezustand, true während Daten geladen werden
   bool isLoading = true;
 
+  /// Liste der Sortierkriterien, nach denen die Sammlung sortiert werden kann
   final List<String> sortierKriterien = ['seltenheit', 'neueste', 'name', 'hoehe'];
+
+  /// Icons passend zu den Sortierkriterien
   final List<IconData> sortierIcons = [
     Icons.star,          // Seltenheit
     Icons.schedule,      // Neueste
     Icons.sort_by_alpha, // Name
     Icons.straighten,    // Höhe
   ];
+
+  /// Index des aktuell ausgewählten Sortierkriteriums
   int aktuellerSortIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    // Lade die Sammelkarten aus dem UserManager beim Start
     loadZiele();
   }
 
+  /// Lädt die Sammelkarten des Benutzers und sortiert sie initial
   Future<void> loadZiele() async {
     final result = await UserManager.getZiele();
     setState(() {
       collection = result;
-      collection.sortierenNach(sortierKriterien[aktuellerSortIndex]); // Sortiere initial
+      collection.sortierenNach(sortierKriterien[aktuellerSortIndex]);
       isLoading = false;
     });
   }
 
+  /// Wechselt das Sortierkriterium zyklisch durch und sortiert die Sammlung neu
   void wechsleSortierung() {
     setState(() {
       aktuellerSortIndex = (aktuellerSortIndex + 1) % sortierKriterien.length;
@@ -51,6 +69,7 @@ class _CollectionPageState extends State<CollectionPage> {
     });
   }
 
+  /// Liest einen NFC-Tag aus und fügt ggf. eine Sammelkarte hinzu
   Future<void> readNfcTag() async {
     try {
       var availability = await FlutterNfcKit.nfcAvailability;
@@ -62,7 +81,7 @@ class _CollectionPageState extends State<CollectionPage> {
         return;
       }
 
-      setState(() => state = 1);
+      setState(() => state = 1); 
       NFCTag tag = await FlutterNfcKit.poll();
 
       List<List<int>> data = <List<int>>[];
@@ -84,22 +103,21 @@ class _CollectionPageState extends State<CollectionPage> {
         throw Exception("ID konnte nicht extrahiert werden.");
       }
 
-      print("ID: $id");
       logger.i('ID erfolgreich extrahiert: $id');
       await FlutterNfcKit.finish();
-      setState(() => state = 2);
-      await Future.delayed(Duration(seconds: 1));
-      setState(() => state = 0);
+
+      setState(() => state = 2); 
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() => state = 0); 
 
       await Validierungsmanager.AddSammelkarteNFCGPS(context, id);
       await loadZiele();
     } catch (e) {
-      print("Fehler beim Lesen: $e");
       logger.w('Fehler beim Lesen des NFC Chips: $e');
       await FlutterNfcKit.finish();
-      setState(() => state = 3);
-      await Future.delayed(Duration(seconds: 1));
-      setState(() => state = 0);
+      setState(() => state = 3); 
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() => state = 0); 
     }
   }
 
@@ -135,7 +153,7 @@ class _CollectionPageState extends State<CollectionPage> {
                 ),
                 Expanded(
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : Scrollbar(
                           thumbVisibility: true,
                           child: SingleChildScrollView(
@@ -151,6 +169,7 @@ class _CollectionPageState extends State<CollectionPage> {
               ],
             ),
           ),
+
           Positioned(
             bottom: 130.0,
             left: 0,
@@ -174,6 +193,7 @@ class _CollectionPageState extends State<CollectionPage> {
               ),
             ),
           ),
+
           const Positioned(
             bottom: 10.0,
             left: 5,

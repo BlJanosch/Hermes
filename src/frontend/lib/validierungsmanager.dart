@@ -10,10 +10,36 @@ import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Manager-Klasse für Validierungslogik rund um Sammelkarten und GPS-Überprüfung.
+///
+/// Die Klasse enthält statische Methoden, um Sammelkarten-Ziele mit
+/// GPS-Standortdaten und NFC-Validierung hinzuzufügen.
+///
+/// Verhindert Instanziierung durch privaten Konstruktor.
 class Validierungsmanager {
   Validierungsmanager._();
-  
-  // Logging included
+
+  /// Versucht, eine Sammelkarte (Ziel) dem Benutzer hinzuzufügen, sofern dieser
+  /// sich in der Nähe (500 Meter) des Zielortes befindet.
+  ///
+  /// - Liest die aktuelle Benutzer-ID aus SharedPreferences aus.
+  /// - Fragt die Ziel-Details (inkl. Latitude/Longitude) vom Server ab.
+  /// - Holt die aktuelle Position des Geräts über Geolocator.
+  /// - Berechnet die Distanz zwischen aktuellem Standort und Zielkoordinaten.
+  /// - Fügt das Ziel über einen POST-Request dem Benutzer hinzu, wenn Distanz <= 500m.
+  ///
+  /// Parameter:
+  /// - [context] (optional): BuildContext zum Anzeigen von Dialogen bei Fehlern.
+  /// - [ZielID]: ID des Zieles, das hinzugefügt werden soll.
+  /// - [client] (optional): HTTP-Client zur Verwendung (für Tests).
+  ///
+  /// Fehlerbehandlung:
+  /// - Bei Netzwerkproblemen oder Serverfehlern wird eine AlertDialog mit Fehlermeldung angezeigt.
+  /// - Wenn das Ziel bereits im Besitz des Benutzers ist, wird ein entsprechender Dialog angezeigt.
+  /// - Wenn das Ziel nicht in der Nähe ist, wird der Benutzer darauf hingewiesen.
+  ///
+  /// Logs:
+  /// - Erfolgs- und Fehlerzustände werden geloggt.
   static Future<void> AddSammelkarteNFCGPS(BuildContext? context, int ZielID, {http.Client? client, }) async {
     client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();

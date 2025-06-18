@@ -13,7 +13,12 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// Logging included
+/// Hauptseite der App mit Kartenanzeige und GPS-Tracking.
+///
+/// Zeigt eine Karte mit der aktuellen Position und einer Route,
+/// die der Nutzer zurückgelegt hat.
+/// Ermöglicht Start, Stopp, Fortsetzen und Zurücksetzen der GPS-Tracking-Session.
+/// Zeigt Distanz, Dauer und weitere Statistiken an.
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -22,23 +27,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  /// Controller für die Kartenansicht (flutter_map)
   final MapController _mapController = MapController();
+
+  /// Service zur Verwaltung des GPS-Trackings (Start, Stop, Positionen, etc.)
   final TrackingService trackingService = TrackingService();
+
+  /// Location-Package für Standortabfrage und Berechtigungen
   final Location _location = Location();
+
+  /// Aktuell zurückgelegte Strecke in Metern
   double distance = 0;
+
+  /// Gesamtanstieg in Metern
   double altitude = 0;
+
+  /// Timer zur regelmäßigen Aktualisierung der UI während des Trackings
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
+    // Erlaube Standortaktualisierungen im Hintergrund
     _location.enableBackgroundMode(enable: true);
 
+    // Callback registrieren, der bei Standortänderungen die UI aktualisiert
     trackingService.onLocationUpdated = () {
       if (mounted) {
         setState(() {});
         if (trackingService.trackedRoute.isNotEmpty) {
+          // Nach dem Frame die Karte auf den letzten Standort zoomen
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _mapController.move(
               trackingService.trackedRoute.last,
@@ -51,9 +70,11 @@ class _HomeState extends State<Home> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _zoomToCurrentLocation());
 
+    // Timer starten, der UI jede Sekunde aktualisiert, wenn Tracking aktiv ist
     _startTimer();
   }
 
+  /// Zoomt die Karte auf den aktuellen GPS-Standort, falls Berechtigung erteilt.
   Future<void> _zoomToCurrentLocation() async {
     final hasPermission = await _location.hasPermission();
     if (hasPermission == PermissionStatus.denied) {
@@ -82,6 +103,8 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  /// Startet einen periodischen Timer, der jede Sekunde die UI aktualisiert,
+  /// solange das Tracking aktiv ist.
   void _startTimer() {
     logger.i('Timer gestartet');
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -91,6 +114,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  /// Startet, pausiert oder setzt das GPS-Tracking fort, je nach aktuellem Status.
   void _toggleTracking() {
     if (trackingService.isTracking) {
       logger.i('Tracking Stop wurde gedrückt');
@@ -107,12 +131,12 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  /// Setzt das Tracking und die gespeicherte Route zurück.
   void _resetTracking() {
     logger.i('Zurücksetzen gestartet');
     trackingService.reset();
     setState(() {});
   }
-
   @override
   Widget build(BuildContext context) {
     final route = trackingService.trackedRoute;

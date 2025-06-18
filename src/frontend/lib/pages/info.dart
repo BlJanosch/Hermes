@@ -6,9 +6,12 @@ import 'package:bcrypt/bcrypt.dart';
 import 'package:hermes/pages/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
+/// Informationsseite der App.
+///
+/// Zeigt Versionsinfo, Entwickler, Lizenzhinweise und Links zu verwendeten
+/// Kartenhintergründen an.
+/// Ermöglicht Rückkehr zu den Einstellungen via Zurück-Button in der AppBar.
 class Info extends StatefulWidget {
-  
   const Info({super.key});
 
   @override

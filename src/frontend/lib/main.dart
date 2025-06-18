@@ -8,6 +8,17 @@ import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+/// Prüft, ob der Server unter der angegebenen URL erreichbar ist.
+///
+/// Führt eine HTTP-GET-Anfrage mit einem Timeout von 2 Sekunden aus.
+/// Gibt `true` zurück, wenn der Server eine Antwort liefert, andernfalls `false`.
+///
+/// Parameter:
+/// - [url]: Die vollständige URL des Servers, der überprüft werden soll.
+///
+/// Rückgabe:
+/// - Ein [Future] mit dem Ergebnis `true`, wenn der Server online ist,
+///   oder `false`, wenn ein Fehler auftritt oder das Timeout erreicht wird.
 Future<bool> isServerOnline(String url) async {
   try {
     final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 2));

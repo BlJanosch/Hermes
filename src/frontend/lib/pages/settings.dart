@@ -9,16 +9,14 @@ import 'package:hermes/erfolgCollection.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hermes/pages/login.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
 import 'package:hermes/pages/change_userdata.dart';
 import 'package:hermes/pages/info.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Logging included
+/// Einstellungen-Seite der App.
+/// Zeigt Benutzerstatistiken, Erfolge, und erlaubt Zugang zu Benutzeraktionen wie Abmelden oder Profildaten ändern.
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -31,43 +29,47 @@ class _SettingsState extends State<Settings> {
   double _kmgelaufen = 0;
   double _hoehenmeter = 0;
   int _berge = 0;
-  ErfolgCollection _userErfolge = ErfolgCollection();
-  ErfolgCollection _allErfolge = ErfolgCollection();
+
+  ErfolgCollection _userErfolge = ErfolgCollection(); 
+  ErfolgCollection _allErfolge = ErfolgCollection(); 
 
   @override
   void initState() {
     super.initState();
-    try{
+
+    try {
       UserManager.loadUserData().then((userData) {
-      if (!mounted) return;
-      setState(() {
-        _username = userData['username'] ?? 'Unbekannt';
-        _kmgelaufen = userData['kmgelaufen'] ?? 0.0;
-        _hoehenmeter = userData['hoehenmeter'] ?? 0.0;
-        _berge = userData['berge'] ?? 0;
+        if (!mounted) return;
+        setState(() {
+          _username = userData['username'] ?? 'Unbekannt';
+          _kmgelaufen = userData['kmgelaufen'] ?? 0.0;
+          _hoehenmeter = userData['hoehenmeter'] ?? 0.0;
+          _berge = userData['berge'] ?? 0;
+        });
       });
-    });
-    }
-    catch (e) {
+    } catch (e) {
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Fehler beim Laden der Benutzerdaten'),
-            content: Text('Fehler: $e'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Fehler beim Laden der Benutzerdaten'),
+          content: Text('Fehler: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
+
+    // Lade Erfolge
     _initErfolge();
   }
 
+  /// Lädt Benutzer- und globale Erfolge und aktualisiert den State.
   Future<void> _initErfolge() async {
-    try{
+    try {
       await UserManager.checkErfolge(context);
       final erfolge = await UserManager.loadUserErfolge();
       if (mounted) {
@@ -75,27 +77,27 @@ class _SettingsState extends State<Settings> {
           _userErfolge.ergebnisse = erfolge;
         });
       }
+
       final allErfolge = await UserManager.loadAllErfolge(_userErfolge);
       if (mounted) {
         setState(() {
           _allErfolge.ergebnisse = allErfolge;
         });
       }
-    }
-    catch (e){
+    } catch (e) {
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Fehler beim Laden der Erfolge'),
-            content: Text('Fehler: $e'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Fehler beim Laden der Erfolge'),
+          content: Text('Fehler: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -104,6 +106,7 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
 
+      /// Seitliches Menü mit Benutzeraktionen
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -131,40 +134,34 @@ class _SettingsState extends State<Settings> {
             ),
             ListTile(
               leading: Icon(Icons.manage_accounts),
-              title: Text(
-                "Benutzername",
-              ),
+              title: Text("Benutzername"),
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Benutzername",)),
-              );
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Benutzername")),
+                );
               },
             ),
             ListTile(
               leading: Icon(Icons.password),
-              title: Text(
-                "Passwort",
-              ),
+              title: Text("Passwort"),
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Passwort",)),
-              );
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChangeUserdata(ChangeType: "Passwort")),
+                );
               },
             ),
             ListTile(
               leading: Icon(Icons.info),
-              title: Text(
-                "Info",
-              ),
+              title: Text("Info"),
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const Info()),
+                  context,
+                  MaterialPageRoute(builder: (context) => const Info()),
                 );
               },
             ),
@@ -172,30 +169,30 @@ class _SettingsState extends State<Settings> {
         ),
       ),
 
+      /// AppBar mit Titel und Menübutton
       appBar: AppBar(
-        title: Text(
-          'Einstellungen',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Einstellungen', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: Icon(Icons.menu, color: Colors.white,),
+              icon: Icon(Icons.menu, color: Colors.white),
               onPressed: () {
-                Scaffold.of(context).openEndDrawer(); 
+                Scaffold.of(context).openEndDrawer();
               },
             ),
           ),
         ],
       ),
 
+      /// Hauptbereich mit Statistiken und Erfolgen
       body: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                /// Benutzerkarte mit Infos und Avatar
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -216,25 +213,13 @@ class _SettingsState extends State<Settings> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Name: $_username',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
+                          Text('Name: $_username', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                           SizedBox(height: 2),
-                          Text(
-                            'km: ${_kmgelaufen.toStringAsFixed(2)} km',
-                            style: TextStyle(fontSize: 13),
-                          ),
+                          Text('km: ${_kmgelaufen.toStringAsFixed(2)} km', style: TextStyle(fontSize: 13)),
                           SizedBox(height: 2),
-                          Text(
-                            'Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} m',
-                            style: TextStyle(fontSize: 13),
-                          ),
+                          Text('Höhenmeter: ${_hoehenmeter.toStringAsFixed(2)} m', style: TextStyle(fontSize: 13)),
                           SizedBox(height: 2),
-                          Text(
-                            'Berge: $_berge',
-                            style: TextStyle(fontSize: 13),
-                          ),
+                          Text('Berge: $_berge', style: TextStyle(fontSize: 13)),
                         ],
                       ),
                     ),
@@ -249,7 +234,10 @@ class _SettingsState extends State<Settings> {
                     ),
                   ],
                 ),
+
                 SizedBox(height: 32),
+
+                /// Abschnittstitel für Erfolge
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -258,12 +246,17 @@ class _SettingsState extends State<Settings> {
                     textAlign: TextAlign.left,
                   ),
                 ),
+
                 SizedBox(height: 10),
+
+                /// Grid mit Erfolgsabzeichen
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       int crossAxisCount = 2;
                       double width = constraints.maxWidth;
+
+                      // Anpassung für verschiedene Bildschirmbreiten
                       if (width > 900) {
                         crossAxisCount = 6;
                       } else if (width > 700) {
@@ -327,6 +320,8 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
+
+          /// Navigationsleiste am unteren Rand
           Positioned(
             bottom: 10.0,
             left: 5,

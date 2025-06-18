@@ -5,10 +5,28 @@ import 'package:hermes/pages/collection_page.dart';
 import 'package:hermes/pages/leaderboard.dart';
 import 'package:hermes/pages/settings.dart';
 
+/// Ein Bottom Navigation Bar Widget mit 4 Tabs für die Navigation zwischen den Hauptseiten.
+///
+/// Verwendet das Paket `google_nav_bar` für eine moderne und anpassbare Navigation.
+///
+/// Die Tabs sind:
+/// 0. Home
+/// 1. CollectionPage
+/// 2. LeaderboardPage
+/// 3. Settings
+///
+/// Navigiert per `Navigator.pushReplacement`, um den aktuellen Screen zu ersetzen.
+///
+/// [currentIndex] gibt den aktuell aktiven Tab an.
 class MyBottomNavBar extends StatelessWidget {
+  /// Der aktuell ausgewählte Tab-Index.
   final int currentIndex;
+
+  /// Erzeugt eine neue Bottom Navigation Bar mit dem aktuellen Index.
   const MyBottomNavBar({super.key, required this.currentIndex});
 
+  /// Behandelt Tab-Wechsel, navigiert zur entsprechenden Seite,
+  /// wenn der neue Index sich vom aktuellen unterscheidet.
   void _onTabChange(BuildContext context, int index) {
     if (index == currentIndex) return;
     switch (index) {

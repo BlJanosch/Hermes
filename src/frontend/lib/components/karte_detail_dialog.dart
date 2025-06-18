@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:hermes/sammelkarte.dart';
 import 'package:hermes/schwierigkeit.dart';
 
+/// Dialog zur Anzeige der Details einer Sammelkarte.
+/// 
+/// Zeigt ein vergrößertes Bild der Karte, Name, Höhe, Datum und einen Schließen-Button.
+/// Der Hintergrund ist unscharf (Blur), um den Fokus auf die Karte zu legen.
+/// Die Farben und das Hintergrundbild variieren je nach Schwierigkeit der Karte.
 class KarteDetailDialog extends StatelessWidget {
+  /// Die anzuzeigende Sammelkarte
   final Sammelkarte karte;
 
+  /// Konstruktor für den Dialog, benötigt eine Sammelkarte
   const KarteDetailDialog({super.key, required this.karte});
 
   @override
@@ -16,7 +23,6 @@ class KarteDetailDialog extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Hintergrund mit Blur
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
@@ -24,7 +30,6 @@ class KarteDetailDialog extends StatelessWidget {
             ),
           ),
 
-          // Vergrößerte Karte
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -79,6 +84,7 @@ class KarteDetailDialog extends StatelessWidget {
     );
   }
 
+  /// Gibt den Pfad zum Hintergrundbild entsprechend der Schwierigkeit der Karte zurück.
   String getHintergrundBildPfad() {
     switch (karte.schwierigkeit) {
       case Schwierigkeit.Holz:
@@ -96,6 +102,8 @@ class KarteDetailDialog extends StatelessWidget {
     }
   }
 
+  /// Gibt die Textfarbe zurück, abhängig von der Schwierigkeit der Karte.
+  /// Für die Schwierigkeit 'Galaktisch' wird weiß verwendet, sonst schwarz.
   Color getTextColor() {
     switch (karte.schwierigkeit) {
       case Schwierigkeit.Galaktisch:
