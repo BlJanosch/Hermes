@@ -34,47 +34,46 @@ def get_connection():
 
 # Logging included
 def user_get(user_id):  # noqa: E501
-    """Gibt die Daten eines Benutzers anhand der ID zurück
+    """
+    @brief Sucht einen User anhand der ID und gibt die User-Daten zurück
+    @param user_id: ID des Benutzers (integer)
 
-    :param id:
-    :type id: int
-
-    :rtype: Union[User, Tuple[User, int], Tuple[User, int, Dict[str, str]]]
+    @return Ein User-Objekt mit den Daten des Benutzers mit der angegebenen ID, und im Fehlerfall eine dementsprechende Fehlermeldung
     """
     conn = get_connection()
     cur = conn.cursor()
-
-    cur.execute("SELECT id, kmgelaufen, hoehenmeter, passwort, benutzername, profilbild FROM user WHERE id = ?", (user_id,))
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
-
-    if row:
-        user = User(
-            id=row[0],
-            kmgelaufen=row[1],
-            hoehenmeter=row[2],
-            passwort=row[3],
-            benutzername=row[4],
-            profilbild=row[5]
-        )
-        logging.info(f"User mit ID {user_id} gefunden: {user.benutzername}")
-        return user, 200
-    else:
-        logging.error(f"User mit ID {user_id} nicht gefunden")
-        return {"message": "User not found"}, 401
+    try:
+        cur.execute("SELECT id, kmgelaufen, hoehenmeter, passwort, benutzername, profilbild FROM user WHERE id = ?", (user_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if row:
+            user = User(
+                id=row[0],
+                kmgelaufen=row[1],
+                hoehenmeter=row[2],
+                passwort=row[3],
+                benutzername=row[4],
+                profilbild=row[5]
+            )
+            logging.info(f"User mit ID {user_id} gefunden: {user.benutzername}")
+            return user, 200
+        else:
+            logging.error(f"Fehler: Kein Benutzer mit ID {user_id} gefunden")
+            return {"message": f"User with ID {user_id} not found"}, 401
+    except:
+        logging.error(f"Fehler: irgendwas ist schiefgelaufen")
+        return {"message": "Unbekannter Fehler"}, 500
     
 # Logging included
 def update_userdata(body):  # noqa: E501
-    """Aktualisiert die Daten eines Benutzers, man muss ein Json mitgeben
-
-     # noqa: E501
-
-    :param user: 
-    :type user: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
+    @brief Aktualisiert die Daten eines Benutzers.
+    @param body: JSON-Objekt mit den Attributen des Benutzers, auch die Attribute, die nicht aktualisiert werden. (json-Objekt)
+
+    @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
+    """
+
     user = body
     if connexion.request.is_json:
         user = User.from_dict(connexion.request.get_json())  # noqa: E501
@@ -106,13 +105,13 @@ def update_userdata(body):  # noqa: E501
 
 # Logging included
 def update_stats(body):  # noqa: E501
-    """Aktualisiert die Statistiken eines Benutzers. Erwartet JSON mit id, kmgelaufen und hoehenmeter.
-
-    :param body: JSON-Daten mit den Feldern 'id', 'kmgelaufen', 'hoehenmeter'
-    :type body: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]]
     """
+    @brief Aktualisiert einzig und allein die Stats des Benutzers, nicht seine Daten, indem er die erhaltenen Daten zu den vorhandenen addiert.
+    @param body: JSON-Objekt mit den Attributen des Benutzers (id, kmgelaufen, hoehenmeter), die aktualisiert werden sollen. (json-Objekt)
+
+    @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
+    """
+
     if not connexion.request.is_json:
         logging.error("Falsche Eingabe: JSON erwartet")
         return {"message": "JSON erwartet"}, 400
@@ -150,17 +149,14 @@ def update_stats(body):  # noqa: E501
 
 # Logging included
 def user_login(benutzername, passwort):  # noqa: E501
-    """Prüft, ob ein User existiert, gibt Integer ID zurück (-1, wenn User nicht vorhanden)
-
-     # noqa: E501
-
-    :param benutzername: 
-    :type benutzername: str
-    :param passwort: 
-    :type passwort: str
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
+    @brief Gibt einfach die ID des Benutzers zurück, wenn er vorhanden ist.
+    @param benutzername: Benutzername des Benutzers (string)
+    @param passwort: Passwort des Benutzers (string)
+
+    @return Die ID des Benutzers, wenn er vorhanden ist, sonst -1.
+    """
+
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT passwort FROM user WHERE benutzername = ?", (benutzername,))
@@ -182,14 +178,10 @@ def user_login(benutzername, passwort):  # noqa: E501
 
 # Logging included
 def user_register(body):  # noqa: E501
-    """Neuen Benutzer registrieren
-
-     # noqa: E501
-
-    :param user: 
-    :type user: dict | bytes
-
-    :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
+    """
+    @brief Legt einen neuen Benutzer an, wenn dieser noch nicht existiert.
+    @param body: JSON-Body, der ein User-Objekt repräsentiert, mit 0 kmgelaufen, 0 hoehenmeter, einem Passwort, einem Benutzernamen und einem Profilbild. (json-Objekt)
+    @return Meldung "Erfolg" bei erfolgreicher Registrierung, sonst eine dementsprechende Fehlermeldung.
     """
     user = body
     if connexion.request.is_json:
