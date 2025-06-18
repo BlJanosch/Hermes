@@ -42,28 +42,28 @@ def user_get(user_id):  # noqa: E501
     """
     conn = get_connection()
     cur = conn.cursor()
-
-    cur.execute("SELECT id, kmgelaufen, hoehenmeter, passwort, benutzername, profilbild FROM user WHERE id = ?", (user_id,))
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
-
-    print(row[3])
-
-    if row:
-        user = User(
-            id=row[0],
-            kmgelaufen=row[1],
-            hoehenmeter=row[2],
-            passwort=row[3],
-            benutzername=row[4],
-            profilbild=row[5]
-        )
-        logging.info(f"User mit ID {user_id} gefunden: {user.benutzername}")
-        return user, 200
-    else:
-        logging.error(f"User mit ID {user_id} nicht gefunden")
-        return {"message": "User not found"}, 401
+    try:
+        cur.execute("SELECT id, kmgelaufen, hoehenmeter, passwort, benutzername, profilbild FROM user WHERE id = ?", (user_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if row:
+            user = User(
+                id=row[0],
+                kmgelaufen=row[1],
+                hoehenmeter=row[2],
+                passwort=row[3],
+                benutzername=row[4],
+                profilbild=row[5]
+            )
+            logging.info(f"User mit ID {user_id} gefunden: {user.benutzername}")
+            return user, 200
+        else:
+            logging.error(f"Fehler: Kein Benutzer mit ID {user_id} gefunden")
+            return {"message": f"User with ID {user_id} not found"}, 401
+    except:
+        logging.error(f"Fehler: irgendwas ist schiefgelaufen")
+        return {"message": "Unbekannter Fehler"}, 500
     
 # Logging included
 def update_userdata(body):  # noqa: E501
