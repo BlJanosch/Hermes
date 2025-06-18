@@ -1,0 +1,174 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="Seite-1" id="QSkTq2VIPLX36ERGjjrI">
+    <mxGraphModel dx="1687" dy="1040" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Xz1Lhe8oSOnVWWPvrxZf-1" target="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-1" value="Erfolg" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="300" width="260" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-2" value="+ Name : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-1">
+          <mxGeometry y="30" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-3" value="+ Beschreibung : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-1">
+          <mxGeometry y="60" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-4" value="+ Schwierigkeit : Schwierigkeit" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-1">
+          <mxGeometry y="90" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-5" value="+ Erfolg(name:string, beschreibung:string, schwierigkeit:schwierigkeit)" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-1">
+          <mxGeometry y="120" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-6" value="+ toJson() : Map&amp;lt;String,dynamic&amp;gt;" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-1">
+          <mxGeometry y="150" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-7" value="ErfolgCollection" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="815" y="530" width="210" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-8" value="+ ergebnisse : List&amp;lt;Erfolg&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-7">
+          <mxGeometry y="30" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-9" value="+ ErfolgCollection()" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-7">
+          <mxGeometry y="60" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-15" value="Sammelkarte" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="20" width="286" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-16" value="Name : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="30" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-17" value="Bild : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="60" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-18" value="Schwierigkeit : Schwierigkeit" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="90" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-19" value="Hoehe : double" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="120" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-20" value="Datum : date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="150" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-21" value="+ Sammelkarte(name:string, bild:string, schwierigkeit:int, hoehe:double, datum: date)" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-15">
+          <mxGeometry y="180" width="286" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Xz1Lhe8oSOnVWWPvrxZf-22" target="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="848" y="10" />
+              <mxPoint x="630" y="10" />
+              <mxPoint x="630" y="280" />
+              <mxPoint x="610" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-22" value="SammelkarteCollection" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="20" width="396" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-23" value="+ SammelkartenList: List&amp;lt;Sammelkarte&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-22">
+          <mxGeometry y="30" width="396" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-24" value="+ SammelkarteCollection()" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-22">
+          <mxGeometry y="60" width="396" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-25" value="+ sortierenNach(kriterium:string): void" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-22">
+          <mxGeometry y="90" width="396" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-26" value="(e) Schwierigkeit" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="380" width="140" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-34" value="Holz : 0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="30" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-33" value="Stein : 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="60" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-27" value="Bronze : 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="90" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-28" value="Silber : 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="120" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-29" value="Gold : 4" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="150" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-30" value="Galaktisch : 5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-26">
+          <mxGeometry y="180" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Xz1Lhe8oSOnVWWPvrxZf-45" target="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="245" y="335" />
+              <mxPoint x="10" y="335" />
+              <mxPoint x="10" y="20" />
+              <mxPoint x="150" y="20" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-45" value="UserManager (static -&amp;gt; alle Funktionen)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="370" width="350" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-46" value="+ Login(context:BuildContext?, username:string, password:string) : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="30" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-47" value="&lt;br&gt;+ Register(context:BuildContext?, username:string, password:string) : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="60" width="350" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-48" value="+ loadUserData() : Map&amp;lt;String,dynamic&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="130" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-49" value="+ loadUserErfolge() : List&amp;lt;Erfrolg&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="160" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-50" value="+ loadAllErfolge(userErfolge:ErfolgCollection) : List&amp;lt;Erfolg&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="190" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-51" value="+ checkErfolge(context:BuildContext?) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="220" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-52" value="+ updateStats(distance:douible, altitude:double) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="250" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-53" value="+ getZiele() : SammelkarteCollection" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="280" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-54" value="+ updateData(username:string, password:string?, hoehenmeter:double, kmgelaufen:double, profilbild:string) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-45">
+          <mxGeometry y="310" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-55" value="Validierungsmanager (static -&amp;gt; alle Funktionen)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="722" y="680" width="396" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-57" value="+ AddSammelkarteNFCGPS(context:BuildContext?, ZielID:int) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-55">
+          <mxGeometry y="30" width="396" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-35" value="User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="260" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-36" value="+ ID: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="30" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-37" value="+ Benutzername : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="60" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-38" value="+ Passwort : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="90" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-39" value="+ Profilbild : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="120" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-40" value="+ Hoehenmeter : double" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="150" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-41" value="+ KMGelaufen : double" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="180" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Xz1Lhe8oSOnVWWPvrxZf-42" value="+ User(id: int, benutzerame: string, passwort:string, profilbild:string)" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Xz1Lhe8oSOnVWWPvrxZf-35">
+          <mxGeometry y="210" width="260" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

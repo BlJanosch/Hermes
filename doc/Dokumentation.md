@@ -89,6 +89,8 @@ Password Hashing hinzugefügt | Jannik | 17. Juni |
 Doxygen fertiggestellt | Noah | 17. Juni |
 Bei Autlogin wird nun geprüft, ob der User noch exisitert | Jannik | 17. Juni |
 Info Seite hinzugefügt | Jannik | 17. Juni |
+UnitTests für Backend | Noah | 18. Juni |
+Frontend API Dokumentation | Jannik | 18. Juni |
  
 ## Projektplanung
 Die Phase der Projektplanung war für uns eine besonders wichtige, da hier die ganzen Ideen zu einem fast schon fertigen Projekt zusammengeflossen sind. Durch sorgfältige Planung von Komponenten ist uns einiges leichter gefallen, besonders in der Datenbank-Verwaltung und dem Teil der Rest-API. Den ersten Grob-Vorschlag für die App findet man auch in der Datei `ProjektIdee.md`. Die ersten Entwürfe vom ERM bzw. RM sind im Ordner `ERM_RM` zu finden, jedoch sind diese nicht mehr aktuell. Das Klassendiagramm ist dementsprechend auch im Ordner `Klassendiagramm` zu finden. Im Ordern `Bilder` sind Designs von der UI und den Sammelkarten, sowie das Logo. In der Datei `REST-API.md` ist auch der erste Entwurf der Endpunkte zu finden.
@@ -551,3 +553,13 @@ Da diese Bilder nicht alle Copyright enthalten, ist es unsere Aufgabe, falls die
 - https://upload.wikimedia.org/wikipedia/commons/4/4a/Drei_tuerme_montafon.JPG
 - https://upload.wikimedia.org/wikipedia/commons/a/a7/Brocken_vom_Torfhaus_neu.jpg
 - https://img.oastatic.com/img2/71685665/max/variant.jpg
+
+## Info
+
+Möchte man das Backend lokal laufen lassen muss man in dem File `lib/components/globals.dart` die IP-Adresse des Servers anpassen. Diese ist standardmäßig auf die Public IP-Adresse des Servers gesetzt.
+
+### ERM/RM
+Das ERM/RM Diagramm wurde kaum verändert und wurde eigentlich wie geplant umgesetzt. Es ist im Ordner `ERM_RM` zu finden. 
+
+### Klassendiagramm
+Beim Klassendiagramm hat es schon mehr Änderungen gegeben, da wir erkannt haben, dass wir nicht wirklich eine User Klasse brauchen und haben dann alle Funktionen, welche ein User benötigt in den `UserManager` ausgelagert. Bei den Schwierigkeiten sind zwei neue dazugekommen, aber ansonsten ist es ziemlich gleich geblieben. Das Klassendiagramm ist im Ordner `Klassendiagramm` zu finden.
