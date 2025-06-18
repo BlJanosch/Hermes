@@ -4,6 +4,7 @@ import 'package:hermes/components/globals.dart';
 import 'package:hermes/pages/home.dart';
 import 'package:hermes/pages/login.dart';
 import 'package:hermes/pages/server_offline.dart';
+import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,19 +23,22 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-
   final prefs = await SharedPreferences.getInstance();
   final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   bool online = await isServerOnline('http://$serverIP:8080/ui');
-  runApp(MyApp(isLoggedIn: isLoggedIn, online: online));
+  var data = await UserManager.loadUserData();
+  bool AccountStillExists = data.length == 0 ? false : true;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn, online: online, AccountStillExists: AccountStillExists,));
 }
 
 // Logging included
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
   final bool online;
+  final bool AccountStillExists;
 
-  const MyApp({super.key, required this.isLoggedIn, required this.online});
+  const MyApp({super.key, required this.isLoggedIn, required this.online, required this.AccountStillExists});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +51,7 @@ class MyApp extends StatelessWidget {
             logger.w('Server is offline');
             return const ServerOfflinePage();
           }
-          if (isLoggedIn) {
+          if (isLoggedIn && AccountStillExists) {
             logger.i('Benutzer ist bereits angemeldet... Login wird übersprungen');
             return const Home();
           } else {

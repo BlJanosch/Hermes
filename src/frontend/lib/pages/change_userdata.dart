@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hermes/components/globals.dart';
-import 'package:hermes/pages/more_settings.dart';
 import 'package:hermes/userManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bcrypt/bcrypt.dart';
+import 'package:hermes/pages/settings.dart';
+
 
 class ChangeUserdata extends StatefulWidget {
   final String ChangeType;
@@ -76,7 +77,7 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const MoreSettings()),
+              MaterialPageRoute(builder: (context) => const Settings()),
             );
           },
         ),
@@ -136,10 +137,12 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
           ),
         SizedBox(height: 32),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (widget.ChangeType == "Benutzername"){
               try{
-                UserManager.updateData(_zweiterInput.text, oldPassword, hoehenmeter, kmgelaufen, profilbild);
+                UserManager.updateData(_zweiterInput.text, "", hoehenmeter, kmgelaufen, profilbild);
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setString('username', _zweiterInput.text);
               }
               catch (e){
                 logger.w('Fehler beim Aktualiseren der Daten: $e');
@@ -160,7 +163,7 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
               logger.i('Benutzername erfolgreich aktualisiert');
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MoreSettings()),
+                MaterialPageRoute(builder: (context) => const Settings()),
               );
             }
             else{
@@ -189,7 +192,7 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
                   logger.i('Passwort erfolgreich aktualisiert');
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const MoreSettings()),
+                    MaterialPageRoute(builder: (context) => const Settings()),
                   );
                 }
                 else{

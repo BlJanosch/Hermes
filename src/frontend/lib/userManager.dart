@@ -113,14 +113,13 @@ class UserManager {
     final response = await client.get(url);
     if (response.statusCode == 401){
       logger.w('User not found');
-      throw Exception('User not found');
+      return {};
     }
     final result = json.decode(response.body);
     final urlBerge = Uri.parse('http://$serverIP:8080/erfolg/erreichteziele?userID=$id');
     final responseBerge = await client.get(urlBerge);
     if (responseBerge.statusCode != 200){
       logger.w('Ungülte Eingabe/Fehler bei Ziel-Abfrage');
-      throw Exception('Ungültige Eingabe/Fehler bei Ziel-Abfrage');
     }
     final resultBerge = json.decode(responseBerge.body);
     logger.i('Benutzerdaten erfolgreich geladen');
@@ -277,7 +276,7 @@ class UserManager {
   }
 
   // Logging included
-  static Future<void> updateData(String username, String password, double hoehenmeter, double kmgelaufen, String probilbild, {http.Client? client, }) async {
+  static Future<void> updateData(String username, String? password, double hoehenmeter, double kmgelaufen, String probilbild, {http.Client? client, }) async {
     client ??= http.Client();
     final prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id');
