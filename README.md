@@ -27,6 +27,7 @@ Now you have two options:
 ![](doc/BedienungsanleitungBilder/Sammelkarten.png)
 
 Here you can see all your collection cards / mountains you have collected. You can also click on the cards to see a detailed view of the mountain. If you click on the button on the top right corner you can sort your cards by rarity, hight or date.
+If you press the add button you can add new goals by scanning the nfc chip, which is placed at the goal.
 
 ![](doc/BedienungsanleitungBilder/SammelkarteDetail.png)
 

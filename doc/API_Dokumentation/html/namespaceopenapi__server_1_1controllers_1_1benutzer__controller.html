@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Hermes API Dokumentation: openapi_server.controllers.benutzer_controller Namespace Reference</title>
+<title>Hermes API-Dokumentation: openapi_server.controllers.benutzer_controller Namespace Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="hermes_logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">Hermes API Dokumentation
+   <div id="projectname">Hermes API-Dokumentation<span id="projectnumber">&#160;1.0</span>
    </div>
   </td>
  </tr>
@@ -123,7 +123,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <pre class="fragment">@brief Aktualisiert einzig und allein die Stats des Benutzers, nicht seine Daten, indem er die erhaltenen Daten zu den vorhandenen addiert.
-@param body: JSON-Objekt mit den Attributen des Benutzers (id, kmgelaufen, hoehenmeter), die aktualisiert werden sollen.
+@param body: JSON-Objekt mit den Attributen des Benutzers (id, kmgelaufen, hoehenmeter), die aktualisiert werden sollen. (json-Objekt)
 
 @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
 </pre> 
@@ -145,7 +145,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <pre class="fragment">@brief Aktualisiert die Daten eines Benutzers.
-@param body: JSON-Objekt mit den Attributen des Benutzers, auch die Attribute, die nicht aktualisiert werden.
+@param body: JSON-Objekt mit den Attributen des Benutzers, auch die Attribute, die nicht aktualisiert werden. (json-Objekt)
 
 @return Eine Info "Success" falls erfolgreich, sonst dementsprechende Fehlermeldung
 </pre> 
@@ -167,7 +167,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <pre class="fragment">@brief Sucht einen User anhand der ID und gibt die User-Daten zurück
-@param user_id: ID des Benutzers
+@param user_id: ID des Benutzers (integer)
 
 @return Ein User-Objekt mit den Daten des Benutzers mit der angegebenen ID, und im Fehlerfall eine dementsprechende Fehlermeldung
 </pre> 
@@ -199,8 +199,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <pre class="fragment">@brief Gibt einfach die ID des Benutzers zurück, wenn er vorhanden ist.
-@param benutzername: Benutzername des Benutzers
-@param passwort: Passwort des Benutzers
+@param benutzername: Benutzername des Benutzers (string)
+@param passwort: Passwort des Benutzers (string)
 
 @return Die ID des Benutzers, wenn er vorhanden ist, sonst -1.
 </pre> 
@@ -222,7 +222,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <pre class="fragment">@brief Legt einen neuen Benutzer an, wenn dieser noch nicht existiert.
-@param body: JSON-Body, der ein User-Objekt repräsentiert, mit 0 kmgelaufen, 0 hoehenmeter, einem Passwort, einem Benutzernamen und einem Profilbild.
+@param body: JSON-Body, der ein User-Objekt repräsentiert, mit 0 kmgelaufen, 0 hoehenmeter, einem Passwort, einem Benutzernamen und einem Profilbild. (json-Objekt)
 @return Meldung "Erfolg" bei erfolgreicher Registrierung, sonst eine dementsprechende Fehlermeldung.
 </pre> 
 </div>

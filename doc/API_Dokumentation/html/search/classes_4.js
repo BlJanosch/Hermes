@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['user_0',['User',['../classopenapi__server_1_1models_1_1user_1_1_user.html',1,'openapi_server::models::user']]],
-  ['userbestenliste_1',['UserBestenliste',['../classopenapi__server_1_1models_1_1user__bestenliste_1_1_user_bestenliste.html',1,'openapi_server::models::user_bestenliste']]],
-  ['usererfolg_2',['UserErfolg',['../classopenapi__server_1_1models_1_1user__erfolg_1_1_user_erfolg.html',1,'openapi_server::models::user_erfolg']]]
+  ['testbestenlistecontroller_0',['TestBestenlisteController',['../classtest__bestenliste__controller_1_1_test_bestenliste_controller.html',1,'test_bestenliste_controller']]],
+  ['testerfolgecontroller_1',['TestErfolgeController',['../classtest__erfolge__controller_1_1_test_erfolge_controller.html',1,'test_erfolge_controller']]],
+  ['testusercontroller_2',['TestUserController',['../classtest__benutzer__controller_1_1_test_user_controller.html',1,'test_benutzer_controller']]]
 ];

@@ -137,10 +137,12 @@ class _ChangeUserdataState extends State<ChangeUserdata> {
           ),
         SizedBox(height: 32),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (widget.ChangeType == "Benutzername"){
               try{
-                UserManager.updateData(_zweiterInput.text, oldPassword, hoehenmeter, kmgelaufen, profilbild);
+                UserManager.updateData(_zweiterInput.text, "", hoehenmeter, kmgelaufen, profilbild);
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setString('username', _zweiterInput.text);
               }
               catch (e){
                 logger.w('Fehler beim Aktualiseren der Daten: $e');
