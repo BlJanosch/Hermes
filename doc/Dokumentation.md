@@ -558,6 +558,8 @@ Da diese Bilder nicht alle Copyright enthalten, ist es unsere Aufgabe, falls die
 
 Möchte man das Backend lokal laufen lassen muss man in dem File `lib/components/globals.dart` die IP-Adresse des Servers anpassen. Diese ist standardmäßig auf die Public IP-Adresse des Servers gesetzt.
 
+Die **ausführbare Version** bzw. APK befindet sich im Ordner `build/app/outputs/flutter-apk/app-release.apk` oder `bin/app-release.apk`.
+
 ### ERM/RM
 Das ERM/RM Diagramm wurde kaum verändert und wurde eigentlich wie geplant umgesetzt. Es ist im Ordner `ERM_RM` zu finden. 
 
