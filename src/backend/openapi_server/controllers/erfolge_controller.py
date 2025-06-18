@@ -211,22 +211,26 @@ def check_erfolge(user_id):  # noqa: E501
         print(data)
         print(erfolge)
 
-        if data['kmgelaufen'] >= 100 and not any(eintrag['erfolg_id'] == 2 for eintrag in erfolge):
-            newErfolg = True
-            cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 2, date.today().isoformat(),))
-            logging.info(f"Erfolg freigeschaltet: 100 km gelaufen für UserID {user_id}")
-        if data['hoehenmeter'] >= 3000 and not any(eintrag['erfolg_id'] == 3 for eintrag in erfolge):
-            newErfolg = True
-            cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 3, date.today().isoformat(),))
-            logging.info(f"Erfolg freigeschaltet: 3000 Höhenmeter erklommen für UserID {user_id}")
-        if data['ziele_erreicht'] >= 1 and not any(eintrag['erfolg_id'] == 1 for eintrag in erfolge):
-            newErfolg = True
-            cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 1, date.today().isoformat(),))
-            logging.info(f"Erfolg freigeschaltet: 1 Ziel erreicht für UserID {user_id}")
-        if data['ziele_erreicht'] >= 10 and not any(eintrag['erfolg_id'] == 9 for eintrag in erfolge):
-            newErfolg = True
-            cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 9, date.today().isoformat(),))
-            logging.info(f"Erfolg freigeschaltet: 10 Ziele erreicht für UserID {user_id}")
+        try:
+            if data['kmgelaufen'] >= 100 and not any(eintrag['erfolg_id'] == 2 for eintrag in erfolge):
+                newErfolg = True
+                cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 2, date.today().isoformat(),))
+                logging.info(f"Erfolg freigeschaltet: 100 km gelaufen für UserID {user_id}")
+            if data['hoehenmeter'] >= 3000 and not any(eintrag['erfolg_id'] == 3 for eintrag in erfolge):
+                newErfolg = True
+                cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 3, date.today().isoformat(),))
+                logging.info(f"Erfolg freigeschaltet: 3000 Höhenmeter erklommen für UserID {user_id}")
+            if data['ziele_erreicht'] >= 1 and not any(eintrag['erfolg_id'] == 1 for eintrag in erfolge):
+                newErfolg = True
+                cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 1, date.today().isoformat(),))
+                logging.info(f"Erfolg freigeschaltet: 1 Ziel erreicht für UserID {user_id}")
+            if data['ziele_erreicht'] >= 10 and not any(eintrag['erfolg_id'] == 9 for eintrag in erfolge):
+                newErfolg = True
+                cursor.execute("INSERT INTO user_erfolg (user_id, erfolg_id, datum) VALUES (?, ?, ?)", (user_id, 9, date.today().isoformat(),))
+                logging.info(f"Erfolg freigeschaltet: 10 Ziele erreicht für UserID {user_id}")
+        except:
+            logging.error("Fehler mit den Daten oder Erfolgen")
+            return {"Fehler mit den Daten oder Erfolgen"}, 400
 
         conn.commit()
         cursor.close()
@@ -239,7 +243,7 @@ def check_erfolge(user_id):  # noqa: E501
 
     except mariadb.Error as e:
         logging.error(f"Fehler beim Überprüfen der Erfolge für UserID {user_id}: {e}")
-        return {"error": str(e)}, 500
+        return {"error": str(e)}, 400
     
 # Logging included
 def get_ziel(ziel_id):  # noqa: E501
