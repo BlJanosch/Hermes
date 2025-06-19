@@ -6,10 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Eine Seite, die angezeigt wird, wenn der Server nicht erreichbar ist.
-///
-/// Zeigt eine Fehlermeldung und ermöglicht es dem Benutzer, die Verbindung
-/// erneut zu versuchen. Wenn die Verbindung wiederhergestellt werden kann,
-/// wird die App erneut gestartet mit den aktuellen Verbindungsdaten.
 class ServerOfflinePage extends StatelessWidget {
   const ServerOfflinePage({Key? key}) : super(key: key);
 
@@ -23,15 +19,12 @@ class ServerOfflinePage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// Icon zur Visualisierung, dass der Server offline ist.
               Icon(
                 Icons.cloud_off,
                 color: const Color(0xFF4A742F),
                 size: 80,
               ),
-
               const SizedBox(height: 24),
-
               Text(
                 'Server Offline',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -39,10 +32,7 @@ class ServerOfflinePage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-
               const SizedBox(height: 16),
-
-              /// Beschreibung des Problems
               Text(
                 'Die Verbindung zum Server konnte nicht hergestellt werden.\n'
                 'Bitte überprüfe deine Internetverbindung oder versuche es später erneut.',
@@ -51,10 +41,7 @@ class ServerOfflinePage extends StatelessWidget {
                       color: Colors.white,
                     ),
               ),
-
               const SizedBox(height: 32),
-
-              /// Button zum erneuten Verbindungsversuch
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFBBA430),
@@ -77,11 +64,25 @@ class ServerOfflinePage extends StatelessWidget {
 
                   final online = await isServerOnline('http://$serverIP:8080/ui');
 
-                  var data = await UserManager.loadUserData();
-                  bool accountStillExists = data.isNotEmpty;
+                  var data;
+                  if (online) {
+                    try {
+                      data = await UserManager.loadUserData();
+                    } catch (e) {
+                      data = [];
+                    }
+                  } else {
+                    data = [];
+                  }
 
+                  final bool accountStillExists = data.isNotEmpty;
+
+                  if (!context.mounted) return;
                   Navigator.of(context, rootNavigator: true).pop();
 
+                  await Future.delayed(const Duration(milliseconds: 100));
+
+                  if (!context.mounted) return;
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => MyApp(
@@ -105,9 +106,6 @@ class ServerOfflinePage extends StatelessWidget {
     );
   }
 
-  /// Prüft, ob der Server unter der angegebenen URL erreichbar ist.
-  ///
-  /// Gibt `true` zurück, wenn eine HTTP 200-Antwort empfangen wird, andernfalls `false`.
   Future<bool> isServerOnline(String url) async {
     try {
       final response =

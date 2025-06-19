@@ -38,13 +38,16 @@ void main() async {
   final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   bool online = await isServerOnline('http://$serverIP:8080/ui');
   var data;
-  try{
-    data = await UserManager.loadUserData();
-  }
-  catch (e){
+  if (online) {
+    try {
+      data = await UserManager.loadUserData();
+    } catch (e) {
+      data = [];
+    }
+  } else {
     data = [];
   }
-  bool AccountStillExists = data.length == 0 ? false : true;
+bool AccountStillExists = data.length == 0 ? false : true;
 
   runApp(MyApp(isLoggedIn: isLoggedIn, online: online, AccountStillExists: AccountStillExists,));
 }

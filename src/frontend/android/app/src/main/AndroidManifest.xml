@@ -10,6 +10,7 @@
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
     <application
         android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
         android:foregroundServiceType="location"
         android:label="Hermes"
         android:name="${applicationName}"
@@ -42,6 +43,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="flutter.renderer"
+            android:value="opengl" />
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
