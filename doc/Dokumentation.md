@@ -560,6 +560,8 @@ Möchte man das Backend lokal laufen lassen muss man in dem File `lib/components
 
 Die **ausführbare Version** bzw. APK befindet sich im Ordner `build/app/outputs/flutter-apk/app-release.apk` oder `bin/app-release.apk`.
 
+Es kann sein, dass man für das **Background-Tracking** der App die Berechtigung für den Standort im Hintergrund geben muss also `Immer zulassen`.
+
 ### ERM/RM
 Das ERM/RM Diagramm wurde kaum verändert und wurde eigentlich wie geplant umgesetzt. Es ist im Ordner `ERM_RM` zu finden. 
 
